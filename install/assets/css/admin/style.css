@@ -1,0 +1,15 @@
+/* Стили для иконки в главном меню */
+.adm-global_menu_dd .adm-main-menu-item-icon {
+    background: url('../../../images/dd.tools/main_menu_icon.png') 15px 9px no-repeat !important;
+}
+
+.adm-progress-bar-outer {
+    margin: 10px 0;
+    position: relative;
+}
+
+.adm-progress-bar-inner {
+    position: relative;
+    height: 20px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}

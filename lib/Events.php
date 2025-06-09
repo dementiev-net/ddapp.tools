@@ -15,7 +15,7 @@ class Events
      */
     public static function OnPageStart()
     {
-        PageEvents::OnPageStart();
+        PageEvents::OnPageStartHandler();
     }
 
     /**

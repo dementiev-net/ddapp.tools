@@ -183,7 +183,7 @@ class DD_Tools extends CModule
      */
     function InstallEvents()
     {
-        EventManager::getInstance()->registerEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStart");
+        EventManager::getInstance()->registerEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
         EventManager::getInstance()->registerEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
         EventManager::getInstance()->registerEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
         EventManager::getInstance()->registerEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
@@ -200,7 +200,7 @@ class DD_Tools extends CModule
      */
     function UnInstallEvents()
     {
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStart");
+        EventManager::getInstance()->unRegisterEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
         EventManager::getInstance()->unRegisterEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
         EventManager::getInstance()->unRegisterEventHandler("main", "OnAdminContextMenuShowHandler", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
         EventManager::getInstance()->unRegisterEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");

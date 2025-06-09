@@ -9,12 +9,17 @@ use Bitrix\Main\Localization\Loc;
 class AdminEvents
 {
     /**
+     * Событие OnAdminListDisplay вызывается в функции CAdminList::Display() при выводе
+     * в административном разделе списка элементов
+     * Событие позволяет модифицировать объект списка, в частности, добавить произвольные
+     * групповые действия над элементами списка, добавить команды в меню действий элемента списка и т.п.
      * @param $list
      * @param $userMessageText
      * @return void
      */
     public static function OnAdminListDisplayHandler(&$list, &$userMessageText)
     {
+        // Добавление кнопки "Запустить" для агентов
         if (Application::getInstance()->getContext()->getRequest()->getRequestedPage() == "/bitrix/admin/agent_list.php") {
 
             if (strlen($userMessageText)) {
@@ -42,6 +47,9 @@ class AdminEvents
     }
 
     /**
+     * Событие OnAdminContextMenuShow вызывается в функции CAdminContextMenu::Show() при выводе
+     * в административном разделе панели кнопок
+     * Событие позволяет модифицировать или добавить собственные кнопки на панель.
      * @param $items
      * @return void
      */

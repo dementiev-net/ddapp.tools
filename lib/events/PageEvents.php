@@ -13,7 +13,12 @@ use Bitrix\Main\Security\Sign\Signer;
 
 class PageEvents
 {
-    public static function OnPageStart()
+    /**
+     * Событие "OnPageStart" вызывается в начале выполняемой части пролога сайта,
+     * после подключения всех библиотек и отработки Агентов
+     * @return void
+     */
+    public static function OnPageStartHandler()
     {
 //         echo "<pre>";
 //         echo "Обработчик события";
@@ -21,6 +26,8 @@ class PageEvents
     }
 
     /**
+     * Событие "OnBeforeProlog" вызывается в выполняемой части пролога сайта,
+     * после события OnPageStart
      * @param $userMessageText
      * @return void
      */
@@ -28,35 +35,21 @@ class PageEvents
     {
         $request = Context::getCurrent()->getRequest();
 
-        $action = null;
-        if (isset($request["action_button"]) && !isset($request["action"])) {
-            $action = $request["action_button"];
-        } elseif (isset($request["action"])) {
-            $action = $request["action"];
-        }
-
-        if (!$action) {
-            return;
-        }
-
-        $connection = Application::getConnection();
-        $currentUser = CurrentUser::get();
-        $application = Application::getInstance();
+        // Запуск агентов
+        $action = $request["action_button"] ?? $request["action"] ?? null;
 
         if ($action == "dd_agent_run" &&
-            $currentUser->canDoOperation("view_other_settings") &&
-            $application->getContext()->getRequest()->getRequestedPage() == "/bitrix/admin/agent_list.php" &&
+            Application::getInstance()->getContext()->getRequest()->getRequestedPage() == "/bitrix/admin/agent_list.php" &&
+            CurrentUser::get()->canDoOperation("view_other_settings") &&
             check_bitrix_sessid() &&
             $request["mode"] == "list" &&
             is_numeric($request["agent_id"])
         ) {
             $agentId = (int)$request["agent_id"];
-
-            $helper = $connection->getSqlHelper();
-            $sql = "SELECT ID, NAME, AGENT_INTERVAL, IS_PERIOD, MODULE_ID FROM b_agent WHERE ID = " . $helper->forSql($agentId) . " ORDER BY SORT DESC";
-            $result = $connection->query($sql);
+            $result = \CAgent::GetByID($agentId);
 
             if ($arAgent = $result->fetch()) {
+
                 @set_time_limit(0);
 
                 if (strlen($arAgent["MODULE_ID"]) > 0 && $arAgent["MODULE_ID"] != "main") {

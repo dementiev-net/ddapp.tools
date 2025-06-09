@@ -9,9 +9,12 @@ Loader::registerAutoLoadClasses(DD_MODULE_NAMESPACE,
         // Основной класс модуля
         "DD\\Tools\\Main" => "lib/Main.php",
 
-        // Эвенты
+        // Классы событий
+        "DD\\Tools\\Events" => "lib/Events.php",
         "DD\\Tools\\Events\\AdminEvents" => "lib/events/AdminEvents.php",
         "DD\\Tools\\Events\\PageEvents" => "lib/events/PageEvents.php",
+        "DD\\Tools\\Events\\LoginEvents" => "lib/events/LoginEvents.php",
+        "DD\\Tools\\Events\\ContentEvents" => "lib/events/ContentEvents.php",
 
         // ORM сущности
         "DD\\Tools\\Entity\\DataTable" => "lib/entity/DataTable.php",

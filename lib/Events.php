@@ -2,9 +2,10 @@
 
 namespace DD\Tools;
 
-use Bitrix\Main\Entity\Event;
 use DD\Tools\Events\AdminEvents;
+use DD\Tools\Events\LoginEvents;
 use DD\Tools\Events\PageEvents;
+use DD\Tools\Events\ContentEvents;
 
 class Events
 {
@@ -13,7 +14,7 @@ class Events
     /**
      * @return void
      */
-    public static function OnPageStart()
+    public static function OnPageStartHandler()
     {
         PageEvents::OnPageStartHandler();
     }
@@ -24,6 +25,49 @@ class Events
     public static function OnBeforePrologHandler()
     {
         PageEvents::OnBeforePrologHandler(self::$userMessageText);
+    }
+
+    /**
+     * @return void
+     */
+    public static function OnPrologHandler()
+    {
+        PageEvents::OnPrologHandler();
+    }
+
+    /**
+     * @return void
+     */
+    public static function OnEpilogHandler()
+    {
+        PageEvents::OnEpilogHandler();
+    }
+
+    /**
+     * @param $arFields
+     * @return void
+     */
+    public static function OnAfterUserLoginHandler(&$arFields)
+    {
+        LoginEvents::OnAfterUserLoginHandler($arFields);
+    }
+
+    /**
+     * @param $arFields
+     * @return void
+     */
+    public static function OnBeforeUserLoginHandler(&$arFields)
+    {
+        LoginEvents::OnBeforeUserLoginHandler($arFields);
+    }
+
+    /**
+     * @param $content
+     * @return void
+     */
+    public static function OnEndBufferContentHandler(&$content)
+    {
+        ContentEvents::OnEndBufferContentHandler($content);
     }
 
     /**

@@ -183,11 +183,20 @@ class DD_Tools extends CModule
      */
     function InstallEvents()
     {
+        // страницы
         EventManager::getInstance()->registerEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
         EventManager::getInstance()->registerEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
+        EventManager::getInstance()->registerEventHandler("main", "OnProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnPrologHandler");
+        EventManager::getInstance()->registerEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DD\Tools\Events", "OnEpilogHandler");
+        // пользователь
+        EventManager::getInstance()->registerEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnAfterUserLoginHandler");
+        EventManager::getInstance()->registerEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforeUserLoginHandler");
+        // формы и запросы
+        EventManager::getInstance()->registerEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DD\Tools\Events", "OnEndBufferContentHandler");
+        // админка
         EventManager::getInstance()->registerEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
         EventManager::getInstance()->registerEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
-        // модуля
+        // модули
         EventManager::getInstance()->registerEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", 'get');
         EventManager::getInstance()->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
 
@@ -200,11 +209,20 @@ class DD_Tools extends CModule
      */
     function UnInstallEvents()
     {
+        // страницы
         EventManager::getInstance()->unRegisterEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
         EventManager::getInstance()->unRegisterEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
+        EventManager::getInstance()->unRegisterEventHandler("main", "OnProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnPrologHandler");
+        EventManager::getInstance()->unRegisterEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DD\Tools\Events", "OnEpilogHandler");
+        // пользователь
+        EventManager::getInstance()->unRegisterEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnAfterUserLoginHandler");
+        EventManager::getInstance()->unRegisterEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforeUserLoginHandler");
+        // формы и запросы
+        EventManager::getInstance()->unRegisterEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DD\Tools\Events", "OnEndBufferContentHandler");
+        // админка
         EventManager::getInstance()->unRegisterEventHandler("main", "OnAdminContextMenuShowHandler", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
         EventManager::getInstance()->unRegisterEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
-        // модуля
+        // модули
         EventManager::getInstance()->unRegisterEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", 'get');
         EventManager::getInstance()->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
 

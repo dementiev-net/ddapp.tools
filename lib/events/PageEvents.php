@@ -14,20 +14,19 @@ use Bitrix\Main\Security\Sign\Signer;
 class PageEvents
 {
     /**
-     * Событие "OnPageStart" вызывается в начале выполняемой части пролога сайта,
-     * после подключения всех библиотек и отработки Агентов
+     * "OnPageStart"
+     *   Выполняется в самом начале загрузки страницы
+     *   Идеально для инициализации переменных, проверки авторизации
      * @return void
      */
     public static function OnPageStartHandler()
     {
-//         echo "<pre>";
-//         echo "Обработчик события";
-//         echo "</pre>";
     }
 
     /**
-     * Событие "OnBeforeProlog" вызывается в выполняемой части пролога сайта,
-     * после события OnPageStart
+     * "OnBeforeProlog"
+     *   Выполняется до подключения шаблона
+     *   Можно изменить заголовки, сделать редиректы
      * @param $userMessageText
      * @return void
      */
@@ -70,5 +69,25 @@ class PageEvents
                 unset($_REQUEST["action"]);
             }
         }
+    }
+
+    /**
+     * "OnProlog"
+     *   Выполняется после подключения пролога
+     *   Доступны все функции ядра, можно работать с компонентами
+     * @return void
+     */
+    public static function OnPrologHandler()
+    {
+    }
+
+    /**
+     * "OnEpilog"
+     *   Выполняется в конце генерации страницы
+     *   Можно добавить JS, счетчики, логирование
+     * @return void
+     */
+    public static function OnEpilogHandler()
+    {
     }
 }

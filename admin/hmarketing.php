@@ -15,8 +15,7 @@ if ($POST_RIGHT == "D") {
 }
 
 // Подключение файлов
-$APPLICATION->SetAdditionalCSS("/bitrix/css/" . DD_MODULE_NAMESPACE . "/admin/style.css");
-Asset::getInstance()->addJs("/bitrix/js/" . DD_MODULE_NAMESPACE . "/admin/hmarketing.js");
+Asset::getInstance()->addJs("/bitrix/js/" . DD_MODULE_NAMESPACE . "/script.min.js");
 
 \CJSCore::Init(array("ajax"));
 

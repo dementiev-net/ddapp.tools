@@ -9,7 +9,7 @@ if (!CModule::IncludeModule(DD_MODULE_NAMESPACE)) {
 }
 
 // Подключаем стили
-$APPLICATION->SetAdditionalCSS("/bitrix/css/" . DD_MODULE_NAMESPACE . "/admin/style.css");
+$APPLICATION->SetAdditionalCSS("/bitrix/css/" . DD_MODULE_NAMESPACE . "/styles.css");
 
 // Хандлер формирования меню
 AddEventHandler("main", "OnBuildGlobalMenu", "OnBuildGlobalMenuHandlerDD");

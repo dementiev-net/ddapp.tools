@@ -1,0 +1,12 @@
+@use '../abstracts' as *;
+
+.adm-progress-bar-outer {
+  margin: 10px 0;
+  position: relative;
+}
+
+.adm-progress-bar-inner {
+  position: relative;
+  height: 20px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}

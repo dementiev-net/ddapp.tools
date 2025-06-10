@@ -129,65 +129,6 @@ $aTabs = array(
                 "admin@yoursite.com",
                 array("text", 20, 50),
             ),
-            array(
-                "log_note",
-                "",
-                "",
-                array(),
-                "note" =>
-                    "<p><strong>Подключение:</strong></p>
-                    <p>use DD\Tools\Helpers\LogHelper;</p>
-                    <p>
-                            LogHelper::configure();<br>
-                            <br>или<br><br>
-                            LogHelper::configure(array(<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;'log_enabled' => 'Y',<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;'log_min_level' => LogHelper::LEVEL_INFO,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;'log_path' => '/local/logs/custom/',<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;'log_date_format' => 'd.m.Y H:i:s',<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;'log_max_file_size' => 5242880,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;'log_max_files' => 10,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;'log_critical_email' => array(<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'enabled' => 'Y',<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'template_code' => 'DD_TOOLS_CRITICAL_ERROR', // Автоматически создается при установке<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'email' => 'admin@yoursite.com', // ОБЯЗАТЕЛЬНО укажите email администратора<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;)<br>
-                            ));
-                    </p>
-                    <p><strong>Обычное логирование:</strong></p>
-                    <p>
-                           LogHelper::info('user_actions', 'User logged in', array('user_id' => 123));<br>
-                           LogHelper::error('payment', 'Payment processing failed', array('order_id' => 456));<br>
-                           LogHelper::warning('payment', 'Invalid password', array('login' => 'admin'));<br>
-                           LogHelper::debug('payment', 'Invalid password', array('login' => 'admin'));
-                    </p>
-                    <p><strong>Критическая ошибка - автоматически отправит email:</strong></p>
-                    <p>
-                           LogHelper::critical('system', 'Database connection lost', array(<br>
-                           &nbsp;&nbsp;&nbsp;&nbsp;'host' => 'localhost',<br>
-                           &nbsp;&nbsp;&nbsp;&nbsp;'error' => 'Connection timeout'<br>
-                           ));
-                    </p>
-                    <p><strong>Логирование исключений:</strong></p>
-                    <p>
-                           try {<br>
-                           &nbsp;&nbsp;&nbsp;&nbsp;// некий код<br>
-                           } catch (Exception \$e) {<br>
-                           &nbsp;&nbsp;&nbsp;&nbsp;LogHelper::exception('api', \$e, array('method' => 'getUserData'));<br>
-                           }
-                    </p>
-                    <p><strong>Измерение производительности:</strong></p>
-                    <p>
-                           \$result = LogHelper::timeExecution('performance', 'heavy_database_query', function() {<br>
-                           &nbsp;&nbsp;&nbsp;&nbsp;// тяжелый запрос к БД<br>
-                           &nbsp;&nbsp;&nbsp;&nbsp;return \$someResult;<br>
-                           });<br>
-                    </p>
-                    <p><strong>Очистка старых логов (можно добавить в cron):</strong></p>
-                    <p>
-                           LogHelper::cleanOldLogs('system', 30); // удалить логи старше 30 дней
-                    </p>",
-            ),
         )
     ),
     array(
@@ -240,7 +181,7 @@ $tabControl->Begin();
 
     <style>
         #bx-admin-prefix .adm-info-message {
-            width: 90% !important;
+            width: calc(100% - 50px) !important;
         }
 
         #bx-admin-prefix .adm-info-message-wrap {
@@ -252,9 +193,20 @@ $tabControl->Begin();
           method="post">
 
         <?php foreach ($aTabs as $aTab) {
+
             if ($aTab["OPTIONS"]) {
                 $tabControl->BeginNextTab();
                 __AdmSettingsDrawList($module_id, $aTab["OPTIONS"]);
+                $help = Loc::getMessage("DD_MODULE_OPTIONS_HELP_" . $aTab['DIV']);
+                if ($help) { ?>
+                    <tr>
+                        <td valign="top" width="100%" colspan="2">
+                            <?= BeginNote(); ?>
+                            <?= Loc::getMessage("DD_MODULE_OPTIONS_HELP_" . $aTab['DIV']); ?>
+                            <?= EndNote(); ?>
+                        </td>
+                    </tr>
+                <?php }
             }
         }
 

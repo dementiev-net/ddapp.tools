@@ -25,6 +25,7 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
 
         // Получим права доступа текущего пользователя на модуль
         $POST_RIGHT = $APPLICATION->GetGroupRight("dd.tools");
+        $POST_RIGHT_MAIN = $APPLICATION->GetGroupRight("main");
 
         if ($POST_RIGHT >= "R") {
 
@@ -85,7 +86,7 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
             }
 
             // Добавляем оба меню
-            if ($POST_RIGHT == "W") {
+            if ($POST_RIGHT_MAIN == "W") {
                 $arGlobalMenu["global_menu_dd"]["items"]["dd.tools_set"] = $arSettingsMenu;
             }
             $arGlobalMenu["global_menu_dd"]["items"]["dd.tools"] = $arMenu1;

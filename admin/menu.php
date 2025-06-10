@@ -16,12 +16,17 @@ AddEventHandler("main", "OnBuildGlobalMenu", "OnBuildGlobalMenuHandlerDD");
 
 function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
 {
+    global $APPLICATION;
+
     if (!defined("DD_MENU_INCLUDED")) {
         define("DD_MENU_INCLUDED", true);
 
         Loc::loadMessages(__FILE__);
 
-        if ($GLOBALS["APPLICATION"]->GetGroupRight("dd.tools") >= "R") {
+        // Получим права доступа текущего пользователя на модуль
+        $POST_RIGHT = $APPLICATION->GetGroupRight("dd.tools");
+
+        if ($POST_RIGHT >= "R") {
 
             // Меню настроек
             $arSettingsMenu = array(
@@ -80,7 +85,9 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
             }
 
             // Добавляем оба меню
-            $arGlobalMenu["global_menu_dd"]["items"]["dd.tools_set"] = $arSettingsMenu;
+            if ($POST_RIGHT == "W") {
+                $arGlobalMenu["global_menu_dd"]["items"]["dd.tools_set"] = $arSettingsMenu;
+            }
             $arGlobalMenu["global_menu_dd"]["items"]["dd.tools"] = $arMenu1;
         }
     }

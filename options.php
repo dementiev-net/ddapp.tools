@@ -12,10 +12,7 @@ $request = HttpApplication::getInstance()->getContext()->getRequest();
 $module_id = htmlspecialcharsbx($request["mid"] != "" ? $request["mid"] : $request["id"]);
 
 $POST_RIGHT = $APPLICATION->GetGroupRight($module_id);
-
-if ($POST_RIGHT < "S") {
-    $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"));
-}
+//if ($POST_RIGHT < "S") $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"));
 
 Loader::includeModule($module_id);
 

@@ -9,10 +9,8 @@ use DD\Tools\Helpers\LogHelper;
 
 // Получим права доступа текущего пользователя на модуль
 $POST_RIGHT = $APPLICATION->GetGroupRight("dd.tools");
-
-if ($POST_RIGHT == "D") {
-    $APPLICATION->AuthForm(GetMessage("ACCESS_DENIED"));
-}
+if ($POST_RIGHT == "D") $APPLICATION->AuthForm(GetMessage("ACCESS_DENIED"));
+$actionDisabled = ($POST_RIGHT == "W") ? "" : "disabled";
 
 // Настройка логирования
 LogHelper::configure();
@@ -247,11 +245,11 @@ $tabControl->BeginNextTab();
             </div>
             <div class="adm-info-message-buttons">
                 <input type="button" value="Запустить" class="adm-btn-save progress-start-btn"
-                       data-bar-id="<?= $bar["id"] ?>" data-max-gb="<?= $bar["max_gb"] ?>">
+                       data-bar-id="<?= $bar["id"] ?>" data-max-gb="<?= $bar["max_gb"] ?>" <?= $actionDisabled ?>>
                 <input type="button" value="Остановить" class="adm-btn progress-stop-btn"
-                       data-bar-id="<?= $bar["id"] ?>" style="display: none;">
+                       data-bar-id="<?= $bar["id"] ?>" style="display: none;" <?= $actionDisabled ?>>
                 <input type="button" value="Сбросить" class="adm-btn progress-reset-btn"
-                       data-bar-id="<?= $bar["id"] ?>" style="display: none;">
+                       data-bar-id="<?= $bar["id"] ?>" style="display: none;" <?= $actionDisabled ?>>
             </div>
         </td>
     </tr>
@@ -263,7 +261,7 @@ $tabControl->BeginNextTab();
 $tabControl->Buttons();
 ?>
 
-    <input class="adm-btn-save" type="submit" name="save" value="Сохранить настройки"/>
+    <input class="adm-btn-save" type="submit" name="save" value="Сохранить настройки" <?= $actionDisabled ?>/>
 
 <?php
 $tabControl->End();

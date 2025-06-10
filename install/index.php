@@ -11,6 +11,7 @@ use Bitrix\Main\ModuleManager;
 use DD\Tools\Entity\DataTable;
 use DD\Tools\Install\IblockInstaller;
 use DD\Tools\Install\DataInstaller;
+use DD\Tools\Install\EmailTemplateInstaller;
 
 Loc::loadMessages(__FILE__);
 
@@ -83,7 +84,9 @@ class DD_Tools extends CModule
             $this->InstallFiles();
             $this->installAgents();
 
-            $this->addInfoblock(true);
+            $this->manageInfoblock(true);
+            $this->manageEmailTemplate(true);
+
             if ($request["add_data"] == "Y") {
                 $this->addData();
             }
@@ -133,7 +136,8 @@ class DD_Tools extends CModule
             $this->UnInstallFiles();
             $this->unInstallAgents();
 
-            $this->addInfoblock(false);
+            $this->manageInfoblock(false);
+            $this->manageEmailTemplate(false);
 
             ModuleManager::UnRegisterModule("dd.tools");
 
@@ -307,10 +311,23 @@ class DD_Tools extends CModule
      * @param $install
      * @return mixed
      */
-    function addInfoblock($install = true)
+    function manageInfoblock($install = true)
     {
         require_once __DIR__ . "/lib/IblockInstaller.php";
         $installer = new IblockInstaller($this->MODULE_ID);
+
+        return $install ? $installer->install() : $installer->uninstall();
+    }
+
+    /**
+     * Установка/Удаление Почтовых шаблонов
+     * @param $install
+     * @return mixed
+     */
+    function manageEmailTemplate($install = true)
+    {
+        require_once __DIR__ . "/lib/EmailTemplateInstaller.php";
+        $installer = new EmailTemplateInstaller($this->MODULE_ID);
 
         return $install ? $installer->install() : $installer->uninstall();
     }

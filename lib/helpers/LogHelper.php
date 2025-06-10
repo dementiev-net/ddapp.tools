@@ -406,7 +406,7 @@ class LogHelper
             // Отправка события
             $result = Event::send(array(
                 "EVENT_NAME" => $templateCode,
-                "LID" => SITE_ID,
+                "LID" => array("s1"),
                 "C_FIELDS" => $fields,
             ));
 

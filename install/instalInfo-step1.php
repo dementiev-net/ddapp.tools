@@ -1,11 +1,18 @@
 <?php
 
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ModuleManager;
 
 Loc::loadMessages(__FILE__);
 
 if (!check_bitrix_sessid()) {
     return;
+}
+
+$btnDisabled = "";
+if (!CheckVersion(ModuleManager::getVersion('main'), '20.0.0')) {
+    $btnDisabled = "disabled";
+    CAdminMessage::showMessage(Loc::getMessage("DD_TOOLS_INSTALL_ERROR_VERSION"));
 }
 ?>
 
@@ -18,5 +25,5 @@ if (!check_bitrix_sessid()) {
     <p><?= Loc::getMessage("DD_MODULE_ADD_DATA") ?></p>
     <p><input type="checkbox" name="add_data" id="add_data" value="Y" checked><label
                 for="add_data"><?= Loc::getMessage("DD_MODULE_ADD_DATA_BUTTON") ?></label></p>
-    <input type="submit" name="" value="<?= Loc::getMessage("MOD_INSTALL") ?>">
+    <input type="submit" name="" value="<?= Loc::getMessage("MOD_INSTALL") ?>" <?= $btnDisabled ?>>
 </form>

@@ -3,6 +3,8 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\Localization\Loc;
 
+define("DD_MODULE_NAMESPACE", "dd.tools");
+
 // Проверяем, что модуль установлен
 if (!CModule::IncludeModule(DD_MODULE_NAMESPACE)) {
     return array();

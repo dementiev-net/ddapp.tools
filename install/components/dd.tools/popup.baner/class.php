@@ -37,7 +37,7 @@ class Popup extends CBitrixComponent
     protected function checkModules()
     {
         // если модуль не подключен
-        if (!Loader::includeModule(DD_MODULE_NAMESPACE)) {
+        if (!Loader::includeModule("dd.tools")) {
             // выводим сообщение в catch
             throw new SystemException(Loc::getMessage('IBLOCK_MODULE_NOT_INSTALLED'));
         }
@@ -90,7 +90,7 @@ class Popup extends CBitrixComponent
             $taggedCache->endTagCache();
 
             // получаем настройки модуля 
-            $this->arResult["SETTINGS"] = \Bitrix\Main\Config\Option::getForModule(DD_MODULE_NAMESPACE);
+            $this->arResult["SETTINGS"] = \Bitrix\Main\Config\Option::getForModule("dd.tools");
 
             // сохраняем полученные данные в кеш
             $this->EndResultCache();

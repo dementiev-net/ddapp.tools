@@ -8,14 +8,17 @@ use DD\Tools\Entity\DataTable;
 use DD\Tools\Helpers\LogHelper;
 
 // Получим права доступа текущего пользователя на модуль
-$POST_RIGHT = $APPLICATION->GetGroupRight(DD_MODULE_NAMESPACE);
+$POST_RIGHT = $APPLICATION->GetGroupRight("dd.tools");
 
 if ($POST_RIGHT == "D") {
     $APPLICATION->AuthForm(GetMessage("ACCESS_DENIED"));
 }
 
+// Настройка логирования
+LogHelper::configure();
+
 // Подключение файлов
-Asset::getInstance()->addJs("/bitrix/js/" . DD_MODULE_NAMESPACE . "/script.min.js");
+Asset::getInstance()->addJs("/bitrix/js/" . "dd.tools" . "/script.min.js");
 
 \CJSCore::Init(array("ajax"));
 
@@ -35,7 +38,7 @@ $tabControl = new CAdminTabControl(
     $aTabs
 );
 
-Loader::includeModule(DD_MODULE_NAMESPACE);
+Loader::includeModule("dd.tools");
 
 /**
  * Обработка AJAX-запроса
@@ -63,7 +66,7 @@ if ($REQUEST_METHOD === "POST" && $_POST["ajax"] === "Y" && check_bitrix_sessid(
             "error" => $randomError,
             "bar_id" => $barId
         ));
-        LogHelper::error("admin", "AJAX запрос: " . $randomError);
+        LogHelper::error("admin", "AJAX request: " . $randomError);
         die();
     }
 
@@ -109,11 +112,11 @@ if ($REQUEST_METHOD == "POST" && $save != "" && $POST_RIGHT == "W" && check_bitr
     if (!$res->isSuccess()) {
         if ($e = $APPLICATION->GetException()) {
             $message = new CAdminMessage($e);
-            LogHelper::error("admin", "Обработка формы: " . $message);
+            LogHelper::error("admin", "Form processing: " . $message);
 
         } else {
             $message = new CAdminMessage(implode("<br>", $res->getErrorMessages()));
-            LogHelper::error("admin", "Обработка формы: " . implode(", ", $res->getErrorMessages()));
+            LogHelper::error("admin", "Form processing", $res->getErrorMessages());
         }
     }
 }

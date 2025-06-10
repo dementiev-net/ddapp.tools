@@ -12,8 +12,6 @@ use DD\Tools\Entity\DataTable;
 use DD\Tools\Install\IblockInstaller;
 use DD\Tools\Install\DataInstaller;
 
-require_once __DIR__ . '/../config.php';
-
 Loc::loadMessages(__FILE__);
 
 class DD_Tools extends CModule
@@ -37,7 +35,7 @@ class DD_Tools extends CModule
 
         $this->MODULE_VERSION = $arModuleVersion["VERSION"];
         $this->MODULE_VERSION_DATE = $arModuleVersion["VERSION_DATE"];
-        $this->MODULE_ID = DD_MODULE_NAMESPACE;
+        $this->MODULE_ID = "dd.tools";
         $this->MODULE_NAME = "DD Tools - Утилиты разработчика";
         $this->MODULE_DESCRIPTION = "Модуль с полезными инструментами для разработки и администрирования";
         $this->PARTNER_NAME = "Дмитрий Дементьев";
@@ -55,7 +53,7 @@ class DD_Tools extends CModule
         // С установкой в один шаг
         ////////////////////////////////////////////////
         // global $APPLICATION;
-        // ModuleManager::RegisterModule(DD_MODULE_NAMESPACE);
+        // ModuleManager::RegisterModule("dd.tools");
         // $this->InstallDB();
         // $this->addData();
         // $this->InstallEvents();
@@ -79,7 +77,7 @@ class DD_Tools extends CModule
         }
 
         if ($request["step"] == 2) {
-            ModuleManager::RegisterModule(DD_MODULE_NAMESPACE);
+            ModuleManager::RegisterModule("dd.tools");
             $this->InstallDB();
             $this->InstallEvents();
             $this->InstallFiles();
@@ -109,7 +107,7 @@ class DD_Tools extends CModule
         // $this->UnInstallEvents();
         // $this->UnInstallFiles();
         // $this->unInstallAgents();
-        // ModuleManager::UnRegisterModule(DD_MODULE_NAMESPACE);
+        // ModuleManager::UnRegisterModule("dd.tools");
         //
         // $APPLICATION->includeAdminFile(
         //     Loc::getMessage("DD_MODULE_DEINSTALL_TITLE"),
@@ -137,7 +135,7 @@ class DD_Tools extends CModule
 
             $this->addInfoblock(false);
 
-            ModuleManager::UnRegisterModule(DD_MODULE_NAMESPACE);
+            ModuleManager::UnRegisterModule("dd.tools");
 
             $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_MODULE_DEINSTALL_TITLE_STEP_2"), __DIR__ . "/deInstalInfo-step2.php");
         }

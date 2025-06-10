@@ -3,15 +3,13 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\Localization\Loc;
 
-require_once __DIR__ . '/../config.php';
-
 // Проверяем, что модуль установлен
-if (!CModule::IncludeModule(DD_MODULE_NAMESPACE)) {
+if (!CModule::IncludeModule("dd.tools")) {
     return array();
 }
 
 // Подключаем стили
-$APPLICATION->SetAdditionalCSS("/bitrix/css/" . DD_MODULE_NAMESPACE . "/styles.css");
+$APPLICATION->SetAdditionalCSS("/bitrix/css/dd.tools/styles.css");
 
 // Хандлер формирования меню
 AddEventHandler("main", "OnBuildGlobalMenu", "OnBuildGlobalMenuHandlerDD");
@@ -23,7 +21,7 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
 
         Loc::loadMessages(__FILE__);
 
-        if ($GLOBALS["APPLICATION"]->GetGroupRight(DD_MODULE_NAMESPACE) >= "R") {
+        if ($GLOBALS["APPLICATION"]->GetGroupRight("dd.tools") >= "R") {
 
             // Меню настроек
             $arSettingsMenu = array(
@@ -33,7 +31,7 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
                 "page_icon" => "sys_menu_icon",
                 "items_id" => "menu_dd_tools_2",
                 "menu_id" => "global_menu_dd_tools_2",
-                "url" => "settings.php?lang=" . LANGUAGE_ID . "&mid=" . DD_MODULE_NAMESPACE,
+                "url" => "settings.php?lang=" . LANGUAGE_ID . "&mid=dd.tools",
                 "sort" => 100,
                 "items" => array()
             );
@@ -60,7 +58,7 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
                     array(
                         "text" => Loc::getMessage("DD_MODULE_MENU_TEST2"),
                         "title" => Loc::getMessage("DD_MODULE_MENU_TEST2_TITLE"),
-                        "url" => "settings.phplang=" . LANGUAGE_ID . "&mid=" . DD_MODULE_NAMESPACE,
+                        "url" => "settings.phplang=" . LANGUAGE_ID . "&mid=dd.tools",
                         "sort" => 10,
                         "icon" => "imi_typography",
                         "page_icon" => "pi_typography",
@@ -82,8 +80,8 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
             }
 
             // Добавляем оба меню
-            $arGlobalMenu["global_menu_dd"]["items"][DD_MODULE_NAMESPACE . "_set"] = $arSettingsMenu;
-            $arGlobalMenu["global_menu_dd"]["items"][DD_MODULE_NAMESPACE] = $arMenu1;
+            $arGlobalMenu["global_menu_dd"]["items"]["dd.tools_set"] = $arSettingsMenu;
+            $arGlobalMenu["global_menu_dd"]["items"]["dd.tools"] = $arMenu1;
         }
     }
 }

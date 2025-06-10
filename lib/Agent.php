@@ -10,7 +10,10 @@ class Agent
     // для примера функция пишет в папку модуля время
     static public function superAgent()
     {
-        LogHelper::write("cron", "Сработал в: " . date("Y-m-d H:i:s"));
+        // Настройка логирования
+        LogHelper::configure();
+
+        LogHelper::info("cron", "Work!");
 
         return "\DD\Tools\Agent::superAgent();";
     }

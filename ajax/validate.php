@@ -6,11 +6,14 @@ use Bitrix\Main\Application;
 use DD\Tools\Helpers\ValidationHelper;
 use DD\Tools\Helpers\LogHelper;
 
-if (!Loader::includeModule(DD_MODULE_NAMESPACE)) {
+if (!Loader::includeModule("dd.tools")) {
     http_response_code(500);
     echo json_encode(["error" => "Модуль DD Tools не подключен"]);
     exit;
 }
+
+// Настройка логирования
+LogHelper::configure();
 
 $request = Application::getInstance()->getContext()->getRequest();
 $data = $request->get("data");
@@ -37,10 +40,10 @@ try {
         }
     }
 
-    LogHelper::write("ajax", "Валидация выполнена: " . json_encode($response["validations"]));
+    LogHelper::info("ajax", "Validation completed: " . json_encode($response["validations"]));
 
 } catch (Exception $e) {
-    LogHelper::error("ajax", "Ошибка валидации: " . $e->getMessage());
+    LogHelper::error("ajax", "Validation error: " . $e->getMessage());
     $response = [
         "success" => false,
         "error" => "Ошибка сервера"

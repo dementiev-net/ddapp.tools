@@ -37,8 +37,8 @@ class DataInstaller
     private function addDefaultData()
     {
         $testElements = array(
-            array("ACTIVE" => "N", "SITE" => "[\"s1\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/" . DD_MODULE_NAMESPACE . "/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"),
-            array("ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/" . DD_MODULE_NAMESPACE . "/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1")
+            array("ACTIVE" => "N", "SITE" => "[\"s1\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"),
+            array("ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1")
         );
 
         foreach ($testElements as $elementData) {
@@ -74,7 +74,7 @@ class DataInstaller
 
         $testElements = array(
             array("NAME" => "Первая новость DD Tools", "CODE" => "first_news_dd_tools", "PREVIEW_TEXT" => "Краткое описание первой новости для тестирования модуля DD Tools", "DETAIL_TEXT" => "Подробное описание первой новости. Здесь может быть много текста с различными подробностями о функционале модуля DD Tools.",
-                "PROPERTIES" => array("AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => array("новости", DD_MODULE_NAMESPACE, "модуль"), "RATING" => 5, "SHOW_ON_MAIN" => "Да")
+                "PROPERTIES" => array("AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => array("новости", "dd.tools", "модуль"), "RATING" => 5, "SHOW_ON_MAIN" => "Да")
             ),
             array("NAME" => "Обновление функционала", "CODE" => "functionality_update", "PREVIEW_TEXT" => "Информация о новых возможностях модуля DD Tools", "DETAIL_TEXT" => "В новой версии модуля DD Tools добавлены дополнительные функции для работы с контентом и улучшена производительность.",
                 "PROPERTIES" => array("AUTHOR" => "Анна Сидорова", "SOURCE" => "Блог разработчиков", "TAGS" => array("обновление", "функционал", "производительность"), "RATING" => 4, "SHOW_ON_MAIN" => "Да")

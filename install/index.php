@@ -1,7 +1,5 @@
 <?php
 
-define("DD_MODULE_NAMESPACE", "dd.tools");
-
 use Bitrix\Main\Application;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
@@ -13,6 +11,8 @@ use Bitrix\Main\ModuleManager;
 use DD\Tools\Entity\DataTable;
 use DD\Tools\Install\IblockInstaller;
 use DD\Tools\Install\DataInstaller;
+
+require_once __DIR__ . '/../config.php';
 
 Loc::loadMessages(__FILE__);
 

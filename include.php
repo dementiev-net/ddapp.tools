@@ -2,7 +2,7 @@
 
 use Bitrix\Main\Loader;
 
-define("DD_MODULE_NAMESPACE", "dd.tools");
+require_once __DIR__ . '/config.php';
 
 Loader::registerAutoLoadClasses(DD_MODULE_NAMESPACE,
     array(

@@ -3,6 +3,7 @@
 namespace DD\Tools\Install;
 
 use Bitrix\Main\Loader;
+use Bitrix\Main\Diag\Debug;
 
 class IblockInstaller
 {
@@ -53,7 +54,15 @@ class IblockInstaller
         ];
 
         $obBlocktype = new \CIBlockType;
-        $obBlocktype->Add($arFields);
+        $typeId = $obBlocktype->Add($arFields);
+
+        if (!$typeId) {
+            Debug::writeToFile([
+                "DATE" => date("Y-m-d H:i:s"),
+                "ERROR" => $obBlocktype->LAST_ERROR,
+                "FIELDS" => $arFields
+            ], "CIBlockType::add", "/upload/logs/dd.tools.install.log");
+        }
     }
 
     /**
@@ -79,7 +88,13 @@ class IblockInstaller
         $ib = new \CIBlock;
         $iblockId = $ib->Add($arFields);
 
-        if ($iblockId) {
+        if (!$iblockId) {
+            Debug::writeToFile([
+                "DATE" => date("Y-m-d H:i:s"),
+                "ERROR" => $ib->LAST_ERROR,
+                "FIELDS" => $arFields
+            ], "CIBlock::add", "/upload/logs/dd.tools.install.log");
+        } else {
             $this->createIblockProperties($iblockId);
         }
     }
@@ -104,7 +119,16 @@ class IblockInstaller
         ];
         $ibp = new \CIBlockProperty;
         foreach ($arPropFields as $field) {
-            $ibp->Add($field);
+
+            $result = $ibp->Add($field);
+
+            if (!$result) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $ibp->LAST_ERROR,
+                    "FIELDS" => $field,
+                ], "CIBlockProperty::add", "/upload/logs/dd.tools.install.log");
+            }
         }
     }
 
@@ -118,19 +142,51 @@ class IblockInstaller
         if ($ar_res = $res->Fetch()) {
 
             $iblockId = $ar_res["ID"];
+
+            // Удаляем элементы инфоблока
             $rsElements = \CIBlockElement::GetList([], ["IBLOCK_ID" => $iblockId], false, false, ["ID"]);
 
             while ($arElement = $rsElements->Fetch()) {
-                \CIBlockElement::Delete($arElement["ID"]);
+
+                $result = \CIBlockElement::Delete($arElement["ID"]);
+
+                if (!$result) {
+                    Debug::writeToFile([
+                        "DATE" => date("Y-m-d H:i:s"),
+                        "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении элемента",
+                        "ELEMENT_ID" => $arElement["ID"],
+                        "IBLOCK_ID" => $iblockId,
+                    ], "CIBlockElement::Delete", "/upload/logs/dd.tools.install.log");
+                }
             }
 
+            // Удаляем разделы инфоблока
             $rsSections = \CIBlockSection::GetList([], ["IBLOCK_ID" => $iblockId], false, ["ID"]);
 
             while ($arSection = $rsSections->Fetch()) {
-                \CIBlockSection::Delete($arSection["ID"]);
+
+                $result = \CIBlockSection::Delete($arSection["ID"]);
+
+                if (!$result) {
+                    Debug::writeToFile([
+                        "DATE" => date("Y-m-d H:i:s"),
+                        "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении раздела",
+                        "SECTION_ID" => $arSection["ID"],
+                        "IBLOCK_ID" => $iblockId,
+                    ], "CIBlockSection::Delete", "/upload/logs/dd.tools.install.log");
+                }
             }
 
-            \CIBlock::Delete($iblockId);
+            // Удаляем сам инфоблок
+            $result = \CIBlock::Delete($iblockId);
+
+            if (!$result) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении инфоблока",
+                    "IBLOCK_ID" => $iblockId,
+                ], "CIBlock::Delete", "/upload/logs/dd.tools.install.log");
+            }
         }
     }
 
@@ -143,7 +199,15 @@ class IblockInstaller
 
         if (!$res->Fetch()) {
             $obBlockType = new \CIBlockType;
-            $obBlockType->Delete("dd_tools_content");
+            $result = $obBlockType->Delete("dd_tools_content");
+
+            if (!$result) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении типа инфоблока",
+                    "IBLOCK_TYPE" => "dd_tools_content"
+                ], "CIBlockType::Delete", "/upload/logs/dd.tools.install.log");
+            }
         }
     }
 }

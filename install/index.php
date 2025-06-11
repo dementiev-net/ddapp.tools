@@ -1,8 +1,9 @@
 <?php
 
-use Bitrix\Main\Application;
 use Bitrix\Main\Loader;
+use Bitrix\Main\Application;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Entity\Base;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\EventManager;
@@ -157,11 +158,33 @@ class DD_Tools extends CModule
         Loader::includeModule($this->MODULE_ID);
         Loader::includeModule("iblock");
 
-        if (!Application::getConnection(DataTable::getConnectionName())->isTableExists(Base::getInstance("\DD\Tools\Entity\DataTable")->getDBTableName())) {
-            Base::getInstance("\DD\Tools\Entity\DataTable")->createDbTable();
+        $connection = Application::getConnection(DataTable::getConnectionName());
+
+        $dataTableEntity = Base::getInstance("\DD\Tools\Entity\DataTable");
+        if (!$connection->isTableExists($dataTableEntity->getDBTableName())) {
+            try {
+                $dataTableEntity->createDbTable();
+            } catch (\Exception $e) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $e->getMessage(),
+                    "TABLE" => $dataTableEntity->getDBTableName()
+                ], "DataTable::createDbTable", "/upload/logs/dd.tools.install.log");
+            }
         }
-        if (!Application::getConnection(DataTable::getConnectionName())->isTableExists(Base::getInstance("\DD\Tools\Entity\AuthorTable")->getDBTableName())) {
-            Base::getInstance("\DD\Tools\Entity\AuthorTable")->createDbTable();
+
+        $authorTableEntity = Base::getInstance("\DD\Tools\Entity\AuthorTable");
+
+        if (!$connection->isTableExists($authorTableEntity->getDBTableName())) {
+            try {
+                $authorTableEntity->createDbTable();
+            } catch (\Exception $e) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $e->getMessage(),
+                    "TABLE" => $authorTableEntity->getDBTableName()
+                ], "AuthorTable::createDbTable", "/upload/logs/dd.tools.install.log");
+            }
         }
     }
 
@@ -186,22 +209,24 @@ class DD_Tools extends CModule
      */
     function InstallEvents()
     {
+        $eventManager = EventManager::getInstance();
+
         // страницы
-        EventManager::getInstance()->registerEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
-        EventManager::getInstance()->registerEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
-        EventManager::getInstance()->registerEventHandler("main", "OnProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnPrologHandler");
-        EventManager::getInstance()->registerEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DD\Tools\Events", "OnEpilogHandler");
+        $eventManager->registerEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
+        $eventManager->registerEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
+        $eventManager->registerEventHandler("main", "OnProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnPrologHandler");
+        $eventManager->registerEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DD\Tools\Events", "OnEpilogHandler");
         // пользователь
-        EventManager::getInstance()->registerEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnAfterUserLoginHandler");
-        EventManager::getInstance()->registerEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforeUserLoginHandler");
+        $eventManager->registerEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnAfterUserLoginHandler");
+        $eventManager->registerEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforeUserLoginHandler");
         // формы и запросы
-        EventManager::getInstance()->registerEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DD\Tools\Events", "OnEndBufferContentHandler");
+        $eventManager->registerEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DD\Tools\Events", "OnEndBufferContentHandler");
         // админка
-        EventManager::getInstance()->registerEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
-        EventManager::getInstance()->registerEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
+        $eventManager->registerEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
+        $eventManager->registerEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
         // модули
-        EventManager::getInstance()->registerEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", 'get');
-        EventManager::getInstance()->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
+        $eventManager->registerEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", "get");
+        $eventManager->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
 
         return true;
     }
@@ -212,22 +237,24 @@ class DD_Tools extends CModule
      */
     function UnInstallEvents()
     {
+        $eventManager = EventManager::getInstance();
+
         // страницы
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnPrologHandler");
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DD\Tools\Events", "OnEpilogHandler");
+        $eventManager->unRegisterEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
+        $eventManager->unRegisterEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
+        $eventManager->unRegisterEventHandler("main", "OnProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnPrologHandler");
+        $eventManager->unRegisterEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DD\Tools\Events", "OnEpilogHandler");
         // пользователь
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnAfterUserLoginHandler");
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforeUserLoginHandler");
+        $eventManager->unRegisterEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnAfterUserLoginHandler");
+        $eventManager->unRegisterEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforeUserLoginHandler");
         // формы и запросы
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DD\Tools\Events", "OnEndBufferContentHandler");
+        $eventManager->unRegisterEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DD\Tools\Events", "OnEndBufferContentHandler");
         // админка
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnAdminContextMenuShowHandler", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
-        EventManager::getInstance()->unRegisterEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
+        $eventManager->unRegisterEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
+        $eventManager->unRegisterEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
         // модули
-        EventManager::getInstance()->unRegisterEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", 'get');
-        EventManager::getInstance()->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
+        $eventManager->unRegisterEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", "get");
+        $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
 
         return true;
     }
@@ -238,24 +265,34 @@ class DD_Tools extends CModule
      */
     function InstallFiles()
     {
-        // Определяем, где находится модуль по текущему пути
+        $docRoot = Application::getDocumentRoot();
+
+        // Определяем, где находится модуль — local или bitrix
         $isLocalModule = strpos(__DIR__, "/local/") !== false;
 
-        // Определяем базовую папку для компонентов
-        $componentsPath = $isLocalModule ?
-            $_SERVER["DOCUMENT_ROOT"] . "/local/components" :
-            $_SERVER["DOCUMENT_ROOT"] . "/bitrix/components";
+        // Путь для компонентов с учётом локального расположения модуля
+        $componentsPath = $isLocalModule ? $docRoot . "/local/components" : $docRoot . "/bitrix/components";
 
-        // Копируем статические файлы
-        CopyDirFiles(__DIR__ . "/assets/images", Application::getDocumentRoot() . "/bitrix/images/" . $this->MODULE_ID . "/", true, true);
-        CopyDirFiles(__DIR__ . "/assets/js", Application::getDocumentRoot() . "/bitrix/js/" . $this->MODULE_ID . "/", true, true);
-        CopyDirFiles(__DIR__ . "/assets/css", Application::getDocumentRoot() . "/bitrix/css/" . $this->MODULE_ID . "/", true, true);
-        CopyDirFiles(__DIR__ . "/admin", $_SERVER["DOCUMENT_ROOT"] . "/bitrix/admin", true, true);
+        // Массив директорий для копирования: [исходник, назначение]
+        $copyDirs = [
+            [__DIR__ . "/assets/images", $docRoot . "/bitrix/images/" . $this->MODULE_ID . "/"],
+            [__DIR__ . "/assets/js", $docRoot . "/bitrix/js/" . $this->MODULE_ID . "/"],
+            [__DIR__ . "/assets/css", $docRoot . "/bitrix/css/" . $this->MODULE_ID . "/"],
+            [__DIR__ . "/admin", $docRoot . "/bitrix/admin"],
+            [__DIR__ . "/components", $componentsPath],
+            [__DIR__ . "/files", $docRoot . "/"]
+        ];
 
-        // Копируем компоненты в соответствующую папку с учетом namespace модуля
-        CopyDirFiles(__DIR__ . "/components", $componentsPath, true, true);
-
-        CopyDirFiles(__DIR__ . "/files", $_SERVER["DOCUMENT_ROOT"] . "/", true, true);
+        foreach ($copyDirs as [$src, $dst]) {
+            if (is_dir($src)) {
+                if (!CopyDirFiles($src, $dst, true, true)) {
+                    Debug::writeToFile([
+                        "DATE" => date("Y-m-d H:i:s"),
+                        "ERROR" => "Ошибка копирования из $src в $dst"
+                    ], "CopyDirFiles", "/upload/logs/dd.tools.install.log");
+                }
+            }
+        }
 
         return true;
     }
@@ -266,25 +303,38 @@ class DD_Tools extends CModule
      */
     function UnInstallFiles()
     {
-        // Определяем, где находится модуль по текущему пути
+        $docRoot = Application::getDocumentRoot();
+
+        // Проверяем, где установлен модуль: /local или /bitrix
         $isLocalModule = strpos(__DIR__, "/local/") !== false;
 
-        // Определяем путь к компонентам с учетом namespace модуля
+        // Путь к компонентам
         $componentsPath = $isLocalModule ? "/local/components/" : "/bitrix/components/";
 
-        // Удаляем статические файлы
-        Directory::deleteDirectory(Application::getDocumentRoot() . "/bitrix/images/" . $this->MODULE_ID);
-        Directory::deleteDirectory(Application::getDocumentRoot() . "/bitrix/js/" . $this->MODULE_ID);
-        Directory::deleteDirectory(Application::getDocumentRoot() . "/bitrix/css/" . $this->MODULE_ID);
+        // Удаляем директории с ассетами
+        $dirsToDelete = [
+            $docRoot . "/bitrix/images/" . $this->MODULE_ID,
+            $docRoot . "/bitrix/js/" . $this->MODULE_ID,
+            $docRoot . "/bitrix/css/" . $this->MODULE_ID
+        ];
 
-        // Удаляем только компоненты своего модуля
-        if (is_dir($_SERVER["DOCUMENT_ROOT"] . $componentsPath . $this->MODULE_ID)) {
-            DeleteDirFilesEx($componentsPath . $this->MODULE_ID);
+        foreach ($dirsToDelete as $dir) {
+            if (Directory::isDirectoryExists($dir)) {
+                Directory::deleteDirectory($dir);
+            }
         }
 
-        // Удаляем админские и прочие файлы
-        DeleteDirFiles(__DIR__ . "/admin", $_SERVER["DOCUMENT_ROOT"] . "/bitrix/admin");
-        DeleteDirFiles(__DIR__ . "/files", $_SERVER["DOCUMENT_ROOT"] . "/");
+        // Удаляем компоненты модуля
+        $componentDir = $componentsPath . $this->MODULE_ID;
+        if (is_dir($docRoot . $componentDir)) {
+            DeleteDirFilesEx($componentDir);
+        }
+
+        // Удаляем admin-файлы
+        DeleteDirFiles(__DIR__ . "/admin", $docRoot . "/bitrix/admin");
+
+        // Удаляем копированные дополнительные файлы
+        DeleteDirFiles(__DIR__ . "/files", $docRoot . "/");
 
         return true;
     }
@@ -295,8 +345,21 @@ class DD_Tools extends CModule
      */
     function installAgents()
     {
-        \CAgent::AddAgent("\\DD\\Tools\\superAgent::run();", $this->MODULE_ID, "N", self::SUPER_AGENT_INTERVAL, "", "Y", "", 100);
-        \CAgent::AddAgent("\\DD\\Tools\\freespaceAgent::run();", $this->MODULE_ID, "N", self::FREE_SPACE_AGENT_INTERVAL, "", "Y", "", 100);
+        $agent = \CAgent::AddAgent("\\DD\\Tools\\superAgent::run();", $this->MODULE_ID, "N", self::SUPER_AGENT_INTERVAL, "", "Y", "", 100);
+        if (!$agent) {
+            Debug::writeToFile([
+                "DATE" => date("Y-m-d H:i:s"),
+                "ERROR" => "Не удалось добавить агента superAgent"
+            ], "CAgent::AddAgent", "/upload/logs/dd.tools.install.log");
+        }
+
+        $agent = \CAgent::AddAgent("\\DD\\Tools\\freespaceAgent::run();", $this->MODULE_ID, "N", self::FREE_SPACE_AGENT_INTERVAL, "", "Y", "", 100);
+        if (!$agent) {
+            Debug::writeToFile([
+                "DATE" => date("Y-m-d H:i:s"),
+                "ERROR" => "Не удалось добавить агента freespaceAgent"
+            ], "CAgent::AddAgent", "/upload/logs/dd.tools.install.log");
+        }
     }
 
     /**

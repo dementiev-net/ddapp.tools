@@ -3,6 +3,7 @@
 namespace DD\Tools\Install;
 
 use Bitrix\Main\Loader;
+use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Mail\Internal\EventTypeTable;
 use Bitrix\Main\Mail\Internal\EventMessageTable;
 
@@ -70,29 +71,44 @@ class EmailTemplateInstaller
         }
 
         // Проверяем, не существует ли уже такой тип события
-        $existingType = EventTypeTable::getList(["filter" => ["EVENT_NAME" => $eventName], "limit" => 1])->fetch();
+        $existingType = EventTypeTable::getList([
+                "filter" => ["EVENT_NAME" => $eventName],
+                "limit" => 1]
+        )->fetch();
 
         if (!$existingType) {
-            // Создаем тип почтового события
-            $typeResult = EventTypeTable::add([
+
+            $arFields = [
                 "LID" => "ru",
                 "EVENT_NAME" => $eventName,
                 "NAME" => $typeName,
                 "DESCRIPTION" => $typeDesc
-            ]);
+            ];
+
+            // Создаем тип почтового события
+            $typeResult = EventTypeTable::add($arFields);
 
             if (!$typeResult->isSuccess()) {
+
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERRORS" => $typeResult->getErrorMessages(),
+                    "FIELDS" => $arFields
+                ], "EventTypeTable::add", "/upload/logs/dd.tools.install.log");
+
                 return false;
             }
         }
 
         // Проверяем, не существует ли уже шаблон сообщения
-        $existingMessage = EventMessageTable::getList(["filter" => ["EVENT_NAME" => $eventName], "limit" => 1])->fetch();
+        $existingMessage = EventMessageTable::getList([
+                "filter" => ["EVENT_NAME" => $eventName],
+                "limit" => 1]
+        )->fetch();
 
         if (!$existingMessage) {
-            // Создаем шаблон сообщения
-            $em = new \CEventMessage;
-            $templateId = $em->Add([
+
+            $arFields = [
                 "ACTIVE" => "Y",
                 "EVENT_NAME" => $eventName,
                 "LID" => ["s1"],
@@ -101,7 +117,19 @@ class EmailTemplateInstaller
                 "SUBJECT" => $tempSubject,
                 "MESSAGE" => $tempMessage,
                 "BODY_TYPE" => "text"
-            ]);
+            ];
+
+            // Создаем шаблон сообщения
+            $em = new \CEventMessage;
+            $templateId = $em->Add($arFields);
+
+            if (!$templateId) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $em->LAST_ERROR,
+                    "FIELDS" => $arFields
+                ], "CEventMessage::add", "/upload/logs/dd.tools.install.log");
+            }
         }
 
         return true;
@@ -124,7 +152,17 @@ class EmailTemplateInstaller
         ]);
 
         while ($message = $messages->fetch()) {
-            EventMessageTable::delete($message["ID"]);
+
+            $result = EventMessageTable::delete($message["ID"]);
+
+            if (!$result->isSuccess()) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERRORS" => $result->getErrorMessages(),
+                    "MESSAGE_ID" => $message["ID"],
+                    "EVENT_NAME" => $eventName
+                ], "EventMessageTable::delete", "/upload/logs/dd.tools.install.log");
+            }
         }
 
         // Удаляем тип события
@@ -133,7 +171,17 @@ class EmailTemplateInstaller
         ]);
 
         while ($type = $types->fetch()) {
-            EventTypeTable::delete($type["ID"]);
+
+            $result = EventTypeTable::delete($type["ID"]);
+
+            if (!$result->isSuccess()) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERRORS" => $result->getErrorMessages(),
+                    "TYPE_ID" => $type["ID"],
+                    "EVENT_NAME" => $eventName
+                ], "EventTypeTable::delete", "/upload/logs/dd.tools.install.log");
+            }
         }
     }
 }

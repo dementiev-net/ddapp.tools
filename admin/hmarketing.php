@@ -8,6 +8,12 @@ use Bitrix\Main\Type\DateTime;
 use DD\Tools\Entity\DataTable;
 use DD\Tools\Helpers\LogHelper;
 
+$op = Bitrix\Main\Config\Option::getForModule("dd.tools");
+echo "<pre>";
+print_r($op);
+die;
+
+
 Loc::loadMessages(__FILE__);
 
 // Получим права доступа текущего пользователя на модуль

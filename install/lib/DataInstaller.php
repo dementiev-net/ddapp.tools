@@ -3,6 +3,7 @@
 namespace DD\Tools\Install;
 
 use Bitrix\Main\Loader;
+use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Type\DateTime;
 use DD\Tools\Entity\DataTable;
 use DD\Tools\Entity\AuthorTable;
@@ -38,11 +39,20 @@ class DataInstaller
     {
         $testElements = [
             ["ACTIVE" => "N", "SITE" => "[\"s1\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"],
-            ["ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"]
+            ["ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner2.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"]
         ];
 
         foreach ($testElements as $elementData) {
-            DataTable::add($elementData);
+
+            $result = DataTable::add($elementData);
+
+            if (!$result->isSuccess()) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERRORS" => $result->getErrorMessages(),
+                    "FIELDS" => $elementData,
+                ], "DataTable::add", "/upload/logs/dd.tools.install.log");
+            }
         }
     }
 
@@ -57,7 +67,16 @@ class DataInstaller
         ];
 
         foreach ($testElements as $elementData) {
-            AuthorTable::add($elementData);
+
+            $result = AuthorTable::add($elementData);
+
+            if (!$result->isSuccess()) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERRORS" => $result->getErrorMessages(),
+                    "FIELDS" => $elementData,
+                ], "AuthorTable::add", "/upload/logs/dd.tools.install.log");
+            }
         }
     }
 
@@ -102,6 +121,12 @@ class DataInstaller
             return $ar_res["ID"];
         }
 
+        Debug::writeToFile([
+            "DATE" => date("Y-m-d H:i:s"),
+            "MESSAGE" => "Инфоблок с таким CODE не найден",
+            "CODE" => $code,
+        ], "CIBlock::GetList", "/upload/logs/dd.tools.install.log");
+
         return false;
     }
 
@@ -119,8 +144,11 @@ class DataInstaller
         $elementId = $el->Add($arFields);
 
         if (!$elementId) {
-            // Можно добавить логирование ошибок
-            // error_log("Ошибка добавления элемента: " . $el->LAST_ERROR);
+            Debug::writeToFile([
+                "DATE" => date("Y-m-d H:i:s"),
+                "ERROR" => $el->LAST_ERROR,
+                "FIELDS" => $arFields,
+            ], "CIBlockElement::add", "/upload/logs/dd.tools.install.log");
         }
 
         return $elementId;

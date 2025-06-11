@@ -36,10 +36,10 @@ class DataInstaller
      */
     private function addDefaultData()
     {
-        $testElements = array(
-            array("ACTIVE" => "N", "SITE" => "[\"s1\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"),
-            array("ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1")
-        );
+        $testElements = [
+            ["ACTIVE" => "N", "SITE" => "[\"s1\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"],
+            ["ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"]
+        ];
 
         foreach ($testElements as $elementData) {
             DataTable::add($elementData);
@@ -51,10 +51,10 @@ class DataInstaller
      */
     private function addDefaultAuthors()
     {
-        $testElements = array(
-            array("NAME" => "Иван", "LAST_NAME" => "Иванов"),
-            array("NAME" => "Иван2", "LAST_NAME" => "Иванов2")
-        );
+        $testElements = [
+            ["NAME" => "Иван", "LAST_NAME" => "Иванов"],
+            ["NAME" => "Иван2", "LAST_NAME" => "Иванов2"]
+        ];
 
         foreach ($testElements as $elementData) {
             AuthorTable::add($elementData);
@@ -72,17 +72,18 @@ class DataInstaller
             return false;
         }
 
-        $testElements = array(
-            array("NAME" => "Первая новость DD Tools", "CODE" => "first_news_dd_tools", "PREVIEW_TEXT" => "Краткое описание первой новости для тестирования модуля DD Tools", "DETAIL_TEXT" => "Подробное описание первой новости. Здесь может быть много текста с различными подробностями о функционале модуля DD Tools.",
-                "PROPERTIES" => array("AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => array("новости", "dd.tools", "модуль"), "RATING" => 5, "SHOW_ON_MAIN" => "Да")
-            ),
-            array("NAME" => "Обновление функционала", "CODE" => "functionality_update", "PREVIEW_TEXT" => "Информация о новых возможностях модуля DD Tools", "DETAIL_TEXT" => "В новой версии модуля DD Tools добавлены дополнительные функции для работы с контентом и улучшена производительность.",
-                "PROPERTIES" => array("AUTHOR" => "Анна Сидорова", "SOURCE" => "Блог разработчиков", "TAGS" => array("обновление", "функционал", "производительность"), "RATING" => 4, "SHOW_ON_MAIN" => "Да")
-            ),
-            array("NAME" => "Руководство по установке", "CODE" => "installation_guide", "PREVIEW_TEXT" => "Пошаговая инструкция по установке и настройке модуля", "DETAIL_TEXT" => "Данное руководство поможет вам правильно установить и настроить модуль DD Tools на вашем сайте. Следуйте инструкциям для корректной работы.",
-                "PROPERTIES" => array("AUTHOR" => "Техническая поддержка", "SOURCE" => "Документация", "TAGS" => array("установка", "настройка", "инструкция"), "RATING" => 3, "SHOW_ON_MAIN" => "Нет")
-            )
-        );
+        $testElements = [
+            [
+                "NAME" => "Первая новость DD Tools", "CODE" => "first_news_dd_tools", "PREVIEW_TEXT" => "Краткое описание первой новости для тестирования модуля DD Tools", "DETAIL_TEXT" => "Подробное описание первой новости. Здесь может быть много текста с различными подробностями о функционале модуля DD Tools.",
+                "PROPERTIES" => ["AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => ["новости", "dd.tools", "модуль"], "RATING" => 5, "SHOW_ON_MAIN" => "Да"]
+            ], [
+                "NAME" => "Обновление функционала", "CODE" => "functionality_update", "PREVIEW_TEXT" => "Информация о новых возможностях модуля DD Tools", "DETAIL_TEXT" => "В новой версии модуля DD Tools добавлены дополнительные функции для работы с контентом и улучшена производительность.",
+                "PROPERTIES" => ["AUTHOR" => "Анна Сидорова", "SOURCE" => "Блог разработчиков", "TAGS" => ["обновление", "функционал", "производительность"], "RATING" => 4, "SHOW_ON_MAIN" => "Да"]
+            ], [
+                "NAME" => "Руководство по установке", "CODE" => "installation_guide", "PREVIEW_TEXT" => "Пошаговая инструкция по установке и настройке модуля", "DETAIL_TEXT" => "Данное руководство поможет вам правильно установить и настроить модуль DD Tools на вашем сайте. Следуйте инструкциям для корректной работы.",
+                "PROPERTIES" => ["AUTHOR" => "Техническая поддержка", "SOURCE" => "Документация", "TAGS" => ["установка", "настройка", "инструкция"], "RATING" => 3, "SHOW_ON_MAIN" => "Нет"]
+            ]
+        ];
 
         foreach ($testElements as $elementData) {
             $this->addIblockElement($iblockId, $elementData);
@@ -95,7 +96,7 @@ class DataInstaller
      */
     private function getIblockId($code)
     {
-        $res = \CIBlock::GetList(array(), array("CODE" => $code, "CHECK_PERMISSIONS" => "N"));
+        $res = \CIBlock::GetList([], ["CODE" => $code, "CHECK_PERMISSIONS" => "N"]);
 
         if ($ar_res = $res->Fetch()) {
             return $ar_res["ID"];
@@ -113,7 +114,7 @@ class DataInstaller
     {
         $el = new \CIBlockElement;
 
-        $arFields = array("IBLOCK_ID" => $iblockId, "NAME" => $elementData["NAME"], "CODE" => $elementData["CODE"], "ACTIVE" => "Y", "PREVIEW_TEXT" => $elementData["PREVIEW_TEXT"], "DETAIL_TEXT" => $elementData["DETAIL_TEXT"], "PROPERTY_VALUES" => $elementData["PROPERTIES"]);
+        $arFields = ["IBLOCK_ID" => $iblockId, "NAME" => $elementData["NAME"], "CODE" => $elementData["CODE"], "ACTIVE" => "Y", "PREVIEW_TEXT" => $elementData["PREVIEW_TEXT"], "DETAIL_TEXT" => $elementData["DETAIL_TEXT"], "PROPERTY_VALUES" => $elementData["PROPERTIES"]];
 
         $elementId = $el->Add($arFields);
 

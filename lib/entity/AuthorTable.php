@@ -20,21 +20,21 @@ class AuthorTable extends Entity\DataManager
      */
     public static function getMap()
     {
-        return array(
+        return [
             new Entity\IntegerField(
                 "ID",
-                array(
+                [
                     "primary" => true,
                     "autocomplete" => true,
-                )
+                ]
             ),
             new Entity\StringField(
                 "NAME",
-                array(
+                [
                     "required" => true,
-                )
+                ]
             ),
             new Entity\StringField("LAST_NAME")
-        );
+        ];
     }
 }

@@ -2,8 +2,8 @@
 
 use Bitrix\Main\Loader;
 
-Loader::registerAutoLoadClasses("dd.tools",
-    array(
+Loader::registerAutoLoadClasses("dd.tools", [
+
         // Основной класс модуля
         "DD\\Tools\\Main" => "lib/Main.php",
 
@@ -27,5 +27,5 @@ Loader::registerAutoLoadClasses("dd.tools",
         "DD\\Tools\\Helpers\\LogHelper" => "lib/helpers/LogHelper.php",
         "DD\\Tools\\Helpers\\CacheHelper" => "lib/helpers/CacheHelper.php",
         "DD\\Tools\\Helpers\\UrlHelper" => "lib/helpers/UrlHelper.php"
-    )
+    ]
 );

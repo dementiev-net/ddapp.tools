@@ -41,39 +41,39 @@ class DataTable extends Entity\DataManager
          * StringField - varchar
          */
 
-        return array(
+        return [
 
             new Entity\IntegerField(
                 "ID",
-                array(
+                [
                     "primary" => true,
                     "autocomplete" => true,
-                )
+                ]
             ),
             new Entity\BooleanField(
                 "ACTIVE",
-                array(
-                    "values" => array("N", "Y")
-                )
+                [
+                    "values" => ["N", "Y"]
+                ]
             ),
             new Entity\StringField(
                 "SITE",
-                array(
+                [
                     "required" => true,
-                )
+                ]
             ),
             new Entity\StringField(
                 "LINK",
-                array(
+                [
                     "required" => true,
-                )
+                ]
             ),
             new Entity\StringField(
                 "LINK_PICTURE",
-                array(
+                [
                     "column_name" => "LINK_PICTURE_CODE",
                     "validation" => function () {
-                        return array(
+                        return [
                             new Entity\Validator\Unique,
                             function ($value, $primary, $row, $field) {
                                 if (strlen($value) <= 100)
@@ -81,31 +81,31 @@ class DataTable extends Entity\DataManager
                                 else
                                     return "Код LINK_PICTURE должен содержать не более 100 символов";
                             }
-                        );
+                        ];
                     }
-                )
+                ]
             ),
             new Entity\StringField(
                 "ALT_PICTURE",
-                array(
+                [
                     "required" => true,
-                )
+                ]
             ),
             new Entity\TextField(
                 "EXCEPTIONS"
             ),
             new Entity\DatetimeField(
                 "DATE",
-                array(
+                [
                     "required" => true,
-                )
+                ]
             ),
             new Entity\EnumField(
                 "TARGET",
-                array(
-                    "values" => array("self", "blank"),
+                [
+                    "values" => ["self", "blank"],
                     "required" => true,
-                )
+                ]
             ),
             new Entity\IntegerField(
                 "AUTHOR_ID"
@@ -113,9 +113,9 @@ class DataTable extends Entity\DataManager
             new Entity\ReferenceField(
                 "AUTHOR",
                 "DD\Tools\Entity\AuthorTable",
-                array("=this.AUTHOR_ID" => "ref.ID")
+                ["=this.AUTHOR_ID" => "ref.ID"]
             ),
-        );
+        ];
     }
 
     /**

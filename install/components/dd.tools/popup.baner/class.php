@@ -73,8 +73,8 @@ class Popup extends CBitrixComponent
             $query = new Bitrix\Main\Entity\Query(
                 \DD\Tools\EntityDataTable::getEntity()
             );
-            $this->arResult = $query->setSelect(array('*'))
-                ->setFilter(array('=ID' => 1))
+            $this->arResult = $query->setSelect(['*'])
+                ->setFilter(['=ID' => 1])
                 ->setCacheTtl(3600)
                 ->fetch();
 

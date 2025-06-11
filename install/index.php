@@ -31,7 +31,7 @@ class DD_Tools extends CModule
 
     function __construct()
     {
-        $arModuleVersion = array();
+        $arModuleVersion = [];
         include_once(__DIR__ . "/version.php");
 
         $this->MODULE_VERSION = $arModuleVersion["VERSION"];
@@ -62,7 +62,7 @@ class DD_Tools extends CModule
         // $this->installAgents();
         //
         // $APPLICATION->includeAdminFile(
-        //     Loc::getMessage("DD_MODULE_INSTALL_TITLE"),
+        //     Loc::getMessage("DD_TOOLS_INSTALL_TITLE"),
         //     __DIR__ . "/instalInfo.php"
         // );
 
@@ -74,7 +74,7 @@ class DD_Tools extends CModule
         global $APPLICATION;
 
         if ($request["step"] < 2) {
-            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_MODULE_INSTALL_TITLE_STEP_1"), __DIR__ . "/instalInfo-step1.php");
+            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_TOOLS_INSTALL_TITLE_STEP_1"), __DIR__ . "/instalInfo-step1.php");
         }
 
         if ($request["step"] == 2) {
@@ -91,7 +91,7 @@ class DD_Tools extends CModule
                 $this->addData();
             }
 
-            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_MODULE_INSTALL_TITLE_STEP_2"), __DIR__ . "/instalInfo-step2.php");
+            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_TOOLS_INSTALL_TITLE_STEP_2"), __DIR__ . "/instalInfo-step2.php");
         }
 
         return true;
@@ -113,7 +113,7 @@ class DD_Tools extends CModule
         // ModuleManager::UnRegisterModule("dd.tools");
         //
         // $APPLICATION->includeAdminFile(
-        //     Loc::getMessage("DD_MODULE_DEINSTALL_TITLE"),
+        //     Loc::getMessage("DD_TOOLS_DEINSTALL_TITLE"),
         //     __DIR__ . "/deInstalInfo.php"
         // );
 
@@ -125,7 +125,7 @@ class DD_Tools extends CModule
         global $APPLICATION;
 
         if ($request["step"] < 2) {
-            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_MODULE_DEINSTALL_TITLE_STEP_1"), __DIR__ . "/deInstalInfo-step1.php");
+            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_TOOLS_DEINSTALL_TITLE_STEP_1"), __DIR__ . "/deInstalInfo-step1.php");
         }
         // проверяем какой сейчас шаг, усли 2, производим удаление
         if ($request["step"] == 2) {
@@ -141,7 +141,7 @@ class DD_Tools extends CModule
 
             ModuleManager::UnRegisterModule("dd.tools");
 
-            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_MODULE_DEINSTALL_TITLE_STEP_2"), __DIR__ . "/deInstalInfo-step2.php");
+            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_TOOLS_DEINSTALL_TITLE_STEP_2"), __DIR__ . "/deInstalInfo-step2.php");
         }
 
         return true;

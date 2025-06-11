@@ -16,39 +16,39 @@ class LogHelper
     public const LEVEL_WARNING = "WARNING";
     public const LEVEL_ERROR = "ERROR";
     public const LEVEL_CRITICAL = "CRITICAL";
-    private static array $config = array();
+    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DD_TOOLS_CRITICAL_ERROR";
+    private static array $config = [];
 
     // Приоритеты уровней логирования
-    private static array $levelPriorities = array(
+    private static array $levelPriorities = [
         self::LEVEL_DEBUG => 1,
         self::LEVEL_INFO => 2,
         self::LEVEL_WARNING => 3,
         self::LEVEL_ERROR => 4,
         self::LEVEL_CRITICAL => 5,
-    );
+    ];
 
     /**
      * Настройка конфигурации логирования
      * @param array $config
      * @return void
      */
-    public static function configure(array $config = array()): void
+    public static function configure(array $config = []): void
     {
         $op = Option::getForModule("dd.tools");
 
-        self::$config = array(
+        self::$config = [
             "log_enabled" => $op["log_enabled"],
             "log_min_level" => $op["log_min_level"],
             "log_path" => $op["log_path"],
             "log_date_format" => $op["log_date_format"],
             "log_max_file_size" => $op["log_max_file_size"],
             "log_max_files" => $op["log_max_files"],
-            "log_critical_email" => array(
+            "log_critical_email" => [
                 "enabled" => $op["log_email_enabled"],
-                "template_code" => $op["log_email_temp"],
                 "email" => $op["log_email"],
-            ),
-        );
+            ],
+        ];
 
         if (!empty($config)) {
             self::$config = array_merge(self::$config, $config);
@@ -62,7 +62,7 @@ class LogHelper
      * @param array $context
      * @return bool
      */
-    public static function critical(string $type, string $message, array $context = array()): bool
+    public static function critical(string $type, string $message, array $context = []): bool
     {
         $result = self::write($type, $message, self::LEVEL_CRITICAL, $context);
 
@@ -81,7 +81,7 @@ class LogHelper
      * @param array $context
      * @return bool
      */
-    public static function error(string $type, string $message, array $context = array()): bool
+    public static function error(string $type, string $message, array $context = []): bool
     {
         return self::write($type, $message, self::LEVEL_ERROR, $context);
     }
@@ -93,7 +93,7 @@ class LogHelper
      * @param array $context
      * @return bool
      */
-    public static function warning(string $type, string $message, array $context = array()): bool
+    public static function warning(string $type, string $message, array $context = []): bool
     {
         return self::write($type, $message, self::LEVEL_WARNING, $context);
     }
@@ -105,7 +105,7 @@ class LogHelper
      * @param array $context
      * @return bool
      */
-    public static function info(string $type, string $message, array $context = array()): bool
+    public static function info(string $type, string $message, array $context = []): bool
     {
         return self::write($type, $message, self::LEVEL_INFO, $context);
     }
@@ -117,7 +117,7 @@ class LogHelper
      * @param array $context
      * @return bool
      */
-    public static function debug(string $type, $data, array $context = array()): bool
+    public static function debug(string $type, $data, array $context = []): bool
     {
         $message = is_string($data) ? $data : Json::encode($data);
         return self::write($type, $message, self::LEVEL_DEBUG, $context);
@@ -130,7 +130,7 @@ class LogHelper
      * @param array $context
      * @return bool
      */
-    public static function exception(string $type, \Throwable $exception, array $context = array()): bool
+    public static function exception(string $type, \Throwable $exception, array $context = []): bool
     {
         $message = sprintf(
             "Exception: %s in %s:%d\nStack trace:\n%s",
@@ -236,7 +236,7 @@ class LogHelper
      * @param array $context Дополнительный контекст
      * @return bool
      */
-    private static function write(string $type, string $message, string $level = self::LEVEL_INFO, array $context = array()): bool
+    private static function write(string $type, string $message, string $level = self::LEVEL_INFO, array $context = []): bool
     {
         if (!self::$config["log_enabled"] || !self::shouldLogLevel($level)) {
             return false;
@@ -375,10 +375,10 @@ class LogHelper
      * @param array $context
      * @return bool
      */
-    private static function sendCriticalEmail(string $type, string $message, array $context = array()): bool
+    private static function sendCriticalEmail(string $type, string $message, array $context = []): bool
     {
         try {
-            $templateCode = self::$config["log_critical_email"]["template_code"];
+            $templateCode = self::CRITICAL_EMAIL_TEMPLATE_CODE;
             $email = self::$config["log_critical_email"]["email"];
 
             if (empty($templateCode) || empty($email)) {
@@ -388,7 +388,7 @@ class LogHelper
             global $USER;
 
             // Подготавливаем данные для шаблона
-            $fields = array(
+            $fields = [
                 "EMAIL" => $email,
                 "LOG_TYPE" => $type,
                 "MESSAGE" => $message,
@@ -401,14 +401,14 @@ class LogHelper
                 "USER_LOGIN" => (isset($USER) && is_object($USER) && $USER->IsAuthorized()) ? $USER->GetLogin() : "Не авторизован",
                 "MEMORY_USAGE" => self::formatBytes(memory_get_usage()),
                 "PEAK_MEMORY" => self::formatBytes(memory_get_peak_usage()),
-            );
+            ];
 
             // Отправка события
-            $result = Event::send(array(
+            $result = Event::send([
                 "EVENT_NAME" => $templateCode,
-                "LID" => array("s1"),
+                "LID" => ["s1"],
                 "C_FIELDS" => $fields,
-            ));
+            ]);
 
             return $result->isSuccess();
 

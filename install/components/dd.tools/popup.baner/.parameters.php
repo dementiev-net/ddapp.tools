@@ -2,12 +2,12 @@
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 // настройки компонента, формируем массив $arParams
-$arComponentParameters = array(
+$arComponentParameters = [
     // основной массив с параметрами
-    'PARAMETERS' => array(
+    'PARAMETERS' => [
         // настройки кэширования
-        'CACHE_TIME' => array(
+        'CACHE_TIME' => [
             'DEFAULT' => 3600
-        ),
-    ),
-);
+        ],
+    ],
+];

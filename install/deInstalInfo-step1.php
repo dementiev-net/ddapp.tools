@@ -16,6 +16,6 @@ if (!check_bitrix_sessid()) {
     <?= CAdminMessage::ShowMessage(Loc::getMessage("MOD_UNINST_WARN")) ?>
     <p><?= Loc::getMessage("MOD_UNINST_SAVE") ?></p>
     <p><input type="checkbox" name="save_data" id="save_data" value="Y" checked><label
-                for="save_data"><?= Loc::getMessage("DD_MODULE_MOD_UNINST_DATA") ?></label></p>
-    <input type="submit" name="" value="<?= Loc::getMessage("DD_MODULE_MOD_UNINST_DATA_BUTTON") ?>">
+                for="save_data"><?= Loc::getMessage("DD_TOOLS_MOD_UNINST_DATA") ?></label></p>
+    <input type="submit" name="" value="<?= Loc::getMessage("DD_TOOLS_MOD_UNINST_DATA_BUTTON") ?>">
 </form>

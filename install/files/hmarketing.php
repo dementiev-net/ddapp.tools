@@ -7,5 +7,5 @@ $rsHandlers = GetModuleEvents("dd.tools", "OnSomeEvent");
 
 while ($arHandler = $rsHandlers->Fetch()) {
     // выполняем каждое зарегистрированное событие по одному
-    ExecuteModuleEventEx($arHandler, array(/* параметры которые нужно передать в модуль */));
+    ExecuteModuleEventEx($arHandler, [/* параметры которые нужно передать в модуль */]);
 }

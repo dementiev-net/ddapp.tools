@@ -47,19 +47,19 @@ class EmailTemplateInstaller
         }
 
         // Проверяем, не существует ли уже такой тип события
-        $existingType = EventTypeTable::getList(array(
-            "filter" => array("EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE),
+        $existingType = EventTypeTable::getList([
+            "filter" => ["EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE],
             "limit" => 1
-        ))->fetch();
+        ])->fetch();
 
         if (!$existingType) {
             // Создаем тип почтового события
-            $typeResult = EventTypeTable::add(array(
+            $typeResult = EventTypeTable::add([
                 "LID" => "ru",
                 "EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE,
                 "NAME" => "Критическая ошибка системы",
                 "DESCRIPTION" => "#EMAIL# - Email получателя\n#LOG_TYPE# - Тип лога\n#MESSAGE# - Сообщение об ошибке\n#CONTEXT# - Дополнительный контекст\n#DATE_TIME# - Дата и время\n#SERVER_NAME# - Имя сервера\n#REQUEST_URI# - URL запроса\n#USER_AGENT# - Браузер пользователя\n#USER_ID# - ID пользователя\n#USER_LOGIN# - Логин пользователя\n#MEMORY_USAGE# - Используемая память\n#PEAK_MEMORY# - Пиковое использование памяти"
-            ));
+            ]);
 
             if (!$typeResult->isSuccess()) {
                 return false;
@@ -67,24 +67,24 @@ class EmailTemplateInstaller
         }
 
         // Проверяем, не существует ли уже шаблон сообщения
-        $existingMessage = EventMessageTable::getList(array(
-            "filter" => array("EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE),
+        $existingMessage = EventMessageTable::getList([
+            "filter" => ["EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE],
             "limit" => 1
-        ))->fetch();
+        ])->fetch();
 
         if (!$existingMessage) {
             // Создаем шаблон сообщения
             $em = new \CEventMessage;
-            $templateId = $em->Add(array(
+            $templateId = $em->Add([
                 "ACTIVE" => "Y",
                 "EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE,
-                "LID" => array("s1"),
+                "LID" => ["s1"],
                 "EMAIL_FROM" => "#DEFAULT_EMAIL_FROM#",
                 "EMAIL_TO" => "#EMAIL#",
                 "SUBJECT" => "[КРИТИЧЕСКАЯ ОШИБКА] #SERVER_NAME# - #LOG_TYPE#",
                 "MESSAGE" => "Сообщение об ошибке: #MESSAGE#\n\nТип лога :#LOG_TYPE#\nДата и время: #DATE_TIME#\nСервер: #SERVER_NAME#\nURL запроса: #REQUEST_URI#\nПользователь: #USER_LOGIN# (ID: #USER_ID#)\nБраузер: #USER_AGENT#\nПамять (текущая/пиковая): #MEMORY_USAGE# / #PEAK_MEMORY#\n\nКонтекст ошибки: #CONTEXT#",
                 "BODY_TYPE" => "text"
-            ));
+            ]);
         }
 
         return true;
@@ -101,18 +101,18 @@ class EmailTemplateInstaller
         }
 
         // Удаляем шаблоны сообщений
-        $messages = EventMessageTable::getList(array(
-            "filter" => array("EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE)
-        ));
+        $messages = EventMessageTable::getList([
+            "filter" => ["EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE]
+        ]);
 
         while ($message = $messages->fetch()) {
             EventMessageTable::delete($message["ID"]);
         }
 
         // Удаляем тип события
-        $types = EventTypeTable::getList(array(
-            "filter" => array("EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE)
-        ));
+        $types = EventTypeTable::getList([
+            "filter" => ["EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE]
+        ]);
 
         while ($type = $types->fetch()) {
             EventTypeTable::delete($type["ID"]);

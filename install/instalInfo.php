@@ -11,12 +11,12 @@ if (!check_bitrix_sessid()) {
 if ($errorException = $APPLICATION->getException()) {
     // Вывод сообщения об ошибке при установке модуля
     CAdminMessage::showMessage(
-        Loc::getMessage("DD_MODULE_INSTALL_FAILED") . ": " . $errorException->GetString()
+        Loc::getMessage("DD_TOOLS_INSTALL_FAILED") . ": " . $errorException->GetString()
     );
 } else {
     // Вывод уведомления при успешной установке модуля
     CAdminMessage::showNote(
-        Loc::getMessage("DD_MODULE_INSTALL_SUCCESS")
+        Loc::getMessage("DD_TOOLS_INSTALL_SUCCESS")
     );
 }
 ?>

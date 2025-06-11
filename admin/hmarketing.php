@@ -2,14 +2,17 @@
 require_once $_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_before.php";
 
 use Bitrix\Main\Loader;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Page\Asset;
 use Bitrix\Main\Type\DateTime;
 use DD\Tools\Entity\DataTable;
 use DD\Tools\Helpers\LogHelper;
 
+Loc::loadMessages(__FILE__);
+
 // Получим права доступа текущего пользователя на модуль
 $POST_RIGHT = $APPLICATION->GetGroupRight("dd.tools");
-if ($POST_RIGHT == "D") $APPLICATION->AuthForm(GetMessage("ACCESS_DENIED"));
+if ($POST_RIGHT == "D") $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"));
 $actionDisabled = ($POST_RIGHT == "W") ? "" : "disabled";
 
 // Настройка логирования
@@ -18,18 +21,18 @@ LogHelper::configure();
 // Подключение файлов
 Asset::getInstance()->addJs("/bitrix/js/" . "dd.tools" . "/script.min.js");
 
-\CJSCore::Init(array("ajax"));
+\CJSCore::Init(["ajax"]);
 
 $APPLICATION->SetTitle("Настройка Pop Up");
 
 IncludeModuleLangFile(__FILE__);
 
-$aTabs = array(
-    array(
+$aTabs = [
+    [
         "TAB" => "Параметры",
         "TITLE" => "Параметры вывода pop-up"
-    )
-);
+    ]
+];
 
 $tabControl = new CAdminTabControl(
     "tabControl",
@@ -48,22 +51,22 @@ if ($REQUEST_METHOD === "POST" && $_POST["ajax"] === "Y" && check_bitrix_sessid(
 
     // Генерируем случайную ошибку с вероятностью 20%
     if (rand(1, 100) <= 20) {
-        $errorMessages = array(
+        $errorMessages = [
             "Недостаточно места на диске",
             "Ошибка подключения к серверу",
             "Превышено время ожидания операции",
             "Нет доступа к файлу конфигурации",
             "Ошибка авторизации в облачном хранилище"
-        );
+        ];
 
         $randomError = $errorMessages[array_rand($errorMessages)];
 
         header("Content-Type: application/json");
-        echo json_encode(array(
+        echo json_encode([
             "success" => false,
             "error" => $randomError,
             "bar_id" => $barId
-        ));
+        ]);
         LogHelper::error("admin", "AJAX request: " . $randomError);
         die();
     }
@@ -71,11 +74,11 @@ if ($REQUEST_METHOD === "POST" && $_POST["ajax"] === "Y" && check_bitrix_sessid(
     $next = min($percent + rand(5, 15), 100);
 
     header("Content-Type: application/json");
-    echo json_encode(array(
+    echo json_encode([
         "success" => true,
         "percent" => $next,
         "bar_id" => $barId
-    ));
+    ]);
     die();
 }
 
@@ -86,7 +89,7 @@ if ($REQUEST_METHOD == "POST" && $save != "" && $POST_RIGHT == "W" && check_bitr
 
     $dataTable = new DataTable;
 
-    $arFields = array(
+    $arFields = [
         "ACTIVE" => ($ACTIVE == "") ? "N" : "Y",
         "SITE" => json_encode($SITE),
         "LINK" => htmlspecialchars($LINK),
@@ -95,7 +98,7 @@ if ($REQUEST_METHOD == "POST" && $save != "" && $POST_RIGHT == "W" && check_bitr
         "EXCEPTIONS" => $EXCEPTIONS == "" ? "" : trim(htmlspecialchars($EXCEPTIONS)),
         "DATE" => new DateTime(date("d.m.Y H:i:s")),
         "TARGET" => htmlspecialchars($TARGET),
-    );
+    ];
 
     $res = $dataTable->Update(1, $arFields);
 
@@ -136,7 +139,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_ad
 
 // Сообщения об успешном сохранении
 if ($_REQUEST["mess"] == "ok") {
-    CAdminMessage::ShowMessage(array("MESSAGE" => "Сохранено успешно", "TYPE" => "OK"));
+    CAdminMessage::ShowMessage(["MESSAGE" => "Сохранено успешно", "TYPE" => "OK"]);
 }
 
 // Сообщение об ошибке
@@ -150,26 +153,24 @@ if ($dataTable->LAST_ERROR != "") {
 }
 
 // Конфигурация прогресс-баров
-$progressBars = array(
-    array(
+$progressBars = [
+    [
         "id" => "bitrix-cloud",
         "title" => "Облачное хранилище \"1С-Битрикс\"",
         "total_space" => "2 ГБ",
         "max_gb" => 2
-    ),
-    array(
+    ], [
         "id" => "backup-system",
         "title" => "Система резервного копирования",
         "total_space" => "5 ГБ",
         "max_gb" => 5
-    ),
-    array(
+    ], [
         "id" => "media-storage",
         "title" => "Медиа-хранилище",
         "total_space" => "10 ГБ",
         "max_gb" => 10
-    )
-);
+    ]
+];
 ?>
 
 <form method="POST" action="<?= $APPLICATION->GetCurPage() ?>?lang=<?= LANG ?>"

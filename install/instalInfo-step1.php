@@ -22,8 +22,8 @@ if (!CheckVersion(ModuleManager::getVersion('main'), '20.0.0')) {
     <input type="hidden" name="id" value="dd.tools">
     <input type="hidden" name="install" value="Y">
     <input type="hidden" name="step" value="2">
-    <p><?= Loc::getMessage("DD_MODULE_ADD_DATA") ?></p>
+    <p><?= Loc::getMessage("DD_TOOLS_ADD_DATA") ?></p>
     <p><input type="checkbox" name="add_data" id="add_data" value="Y" checked><label
-                for="add_data"><?= Loc::getMessage("DD_MODULE_ADD_DATA_BUTTON") ?></label></p>
+                for="add_data"><?= Loc::getMessage("DD_TOOLS_ADD_DATA_BUTTON") ?></label></p>
     <input type="submit" name="" value="<?= Loc::getMessage("MOD_INSTALL") ?>" <?= $btnDisabled ?>>
 </form>

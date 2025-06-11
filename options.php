@@ -137,11 +137,6 @@ $aTabs = [
                 Loc::getMessage("DD_TOOLS_DISK_EMAIL"),
                 Loc::getMessage("DD_TOOLS_DISK_EMAIL_DEFAULT"),
                 ["text", 20, 50]
-            ], [
-                "disk_agent_time",
-                Loc::getMessage("DD_TOOLS_DISK_AGENT_TIME"),
-                Loc::getMessage("DD_TOOLS_DISK_AGENT_TIME_DEFAULT"),
-                ["text", 10, 50]
             ],
             Loc::getMessage("DD_TOOLS_BLOCK4"),
             [

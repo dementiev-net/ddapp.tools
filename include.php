@@ -18,6 +18,10 @@ Loader::registerAutoLoadClasses("dd.tools", [
         "DD\\Tools\\Entity\\DataTable" => "lib/entity/DataTable.php",
         "DD\\Tools\\Entity\\AuthorTable" => "lib/entity/AuthorTable.php",
 
+        // Агенты
+        "DD\\Tools\\superAgent" => "lib/agents/SuperAgent.php",
+        "DD\\Tools\\freespaceAgent" => "lib/agents/FreespaceAgent.php",
+
         // Helper-классы
         "DD\\Tools\\Helpers\\DateHelper" => "lib/helpers/DateHelper.php",
         "DD\\Tools\\Helpers\\FileHelper" => "lib/helpers/FileHelper.php",

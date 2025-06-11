@@ -27,7 +27,8 @@ class DD_Tools extends CModule
     public $PARTNER_URI;
     public $SHOW_SUPER_ADMIN_GROUP_RIGHTS;
     public $MODULE_GROUP_RIGHTS;
-    public $errors;
+    private const SUPER_AGENT_INTERVAL = "120";
+    private const FREE_SPACE_AGENT_INTERVAL = "3600";
 
     function __construct()
     {
@@ -294,7 +295,8 @@ class DD_Tools extends CModule
      */
     function installAgents()
     {
-        \CAgent::AddAgent("\DD\Tools\Agent::superAgent();", $this->MODULE_ID, "N", 120, "", "Y", "", 100);
+        \CAgent::AddAgent("\\DD\\Tools\\superAgent::run();", $this->MODULE_ID, "N", self::SUPER_AGENT_INTERVAL, "", "Y", "", 100);
+        \CAgent::AddAgent("\\DD\\Tools\\freespaceAgent::run();", $this->MODULE_ID, "N", self::FREE_SPACE_AGENT_INTERVAL, "", "Y", "", 100);
     }
 
     /**

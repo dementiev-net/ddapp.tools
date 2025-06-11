@@ -10,6 +10,7 @@ class EmailTemplateInstaller
 {
     private $moduleId;
     private const CRITICAL_EMAIL_TEMPLATE_CODE = "DD_TOOLS_CRITICAL_ERROR";
+    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DD_TOOLS_FREE_SPACE";
 
     public function __construct($moduleId)
     {
@@ -21,7 +22,23 @@ class EmailTemplateInstaller
      */
     public function install()
     {
-        $this->createEmailTemplate();
+        $emailHeader = "Информационное сообщение сайта #SITE_NAME#\n------------------------------------------\n\n";
+        $emailFooter = "\n\nСообщение сгенерировано автоматически.\n";
+
+        $this->createEmailTemplate(
+            self::CRITICAL_EMAIL_TEMPLATE_CODE,
+            "Критическая ошибка системы",
+            "#EMAIL# - Email получателя\n#LOG_TYPE# - Тип лога\n#MESSAGE# - Сообщение об ошибке\n#CONTEXT# - Дополнительный контекст\n#DATE_TIME# - Дата и время\n#SERVER_NAME# - Имя сервера\n#REQUEST_URI# - URL запроса\n#USER_AGENT# - Браузер пользователя\n#USER_ID# - ID пользователя\n#USER_LOGIN# - Логин пользователя\n#MEMORY_USAGE# - Используемая память\n#PEAK_MEMORY# - Пиковое использование памяти",
+            "#SITE_NAME#: Критическая ошибка системы! [#LOG_TYPE#]",
+            $emailHeader . "Сообщение об ошибке: #MESSAGE#\n\nТип лога :#LOG_TYPE#\nДата и время: #DATE_TIME#\nСервер: #SERVER_NAME#\nURL запроса: #REQUEST_URI#\nПользователь: #USER_LOGIN# (ID: #USER_ID#)\nБраузер: #USER_AGENT#\nПамять (текущая/пиковая): #MEMORY_USAGE# / #PEAK_MEMORY#\n\nКонтекст ошибки: #CONTEXT#" . $emailFooter
+        );
+        $this->createEmailTemplate(
+            self::FREE_SPACE_EMAIL_TEMPLATE_CODE,
+            "Мало свободного места",
+            "#EMAIL# - Получатели сообщения\n#FREE_SPACE# - Свободное место, Мб\n#TOTAL_SPACE# - Всего места, Мб",
+            "#SITE_NAME#: Мало свободного места",
+            $emailHeader . "На сайте #SITE_NAME# осталось мало места.\n\nВсего места: #TOTAL_SPACE# Мб.\nОсталось #FREE_SPACE# Мб.\nЖелаемое количество места: #WANT_SPACE# Мб." . $emailFooter
+        );
 
         return true;
     }
@@ -31,34 +48,37 @@ class EmailTemplateInstaller
      */
     public function uninstall()
     {
-        $this->deleteEmailTemplate();
+        $this->deleteEmailTemplate(self::CRITICAL_EMAIL_TEMPLATE_CODE);
+        $this->deleteEmailTemplate(self::FREE_SPACE_EMAIL_TEMPLATE_CODE);
 
         return true;
     }
 
     /**
-     * Создает почтовый шаблон для критических ошибок
+     * Создает почтовый шаблон
+     * @param string $eventName
+     * @param string $typeName
+     * @param string $typeDesc
+     * @param string $tempSubject
+     * @param string $tempMessage
      * @return bool
      */
-    private function createEmailTemplate(): bool
+    private function createEmailTemplate(string $eventName, string $typeName, string $typeDesc, string $tempSubject, string $tempMessage): bool
     {
         if (!Loader::includeModule("main")) {
             return false;
         }
 
         // Проверяем, не существует ли уже такой тип события
-        $existingType = EventTypeTable::getList([
-            "filter" => ["EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE],
-            "limit" => 1
-        ])->fetch();
+        $existingType = EventTypeTable::getList(["filter" => ["EVENT_NAME" => $eventName], "limit" => 1])->fetch();
 
         if (!$existingType) {
             // Создаем тип почтового события
             $typeResult = EventTypeTable::add([
                 "LID" => "ru",
-                "EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE,
-                "NAME" => "Критическая ошибка системы",
-                "DESCRIPTION" => "#EMAIL# - Email получателя\n#LOG_TYPE# - Тип лога\n#MESSAGE# - Сообщение об ошибке\n#CONTEXT# - Дополнительный контекст\n#DATE_TIME# - Дата и время\n#SERVER_NAME# - Имя сервера\n#REQUEST_URI# - URL запроса\n#USER_AGENT# - Браузер пользователя\n#USER_ID# - ID пользователя\n#USER_LOGIN# - Логин пользователя\n#MEMORY_USAGE# - Используемая память\n#PEAK_MEMORY# - Пиковое использование памяти"
+                "EVENT_NAME" => $eventName,
+                "NAME" => $typeName,
+                "DESCRIPTION" => $typeDesc
             ]);
 
             if (!$typeResult->isSuccess()) {
@@ -67,22 +87,19 @@ class EmailTemplateInstaller
         }
 
         // Проверяем, не существует ли уже шаблон сообщения
-        $existingMessage = EventMessageTable::getList([
-            "filter" => ["EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE],
-            "limit" => 1
-        ])->fetch();
+        $existingMessage = EventMessageTable::getList(["filter" => ["EVENT_NAME" => $eventName], "limit" => 1])->fetch();
 
         if (!$existingMessage) {
             // Создаем шаблон сообщения
             $em = new \CEventMessage;
             $templateId = $em->Add([
                 "ACTIVE" => "Y",
-                "EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE,
+                "EVENT_NAME" => $eventName,
                 "LID" => ["s1"],
                 "EMAIL_FROM" => "#DEFAULT_EMAIL_FROM#",
                 "EMAIL_TO" => "#EMAIL#",
-                "SUBJECT" => "[КРИТИЧЕСКАЯ ОШИБКА] #SERVER_NAME# - #LOG_TYPE#",
-                "MESSAGE" => "Сообщение об ошибке: #MESSAGE#\n\nТип лога :#LOG_TYPE#\nДата и время: #DATE_TIME#\nСервер: #SERVER_NAME#\nURL запроса: #REQUEST_URI#\nПользователь: #USER_LOGIN# (ID: #USER_ID#)\nБраузер: #USER_AGENT#\nПамять (текущая/пиковая): #MEMORY_USAGE# / #PEAK_MEMORY#\n\nКонтекст ошибки: #CONTEXT#",
+                "SUBJECT" => $tempSubject,
+                "MESSAGE" => $tempMessage,
                 "BODY_TYPE" => "text"
             ]);
         }
@@ -92,17 +109,18 @@ class EmailTemplateInstaller
 
     /**
      * Удаляет почтовый шаблон
-     * @return bool
+     * @param string $eventName
+     * @return void
      */
-    private function deleteEmailTemplate(): bool
+    private function deleteEmailTemplate(string $eventName): void
     {
         if (!Loader::includeModule("main")) {
-            return false;
+            return;
         }
 
         // Удаляем шаблоны сообщений
         $messages = EventMessageTable::getList([
-            "filter" => ["EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE]
+            "filter" => ["EVENT_NAME" => $eventName]
         ]);
 
         while ($message = $messages->fetch()) {
@@ -111,13 +129,11 @@ class EmailTemplateInstaller
 
         // Удаляем тип события
         $types = EventTypeTable::getList([
-            "filter" => ["EVENT_NAME" => self::CRITICAL_EMAIL_TEMPLATE_CODE]
+            "filter" => ["EVENT_NAME" => $eventName]
         ]);
 
         while ($type = $types->fetch()) {
             EventTypeTable::delete($type["ID"]);
         }
-
-        return true;
     }
 }

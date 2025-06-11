@@ -8,6 +8,7 @@ use Bitrix\Main\IO\File;
 use Bitrix\Main\Application;
 use Bitrix\Main\Mail\Event;
 use Bitrix\Main\Config\Option;
+use DD\Tools\Helpers\FileHelper;
 
 class LogHelper
 {
@@ -165,7 +166,7 @@ class LogHelper
 
             self::info($type, "Operation \"{$operation}\" completed", [
                 "execution_time_ms" => $executionTime,
-                "memory_used" => self::formatBytes($memoryUsed)
+                "memory_used" => FileHelper::formatBytes($memoryUsed)
             ]);
 
             return $result;
@@ -347,25 +348,10 @@ class LogHelper
         }
 
         // Информация о памяти
-        $memory = self::formatBytes(memory_get_usage());
-        $peakMemory = self::formatBytes(memory_get_peak_usage());
+        $memory = FileHelper::formatBytes(memory_get_usage());
+        $peakMemory = FileHelper::formatBytes(memory_get_peak_usage());
 
         return "User: {$userInfo} | URL: {$url} | Memory: {$memory} | Peak: {$peakMemory}";
-    }
-
-    /**
-     * Форматирует байты в человекочитаемый формат
-     * @param int $bytes
-     * @return string
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes == 0) {
-            return "0 B";
-        }
-        $units = ["B", "KB", "MB", "GB"];
-        $power = floor(log($bytes, 1024));
-        return round($bytes / pow(1024, $power), 2) . " " . $units[$power];
     }
 
     /**
@@ -399,8 +385,8 @@ class LogHelper
                 "USER_AGENT" => $_SERVER["HTTP_USER_AGENT"] ?? "Unknown",
                 "USER_ID" => (isset($USER) && is_object($USER) && $USER->IsAuthorized()) ? $USER->GetID() : "Гость",
                 "USER_LOGIN" => (isset($USER) && is_object($USER) && $USER->IsAuthorized()) ? $USER->GetLogin() : "Не авторизован",
-                "MEMORY_USAGE" => self::formatBytes(memory_get_usage()),
-                "PEAK_MEMORY" => self::formatBytes(memory_get_peak_usage()),
+                "MEMORY_USAGE" => FileHelper::formatBytes(memory_get_usage()),
+                "PEAK_MEMORY" => FileHelper::formatBytes(memory_get_peak_usage()),
             ];
 
             // Отправка события

@@ -41,7 +41,7 @@ $MESS['DD_TOOLS_DISK_TYPE_FILESYSTEM_DEFAULT'] = [
     "2" => "Функция обхода всех папок и файлов"
 ];;
 $MESS["DD_TOOLS_DISK_FREE_SPACE"] = "Необходимый запас свободного места, Мб";
-$MESS["DD_TOOLS_DISK_FREE_SPACE_DEFAULT"] = "300";
+$MESS["DD_TOOLS_DISK_FREE_SPACE_DEFAULT"] = "3000";
 $MESS['DD_TOOLS_DISK_ALL_SPACE'] = "Всего выделено места, Мб";
 $MESS['DD_TOOLS_DISK_ALL_SPACE_DEFAULT'] = "0";
 $MESS['TYPE_FILESYSTEM_1'] = "Функции disk_free_space(), disk_total_space()";

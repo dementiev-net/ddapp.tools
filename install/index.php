@@ -280,7 +280,8 @@ class DD_Tools extends CModule
             [__DIR__ . "/assets/css", $docRoot . "/bitrix/css/" . $this->MODULE_ID . "/"],
             [__DIR__ . "/admin", $docRoot . "/bitrix/admin"],
             [__DIR__ . "/components", $componentsPath],
-            [__DIR__ . "/files", $docRoot . "/"]
+            [__DIR__ . "/files", $docRoot . "/"],
+            [__DIR__ . "/gadgets", $docRoot . "/bitrix/gadgets/" . $this->MODULE_ID . "/"],
         ];
 
         foreach ($copyDirs as [$src, $dst]) {
@@ -315,7 +316,8 @@ class DD_Tools extends CModule
         $dirsToDelete = [
             $docRoot . "/bitrix/images/" . $this->MODULE_ID,
             $docRoot . "/bitrix/js/" . $this->MODULE_ID,
-            $docRoot . "/bitrix/css/" . $this->MODULE_ID
+            $docRoot . "/bitrix/css/" . $this->MODULE_ID,
+            $docRoot . "/bitrix/gadgets/" . $this->MODULE_ID
         ];
 
         foreach ($dirsToDelete as $dir) {

@@ -6,6 +6,9 @@ use DD\Tools\Helpers\LogHelper;
 
 class superAgent
 {
+    /**
+     * @return string
+     */
     static public function run()
     {
         // Настройка логирования

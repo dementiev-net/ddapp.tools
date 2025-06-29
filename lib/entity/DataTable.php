@@ -13,7 +13,7 @@ class DataTable extends Entity\DataManager
      */
     public static function getTableName()
     {
-        return "pop_up_table";
+        return "dd_data_table";
     }
 
     /**
@@ -109,12 +109,7 @@ class DataTable extends Entity\DataManager
             ),
             new Entity\IntegerField(
                 "AUTHOR_ID"
-            ),
-            new Entity\ReferenceField(
-                "AUTHOR",
-                "DD\Tools\Entity\AuthorTable",
-                ["=this.AUTHOR_ID" => "ref.ID"]
-            ),
+            )
         ];
     }
 

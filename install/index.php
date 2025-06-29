@@ -173,17 +173,17 @@ class DD_Tools extends CModule
             }
         }
 
-        $authorTableEntity = Base::getInstance("\DD\Tools\Entity\AuthorTable");
+        $maintenanceTableEntity = Base::getInstance("\DD\Tools\Entity\MaintenanceTable");
 
-        if (!$connection->isTableExists($authorTableEntity->getDBTableName())) {
+        if (!$connection->isTableExists($maintenanceTableEntity->getDBTableName())) {
             try {
-                $authorTableEntity->createDbTable();
+                $maintenanceTableEntity->createDbTable();
             } catch (\Exception $e) {
                 Debug::writeToFile([
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $e->getMessage(),
-                    "TABLE" => $authorTableEntity->getDBTableName()
-                ], "AuthorTable::createDbTable", "/upload/logs/dd.tools.install.log");
+                    "TABLE" => $maintenanceTableEntity->getDBTableName()
+                ], "MaintenanceTable::createDbTable", "/upload/logs/dd.tools.install.log");
             }
         }
     }
@@ -198,7 +198,7 @@ class DD_Tools extends CModule
         Loader::includeModule("iblock");
 
         Application::getConnection(DataTable::getConnectionName())->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\DataTable")->getDBTableName());
-        Application::getConnection(DataTable::getConnectionName())->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\AuthorTable")->getDBTableName());
+        Application::getConnection(DataTable::getConnectionName())->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\MaintenanceTable")->getDBTableName());
 
         Option::delete($this->MODULE_ID);
     }
@@ -226,6 +226,7 @@ class DD_Tools extends CModule
         $eventManager->registerEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
         // модули
         $eventManager->registerEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", "get");
+        $eventManager->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeAdd", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
         $eventManager->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
 
         return true;
@@ -254,6 +255,7 @@ class DD_Tools extends CModule
         $eventManager->unRegisterEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
         // модули
         $eventManager->unRegisterEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", "get");
+        $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeAdd", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
         $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
 
         return true;

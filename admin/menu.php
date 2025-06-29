@@ -39,6 +39,22 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
             "items" => []
         ];
 
+        // План технического обслуживания
+        $arMaintenanceMenu = [
+            "text" => Loc::getMessage("DD_TOOLS_MENU_MAINTENANCE_TEXT"),
+            "title" => Loc::getMessage("DD_TOOLS_MENU_MAINTENANCE_TITLE"),
+            "icon" => "extension_menu_icon",
+            "page_icon" => "extension_menu_icon",
+            "items_id" => "menu_dd_tools_3",
+            "menu_id" => "global_menu_dd_tools_3",
+            "url" => "dd_maintenance_list.php?lang=" . LANGUAGE_ID . "&mid=dd.tools",
+            "more_url" => [
+                "dd_maintenance_edit.php", // можно также добавить GET параметры, если нужно
+            ],
+            "sort" => 100,
+            "items" => []
+        ];
+
         // Первое меню
         $arMenu1 = [
             "text" => Loc::getMessage("DD_TOOLS_MENU_TEXT"),
@@ -85,6 +101,8 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
         if ($POST_RIGHT_MAIN == "W") {
             $arGlobalMenu["global_menu_dd"]["items"]["dd.tools_set"] = $arSettingsMenu;
         }
+        $arGlobalMenu["global_menu_dd"]["items"]["dd.tools_main"] = $arMaintenanceMenu;
+
         $arGlobalMenu["global_menu_dd"]["items"]["dd.tools"] = $arMenu1;
     }
 }

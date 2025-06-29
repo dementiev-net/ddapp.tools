@@ -1,4 +1,6 @@
 <?php
+$MESS["DD_TOOLS_TAB1"] = "Настройки";
+$MESS["DD_TOOLS_TAB1_TITLE"] = "Настройка параметров модуля";
 $MESS["DD_TOOLS_TAB2"] = "Логирование";
 $MESS["DD_TOOLS_TAB2_TITLE"] = "Настройка логирования модуля";
 $MESS["DD_TOOLS_TAB3"] = "Свободное место";
@@ -8,6 +10,9 @@ $MESS["DD_TOOLS_BLOCK1"] = "Основные настройки";
 $MESS["DD_TOOLS_BLOCK2"] = "Настройки ротации";
 $MESS["DD_TOOLS_BLOCK3"] = "Настройки email уведомлений при критических ошибках";
 $MESS['DD_TOOLS_BLOCK4'] = "Настройки ограничения места";
+$MESS['DD_TOOLS_BLOCK5'] = "План обслуживания";
+
+$MESS["DD_TOOLS_MAN_PERIOD"] = "Периодичность обслуживания, дни";
 
 $MESS["DD_TOOLS_LOG_ENABLED"] = "Активность";
 $MESS["DD_TOOLS_LOG_MIN_LEVEL"] = "Минимальный уровень логирования";

@@ -4,8 +4,9 @@ use Bitrix\Main\Loader;
 
 Loader::registerAutoLoadClasses("dd.tools", [
 
-        // Основной класс модуля
+        // Классы
         "DD\\Tools\\Main" => "lib/Main.php",
+        "DD\\Tools\\Maintenance" => "lib/Maintenance.php",
 
         // Классы событий
         "DD\\Tools\\Events" => "lib/Events.php",
@@ -16,7 +17,7 @@ Loader::registerAutoLoadClasses("dd.tools", [
 
         // ORM сущности
         "DD\\Tools\\Entity\\DataTable" => "lib/entity/DataTable.php",
-        "DD\\Tools\\Entity\\AuthorTable" => "lib/entity/AuthorTable.php",
+        "DD\\Tools\\Entity\\MaintenanceTable" => "lib/entity/MaintenanceTable.php",
 
         // Агенты
         "DD\\Tools\\superAgent" => "lib/agents/SuperAgent.php",

@@ -6,7 +6,7 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Type\DateTime;
 use DD\Tools\Entity\DataTable;
-use DD\Tools\Entity\AuthorTable;
+use DD\Tools\Entity\MaintenanceTable;
 
 class DataInstaller
 {
@@ -26,7 +26,7 @@ class DataInstaller
         Loader::includeModule("iblock");
 
         $this->addDefaultData();
-        $this->addDefaultAuthors();
+        $this->addDefaultMaintenance();
         $this->addIblockElements();
 
         return true;
@@ -37,12 +37,12 @@ class DataInstaller
      */
     private function addDefaultData()
     {
-        $testElements = [
-            ["ACTIVE" => "N", "SITE" => "[\"s1\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"],
-            ["ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner2.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self", "AUTHOR_ID" => "1"]
+        $defaultElements = [
+            ["ACTIVE" => "N", "SITE" => "[\"s1\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self"],
+            ["ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner2.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self"]
         ];
 
-        foreach ($testElements as $elementData) {
+        foreach ($defaultElements as $elementData) {
 
             $result = DataTable::add($elementData);
 
@@ -59,23 +59,27 @@ class DataInstaller
     /**
      * @return void
      */
-    private function addDefaultAuthors()
+    private function addDefaultMaintenance()
     {
-        $testElements = [
-            ["NAME" => "Иван", "LAST_NAME" => "Иванов"],
-            ["NAME" => "Иван2", "LAST_NAME" => "Иванов2"]
+        $defaultElements = [
+            ["NAME" => "Проверка резервных копий", "LINK" => "/bitrix/admin/dump.php", "TYPE" => "SCHEDULED", "ACTIVE" => "Y", "DATE_CREATE" => new DateTime(date("d.m.Y H:i:s")), "DATE_MODIFY" => new DateTime(date("d.m.Y H:i:s"))],
+            ["NAME" => "Обновление системы", "LINK" => "/bitrix/admin/update_system.php", "TYPE" => "SCHEDULED", "ACTIVE" => "Y", "DATE_CREATE" => new DateTime(date("d.m.Y H:i:s")), "DATE_MODIFY" => new DateTime(date("d.m.Y H:i:s"))],
+            ["NAME" => "Анализ производительности", "LINK" => "/bitrix/admin/perfmon_panel.php", "TYPE" => "SCHEDULED", "ACTIVE" => "Y", "DATE_CREATE" => new DateTime(date("d.m.Y H:i:s")), "DATE_MODIFY" => new DateTime(date("d.m.Y H:i:s"))],
+            ["NAME" => "Проверка логов ошибок", "LINK" => "/bitrix/admin/event_log.php", "TYPE" => "SCHEDULED", "ACTIVE" => "Y", "DATE_CREATE" => new DateTime(date("d.m.Y H:i:s")), "DATE_MODIFY" => new DateTime(date("d.m.Y H:i:s"))],
+            ["NAME" => "Проверка модулей", "LINK" => "/bitrix/admin/module_admin.php", "TYPE" => "SCHEDULED", "ACTIVE" => "Y", "DATE_CREATE" => new DateTime(date("d.m.Y H:i:s")), "DATE_MODIFY" => new DateTime(date("d.m.Y H:i:s"))],
+            ["NAME" => "Очистка кеша", "LINK" => "/bitrix/admin/cache.php", "TYPE" => "SCHEDULED", "ACTIVE" => "Y", "DATE_CREATE" => new DateTime(date("d.m.Y H:i:s")), "DATE_MODIFY" => new DateTime(date("d.m.Y H:i:s"))],
         ];
 
-        foreach ($testElements as $elementData) {
+        foreach ($defaultElements as $elementData) {
 
-            $result = AuthorTable::add($elementData);
+            $result = MaintenanceTable::add($elementData);
 
             if (!$result->isSuccess()) {
                 Debug::writeToFile([
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERRORS" => $result->getErrorMessages(),
                     "FIELDS" => $elementData,
-                ], "AuthorTable::add", "/upload/logs/dd.tools.install.log");
+                ], "MaintenanceTable::add", "/upload/logs/dd.tools.install.log");
             }
         }
     }
@@ -91,20 +95,16 @@ class DataInstaller
             return false;
         }
 
-        $testElements = [
-            [
-                "NAME" => "Первая новость DD Tools", "CODE" => "first_news_dd_tools", "PREVIEW_TEXT" => "Краткое описание первой новости для тестирования модуля DD Tools", "DETAIL_TEXT" => "Подробное описание первой новости. Здесь может быть много текста с различными подробностями о функционале модуля DD Tools.",
-                "PROPERTIES" => ["AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => ["новости", "dd.tools", "модуль"], "RATING" => 5, "SHOW_ON_MAIN" => "Да"]
-            ], [
-                "NAME" => "Обновление функционала", "CODE" => "functionality_update", "PREVIEW_TEXT" => "Информация о новых возможностях модуля DD Tools", "DETAIL_TEXT" => "В новой версии модуля DD Tools добавлены дополнительные функции для работы с контентом и улучшена производительность.",
-                "PROPERTIES" => ["AUTHOR" => "Анна Сидорова", "SOURCE" => "Блог разработчиков", "TAGS" => ["обновление", "функционал", "производительность"], "RATING" => 4, "SHOW_ON_MAIN" => "Да"]
-            ], [
-                "NAME" => "Руководство по установке", "CODE" => "installation_guide", "PREVIEW_TEXT" => "Пошаговая инструкция по установке и настройке модуля", "DETAIL_TEXT" => "Данное руководство поможет вам правильно установить и настроить модуль DD Tools на вашем сайте. Следуйте инструкциям для корректной работы.",
-                "PROPERTIES" => ["AUTHOR" => "Техническая поддержка", "SOURCE" => "Документация", "TAGS" => ["установка", "настройка", "инструкция"], "RATING" => 3, "SHOW_ON_MAIN" => "Нет"]
-            ]
+        $defaultElements = [
+            ["NAME" => "Первая новость DD Tools", "CODE" => "first_news_dd_tools", "PREVIEW_TEXT" => "Краткое описание первой новости для тестирования модуля DD Tools", "DETAIL_TEXT" => "Подробное описание первой новости. Здесь может быть много текста с различными подробностями о функционале модуля DD Tools.",
+                "PROPERTIES" => ["AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => ["новости", "dd.tools", "модуль"], "RATING" => 5, "SHOW_ON_MAIN" => "Да"]],
+            ["NAME" => "Обновление функционала", "CODE" => "functionality_update", "PREVIEW_TEXT" => "Информация о новых возможностях модуля DD Tools", "DETAIL_TEXT" => "В новой версии модуля DD Tools добавлены дополнительные функции для работы с контентом и улучшена производительность.",
+                "PROPERTIES" => ["AUTHOR" => "Анна Сидорова", "SOURCE" => "Блог разработчиков", "TAGS" => ["обновление", "функционал", "производительность"], "RATING" => 4, "SHOW_ON_MAIN" => "Да"]],
+            ["NAME" => "Руководство по установке", "CODE" => "installation_guide", "PREVIEW_TEXT" => "Пошаговая инструкция по установке и настройке модуля", "DETAIL_TEXT" => "Данное руководство поможет вам правильно установить и настроить модуль DD Tools на вашем сайте. Следуйте инструкциям для корректной работы.",
+                "PROPERTIES" => ["AUTHOR" => "Техническая поддержка", "SOURCE" => "Документация", "TAGS" => ["установка", "настройка", "инструкция"], "RATING" => 3, "SHOW_ON_MAIN" => "Нет"]]
         ];
 
-        foreach ($testElements as $elementData) {
+        foreach ($defaultElements as $elementData) {
             $this->addIblockElement($iblockId, $elementData);
         }
     }

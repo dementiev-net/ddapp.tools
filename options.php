@@ -19,45 +19,16 @@ Loader::includeModule($module_id);
 $aTabs = [
     [
         "DIV" => "TAB1", // Для идентификации (используется для javascript)
-        "TAB" => "Настройки",
-        "TITLE" => "Настройка параметров модуля",
+        "TAB" => Loc::getMessage("DD_TOOLS_TAB1"),
+        "TITLE" => Loc::getMessage("DD_TOOLS_TAB1_TITLE"),
         "OPTIONS" => [
-            "Название секции checkbox",
+            Loc::getMessage("DD_TOOLS_BLOCK5"),
             [
-                "hmarketing_checkbox", // Имя элемента формы, для хранения в бд
-                "Поясняющий текс элемента checkbox",
-                "Y",
-                ["checkbox"],
+                "maint_period",
+                Loc::getMessage("DD_TOOLS_MAN_PERIOD"),
+                "30",
+                ["text", 5, 50]
             ],
-            "Название секции text",
-            [
-                "hmarketing_text",
-                "Поясняющий текс элемента text",
-                "Жми!",
-                ["text", 10, 50]
-            ],
-            "Название секции selectbox",
-            [
-                "hmarketing_selectbox",
-                "Поясняющий текс элемента selectbox",
-                "460",
-                ["selectbox", [
-                    "460" => "460Х306",
-                    "360" => "360Х242",
-                ]]
-            ],
-            "Название секции multiselectbox",
-            [
-                "hmarketing_multiselectbox",
-                "Поясняющий текс элемента multiselectbox",
-                "left, bottom",
-                ["multiselectbox", [
-                    "left" => "Лево",
-                    "right" => "Право",
-                    "top" => "Верх",
-                    "bottom" => "Низ",
-                ]]
-            ]
         ]
     ], [
         "DIV" => "TAB2",

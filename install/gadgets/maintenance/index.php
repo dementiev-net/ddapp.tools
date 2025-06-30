@@ -28,9 +28,9 @@ $class = $isCompleted ? "completed" : "incomplete";
 <div class="gadget-content maintenance <?= $class ?>" id="maintenance">
     <div class="header">
         <?php if ($lastCompletionDate) { ?>
-            <h4><?= Loc::getMessage("DD_TOOLS_INFO_DONE") ?>: <?= FormatDate("d.m.Y H:i", MakeTimeStamp($lastCompletionDate)) ?></h4>
+            <h4><?= Loc::getMessage("DD_MAINT_INFO_DONE") ?>: <?= FormatDate("d.m.Y H:i", MakeTimeStamp($lastCompletionDate)) ?></h4>
         <?php } else { ?>
-            <?= Loc::getMessage("DD_TOOLS_INFO_NONE") ?>
+            <?= Loc::getMessage("DD_MAINT_INFO_NONE") ?>
         <?php } ?>
     </div>
     <div class="items-list">
@@ -44,11 +44,11 @@ $class = $isCompleted ? "completed" : "incomplete";
                     <?php if ($item["LINK"]): ?>
                         <a href="<?= htmlspecialchars($item["LINK"]) ?>"
                            class="item-link" target="_blank">
-                            <?= htmlspecialchars($item["NAME"]) ?> (<span style='color: <?= Loc::getMessage("DD_TOOLS_INFO_TYPE_COLOR")[$item["TYPE"]] ?>'><?= Loc::getMessage("DD_TOOLS_INFO_TYPE")[$item["TYPE"]] ?></span>)
+                            <?= htmlspecialchars($item["NAME"]) ?> (<span style='color: <?= Loc::getMessage("DD_MAINT_INFO_TYPE_COLOR")[$item["TYPE"]] ?>'><?= Loc::getMessage("DD_MAINT_INFO_TYPE")[$item["TYPE"]] ?></span>)
                         </a>
                     <?php else: ?>
                         <span class="item-name">
-                            <?= htmlspecialchars($item["NAME"]) ?> (<span style='color: <?= Loc::getMessage("DD_TOOLS_INFO_TYPE_COLOR")[$item["TYPE"]] ?>'><?= Loc::getMessage("DD_TOOLS_INFO_TYPE")[$item["TYPE"]] ?></span>)
+                            <?= htmlspecialchars($item["NAME"]) ?> (<span style='color: <?= Loc::getMessage("DD_MAINT_INFO_TYPE_COLOR")[$item["TYPE"]] ?>'><?= Loc::getMessage("DD_MAINT_INFO_TYPE")[$item["TYPE"]] ?></span>)
                         </span>
                     <?php endif; ?>
                 </div>
@@ -99,10 +99,10 @@ $class = $isCompleted ? "completed" : "incomplete";
                                 BX.addClass(widget, "completed");
 
                                 if (response.completion_date) {
-                                    header.innerHTML = "<h4><?= Loc::getMessage("DD_TOOLS_INFO_DONE") ?>: " + response.completion_date + "</h4>";
+                                    header.innerHTML = "<h4><?= Loc::getMessage("DD_MAINT_INFO_DONE") ?>: " + response.completion_date + "</h4>";
                                 }
                             } else {
-                                header.innerHTML = "<?= Loc::getMessage("DD_TOOLS_INFO_NONE") ?>";
+                                header.innerHTML = "<?= Loc::getMessage("DD_MAINT_INFO_NONE") ?>";
 
                                 BX.removeClass(widget, "completed");
                                 BX.addClass(widget, "incomplete");

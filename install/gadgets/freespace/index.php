@@ -37,22 +37,22 @@ if ($typeFilesystem == 2) {
         <table class="bx-gadgets-info-site-table" cellspacing="0">
             <tbody>
             <tr>
-                <td class="bx-gadget-gray"><?= Loc::getMessage("DD_TOOLS_ALL_SPACE") ?>:</td>
+                <td class="bx-gadget-gray"><?= Loc::getMessage("DD_DISK_ALL_SPACE") ?>:</td>
                 <td><?= FileHelper::formatBytes($totalSpace) ?></td>
             </tr>
             <?php if ($busyPlace) { ?>
                 <tr>
-                    <td class="bx-gadget-gray"><?= Loc::getMessage("DD_TOOLS_BUSY_SPACE") ?>:</td>
+                    <td class="bx-gadget-gray"><?= Loc::getMessage("DD_DISK_BUSY_SPACE") ?>:</td>
                     <td><?= FileHelper::formatBytes($busyPlace) ?></td>
                 </tr>
             <?php } ?>
             <tr>
-                <td class="bx-gadget-gray"><?= Loc::getMessage("DD_TOOLS_FREE_SPACE") ?>:</td>
+                <td class="bx-gadget-gray"><?= Loc::getMessage("DD_DISK_FREE_SPACE") ?>:</td>
                 <td><?= FileHelper::formatBytes($freeSpace) ?></td>
             </tr>
             <?php if ($wantSpace) { ?>
                 <tr>
-                    <td class="bx-gadget-gray"><?= Loc::getMessage("DD_TOOLS_WANT_SPACE") ?>:</td>
+                    <td class="bx-gadget-gray"><?= Loc::getMessage("DD_DISK_WANT_SPACE") ?>:</td>
                     <td><?= FileHelper::formatBytes($wantSpace) ?></td>
                 </tr>
             <?php } ?>

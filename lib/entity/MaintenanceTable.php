@@ -87,11 +87,11 @@ class MaintenanceTable extends DataManager
         }
 
         if (strlen($value) === 0) {
-            $result[] = Loc::getMessage("DD_MAINTENANCE_ENTITY_NAME_REQUIRED");
+            $result[] = Loc::getMessage("DD_MAINT_ENTITY_NAME_REQUIRED");
         }
 
         if (strlen($value) > 255) {
-            $result[] = Loc::getMessage("DD_MAINTENANCE_ENTITY_NAME_TOO_LONG");
+            $result[] = Loc::getMessage("DD_MAINT_ENTITY_NAME_TOO_LONG");
         }
 
         return $result;
@@ -114,7 +114,7 @@ class MaintenanceTable extends DataManager
         }
 
         if (!in_array($value, ["Y", "N"])) {
-            $result[] = Loc::getMessage("DD_MAINTENANCE_ENTITY_ACTIVE_INVALID");
+            $result[] = Loc::getMessage("DD_MAINT_ENTITY_ACTIVE_INVALID");
         }
 
         return $result;
@@ -137,7 +137,7 @@ class MaintenanceTable extends DataManager
         }
 
         if ($value < 1 || $value > 100) {
-            $result[] = Loc::getMessage("DD_MAINTENANCE_ENTITY_PRIORITY_INVALID");
+            $result[] = Loc::getMessage("DD_MAINT_ENTITY_PRIORITY_INVALID");
         }
 
         return $result;
@@ -161,7 +161,7 @@ class MaintenanceTable extends DataManager
         }
 
         if (!empty($value) && !in_array($value, $allowedTypes)) {
-            $result[] = Loc::getMessage("DD_MAINTENANCE_ENTITY_TYPE_INVALID");
+            $result[] = Loc::getMessage("DD_MAINT_ENTITY_TYPE_INVALID");
         }
 
         return $result;

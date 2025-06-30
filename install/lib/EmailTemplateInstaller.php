@@ -11,7 +11,7 @@ class EmailTemplateInstaller
 {
     private $moduleId;
     private const CRITICAL_EMAIL_TEMPLATE_CODE = "DD_TOOLS_CRITICAL_ERROR";
-    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DD_TOOLS_FREE_SPACE";
+    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DD_DISK_FREE_SPACE";
 
     public function __construct($moduleId)
     {

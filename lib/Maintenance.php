@@ -15,7 +15,7 @@ class Maintenance
     public static function getMaintenanceItems()
     {
         $items = MaintenanceTable::getList(array(
-            "select" => array("ID", "NAME", "LINK", "TYPE", "STATUS"),
+            "select" => array("ID", "NAME", "LINK", "TYPE"),
             "filter" => array("ACTIVE" => "Y"),
             "order" => array("PRIORITY" => "ASC")
         ))->fetchAll();

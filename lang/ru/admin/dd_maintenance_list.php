@@ -8,7 +8,6 @@ $MESS["DD_MAINTENANCE_DESCRIPTION_FIELD"] = "Описание";
 $MESS["DD_MAINTENANCE_ACTIVE_FIELD"] = "Активность";
 $MESS["DD_MAINTENANCE_PRIORITY_FIELD"] = "Приоритет";
 $MESS["DD_MAINTENANCE_TYPE_FIELD"] = "Тип";
-$MESS["DD_MAINTENANCE_STATUS_FIELD"] = "Статус";
 $MESS["DD_MAINTENANCE_DATE_CREATE_FIELD"] = "Дата создания";
 $MESS["DD_MAINTENANCE_DATE_MODIFY_FIELD"] = "Дата изменения";
 
@@ -30,12 +29,6 @@ $MESS["DD_MAINTENANCE_FIELD_VALUE_TYPE_COLOR"] = [
     "SCHEDULED" => "green",
     "EMERGENCY" => "red",
     "PREVENTIVE" => "gray"
-];
-$MESS["DD_MAINTENANCE_FIELD_VALUE_STATUS"] = [
-    "NEW" => "Новый",
-    "IN_PROGRESS" => "В работе",
-    "COMPLETED" => "Завершено",
-    "CANCELLED" => "Отменено"
 ];
 $MESS["DD_MAINTENANCE_FIELD_VALUE_PRIOR"] = "из 100";
 

@@ -55,11 +55,6 @@ class MaintenanceTable extends DataManager
                 "size" => 50,
                 "validation" => [__CLASS__, "validateType"]
             ]),
-            "STATUS" => new StringField("STATUS", [
-                "size" => 20,
-                "validation" => [__CLASS__, "validateStatus"],
-                "default_value" => "NEW"
-            ]),
             "DATE_CREATE" => new DatetimeField("DATE_CREATE", [
                 "required" => true,
                 "default_value" => function () {
@@ -173,30 +168,6 @@ class MaintenanceTable extends DataManager
     }
 
     /**
-     * Валидация поля STATUS
-     * @param $value
-     * @param $primary
-     * @param $row
-     * @param $id
-     * @return array
-     */
-    public static function validateStatus($value = null, $primary = null, $row = null, $id = null)
-    {
-        $result = [];
-        $allowedStatuses = ["NEW", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
-
-        if ($value === null) {
-            return $result;
-        }
-
-        if (!in_array($value, $allowedStatuses)) {
-            $result[] = Loc::getMessage("DD_MAINTENANCE_ENTITY_STATUS_INVALID");
-        }
-
-        return $result;
-    }
-
-    /**
      * Обработчик события перед добавлением записи
      * @param \Bitrix\Main\Entity\Event $event
      * @return \Bitrix\Main\Entity\EventResult
@@ -241,18 +212,6 @@ class MaintenanceTable extends DataManager
     public static function getActive($parameters = [])
     {
         $parameters["filter"]["ACTIVE"] = "Y";
-        return static::getList($parameters);
-    }
-
-    /**
-     * Получить записи по статусу
-     * @param string $status
-     * @param array $parameters
-     * @return \Bitrix\Main\DB\Result
-     */
-    public static function getByStatus($status, $parameters = [])
-    {
-        $parameters["filter"]["STATUS"] = $status;
         return static::getList($parameters);
     }
 

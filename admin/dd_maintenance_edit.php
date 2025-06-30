@@ -47,8 +47,7 @@ $arFields = [
     "DESCRIPTION" => "",
     "ACTIVE" => "Y",
     "PRIORITY" => 1,
-    "TYPE" => "SCHEDULED",
-    "STATUS" => "NEW",
+    "TYPE" => "SCHEDULED"
 ];
 
 $arErrors = [];
@@ -76,7 +75,6 @@ if ($request->isPost() && check_bitrix_sessid()) {
     $arFields["ACTIVE"] = $request->getPost("ACTIVE") === "Y" ? "Y" : "N";
     $arFields["PRIORITY"] = intval($request->getPost("PRIORITY"));
     $arFields["TYPE"] = trim($request->getPost("TYPE"));
-    $arFields["STATUS"] = trim($request->getPost("STATUS"));
 
     // Валидация
     if (empty($arFields["NAME"])) $arErrors[] = Loc::getMessage("DD_MAINTENANCE_MESSAGE_ERROR_NAME_EMPTY");
@@ -212,17 +210,6 @@ echo $context->Show();
                     <option value="SCHEDULED" <?php if ($arFields["TYPE"] === "SCHEDULED") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE")["SCHEDULED"] ?></option>
                     <option value="EMERGENCY" <?php if ($arFields["TYPE"] === "EMERGENCY") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE")["EMERGENCY"] ?></option>
                     <option value="PREVENTIVE" <?php if ($arFields["TYPE"] === "PREVENTIVE") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE")["PREVENTIVE"] ?></option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td><?= Loc::getMessage("DD_MAINTENANCE_STATUS_FIELD") ?>:</td>
-            <td>
-                <select name="STATUS">
-                    <option value="NEW" <?php if ($arFields["STATUS"] === "NEW") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_STATUS")["NEW"] ?></option>
-                    <option value="IN_PROGRESS" <?php if ($arFields["STATUS"] === "IN_PROGRESS") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_STATUS")["IN_PROGRESS"] ?></option>
-                    <option value="COMPLETED" <?php if ($arFields["STATUS"] === "COMPLETED") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_STATUS")["COMPLETED"] ?></option>
-                    <option value="CANCELLED" <?php if ($arFields["STATUS"] === "CANCELLED") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_STATUS")["CANCELLED"] ?></option>
                 </select>
             </td>
         </tr>

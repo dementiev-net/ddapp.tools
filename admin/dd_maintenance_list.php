@@ -35,7 +35,6 @@ $arFilterFields = [
     "find_name",
     "find_active",
     "find_type",
-    "find_status",
 ];
 
 $lAdmin->InitFilter($arFilterFields);
@@ -51,16 +50,12 @@ if (!empty($find_active)) {
 if (!empty($find_type)) {
     $arFilter["TYPE"] = $find_type;
 }
-if (!empty($find_status)) {
-    $arFilter["STATUS"] = $find_status;
-}
 
 // Поля фильтра для нового интерфейса
 $filterFields = [
     ["id" => "NAME", "name" => Loc::getMessage("DD_MAINTENANCE_NAME_FIELD"), "filterable" => "?", "quickSearch" => "?", "default" => true],
     ["id" => "ACTIVE", "name" => Loc::getMessage("DD_MAINTENANCE_ACTIVE_FIELD"), "filterable" => "", "type" => "list", "items" => array_merge(["" => Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_ALL")], Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_ACTIVE")), "default" => true],
     ["id" => "TYPE", "name" => Loc::getMessage("DD_MAINTENANCE_TYPE_FIELD"), "filterable" => "", "type" => "list", "items" => Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE"), "default" => true],
-    ["id" => "STATUS", "name" => Loc::getMessage("DD_MAINTENANCE_STATUS_FIELD"), "filterable" => "", "type" => "list", "items" => Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_STATUS"), "default" => true],
     //["id" => "DATE_CREATE", "name" => "Дата создания", "filterable" => "", "type" => "date", "default" => true],
 ];
 
@@ -121,7 +116,6 @@ $lAdmin->AddHeaders([
     ["id" => "ACTIVE", "content" => Loc::getMessage("DD_MAINTENANCE_ACTIVE_FIELD"), "sort" => "ACTIVE", "default" => true, "align" => "center"],
     ["id" => "PRIORITY", "content" => Loc::getMessage("DD_MAINTENANCE_PRIORITY_FIELD"), "sort" => "PRIORITY", "default" => true, "align" => "center"],
     ["id" => "TYPE", "content" => Loc::getMessage("DD_MAINTENANCE_TYPE_FIELD"), "sort" => "TYPE", "default" => true, "align" => "center"],
-    ["id" => "STATUS", "content" => Loc::getMessage("DD_MAINTENANCE_STATUS_FIELD"), "sort" => "STATUS", "default" => true, "align" => "center"],
     ["id" => "DATE_CREATE", "content" => Loc::getMessage("DD_MAINTENANCE_DATE_CREATE_FIELD"), "sort" => "DATE_CREATE", "default" => false],
     ["id" => "DATE_MODIFY", "content" => Loc::getMessage("DD_MAINTENANCE_DATE_MODIFY_FIELD"), "sort" => "DATE_MODIFY", "default" => false],
 ]);
@@ -153,7 +147,6 @@ while ($arRes = $rsData->NavNext(true, "f_")) {
     $row->AddViewField("ACTIVE", "<span style='color: " . Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_ACTIVE_COLOR")[$f_ACTIVE] . "'>" . Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_ACTIVE")[$f_ACTIVE] . "</span>");
     $row->AddViewField("PRIORITY", $f_PRIORITY . " " . Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_PRIOR"));
     $row->AddViewField("TYPE", "<span style='color: " . Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE_COLOR")[$f_TYPE] . "'>" . Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE")[$f_TYPE] . "</span>");
-    $row->AddViewField("STATUS", Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_STATUS")[$f_STATUS]);
     $row->AddViewField("DATE_CREATE", $f_DATE_CREATE ? FormatDate("d.m.Y H:i", MakeTimeStamp($f_DATE_CREATE)) : "");
     $row->AddViewField("DATE_MODIFY", $f_DATE_MODIFY ? FormatDate("d.m.Y H:i", MakeTimeStamp($f_DATE_MODIFY)) : "");
 

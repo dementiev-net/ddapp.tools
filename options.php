@@ -1,4 +1,30 @@
 <?php
+/**
+ * CControllerClient::GetInstalledOptions($module_id);
+ * формат массива, элементы:
+ * 1) ID опции (id инпута)(Берется с помощью COption::GetOptionString($module_id, $Option[0], $Option[2]) если есть)
+ * 2) Отображаемое имя опции
+ * 3) Значение по умолчанию (так же берется если первый элемент равен пустой строке), зависит от типа:
+ *      checkbox - Y если выбран
+ *      text/password - htmlspecialcharsbx($val)
+ *      selectbox - одно из значений, указанных в массиве опций
+ *      multiselectbox - значения через запятую, указанные в массиве опций
+ * 4) Тип поля (массив)
+ *      1) Тип (multiselectbox, textarea, statictext, statichtml, checkbox, text, password, selectbox, note)
+ *      2) Зависит от типа:
+ *         text/password - атрибут size
+ *         textarea - атрибут rows
+ *         selectbox/multiselectbox - массив опций формата ["Значение"=>"Название"]
+ *      3) Зависит от типа:
+ *         checkbox - доп атрибут для input (просто вставляется строкой в атрибуты input)
+ *         textarea - атрибут cols
+ *
+ *      noautocomplete) для text/password, если true то атрибут autocomplete="new-password"
+ *
+ * 5) Disabled = 'Y' || 'N';
+ * 6) $sup_text - ??? текст маленького красного примечания над названием опции
+ * 7) $isChoiceSites - Нужно ли выбрать сайт??? флаг Y или N
+ */
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
@@ -26,122 +52,67 @@ $aTabs = [
         "TAB" => Loc::getMessage("DD_TOOLS_TAB1"),
         "TITLE" => Loc::getMessage("DD_TOOLS_TAB1_TITLE"),
         "OPTIONS" => [
-            [
-                "maint_period",
-                Loc::getMessage("DD_TOOLS_MAINT_PERIOD"),
-                "30",
-                ["text", 5, 50]
-            ], [
-                "cache_period",
-                Loc::getMessage("DD_TOOLS_CACHE_PERIOD"),
-                "NO",
-                ["selectbox", Loc::getMessage("DD_TOOLS_CACHE_PERIOD_DEFAULT")]
-            ], [
-                "cache_size",
-                "<span style='color: #999;'>" . Loc::getMessage("DD_TOOLS_CACHE_SIZE") . $cacheSize . "</span>",
-                "",
-                ["custom"]
-            ],
+            ["maint_period", Loc::getMessage("DD_TOOLS_MAINT_PERIOD"), 30, ["text", 5, 50]],
+            ["cache_period", Loc::getMessage("DD_TOOLS_CACHE_PERIOD"), 0, ["selectbox", Loc::getMessage("DD_TOOLS_CACHE_PERIOD_DEFAULT")]],
+            ["", "", Loc::getMessage("DD_TOOLS_CACHE_SIZE") . $cacheSize, ["statichtml"]],
         ]
     ], [
         "DIV" => "TAB2",
         "TAB" => Loc::getMessage("DD_TOOLS_TAB2"),
         "TITLE" => Loc::getMessage("DD_TOOLS_TAB2_TITLE"),
         "OPTIONS" => [
-            [
-                "log_enabled",
-                Loc::getMessage("DD_TOOLS_LOG_ENABLED"),
-                "Y",
-                ["checkbox"]
-            ], [
-                "log_min_level",
-                Loc::getMessage("DD_TOOLS_LOG_MIN_LEVEL"),
-                "1",
-                ["selectbox", Loc::getMessage("DD_TOOLS_LOG_MIN_LEVEL_DEFAULT")]
-            ], [
-                "log_path",
-                Loc::getMessage("DD_TOOLS_LOG_PATH"),
-                Loc::getMessage("DD_TOOLS_LOG_PATH_DEFAULT"),
-                ["text", 40, 50]
-            ], [
-                "log_date_format",
-                Loc::getMessage("DD_TOOLS_LOG_DATE_FORMAT"),
-                Loc::getMessage("DD_TOOLS_LOG_DATE_FORMAT_DEFAULT"),
-                ["text", 10, 50]
-            ],
+            ["log_enabled", Loc::getMessage("DD_TOOLS_LOG_ENABLED"), "Y", ["checkbox"]],
+            ["log_min_level", Loc::getMessage("DD_TOOLS_LOG_MIN_LEVEL"), 1, ["selectbox", Loc::getMessage("DD_TOOLS_LOG_MIN_LEVEL_DEFAULT")]],
+            ["log_path", Loc::getMessage("DD_TOOLS_LOG_PATH"), Loc::getMessage("DD_TOOLS_LOG_PATH_DEFAULT"), ["text", 40, 50]],
+            ["log_date_format", Loc::getMessage("DD_TOOLS_LOG_DATE_FORMAT"), Loc::getMessage("DD_TOOLS_LOG_DATE_FORMAT_DEFAULT"), ["text", 10, 50]],
             Loc::getMessage("DD_TOOLS_BLOCK2"),
-            [
-                "log_max_file_size",
-                Loc::getMessage("DD_TOOLS_LOG_MAX_FILE_SIZE"),
-                Loc::getMessage("DD_TOOLS_LOG_MAX_FILE_SIZE_DEFAULT"),
-                ["text", 10, 50]
-            ], [
-                "log_max_files",
-                Loc::getMessage("DD_TOOLS_LOG_MAX_FILES"),
-                Loc::getMessage("DD_TOOLS_LOG_MAX_FILES_DEFAULT"),
-                ["text", 5, 50]
-            ],
+            ["log_max_file_size", Loc::getMessage("DD_TOOLS_LOG_MAX_FILE_SIZE"), Loc::getMessage("DD_TOOLS_LOG_MAX_FILE_SIZE_DEFAULT"), ["text", 10, 50]],
+            ["log_max_files", Loc::getMessage("DD_TOOLS_LOG_MAX_FILES"), Loc::getMessage("DD_TOOLS_LOG_MAX_FILES_DEFAULT"), ["text", 5, 50]],
             Loc::getMessage("DD_TOOLS_BLOCK3"),
-            [
-                "log_email_enabled",
-                Loc::getMessage("DD_TOOLS_LOG_EMAIL_ENABLED"),
-                "Y",
-                ["checkbox"]
-            ], [
-                "log_email",
-                Loc::getMessage("DD_TOOLS_LOG_EMAIL"),
-                Loc::getMessage("DD_TOOLS_LOG_EMAIL_DEFAULT"),
-                ["text", 20, 50]
-            ],
+            ["log_email_enabled", Loc::getMessage("DD_TOOLS_LOG_EMAIL_ENABLED"), "Y", ["checkbox"]],
+            ["log_email", Loc::getMessage("DD_TOOLS_LOG_EMAIL"), Loc::getMessage("DD_TOOLS_LOG_EMAIL_DEFAULT"), ["text", 20, 50]],
+            ['note' => Loc::getMessage("DD_TOOLS_HELP_TAB2")],
         ]
     ], [
         "DIV" => "TAB3",
         "TAB" => Loc::getMessage("DD_TOOLS_TAB3"),
         "TITLE" => Loc::getMessage("DD_TOOLS_TAB3_TITLE"),
         "OPTIONS" => [
-            [
-                "disk_enabled",
-                Loc::getMessage("DD_TOOLS_DISK_ENABLED"),
-                "Y",
-                ["checkbox"]
-            ], [
-                "disk_delete_cache",
-                Loc::getMessage("DD_TOOLS_DISK_DELETE_CACHE"),
-                "Y",
-                ["checkbox"]
-            ],
+            ["disk_enabled", Loc::getMessage("DD_TOOLS_DISK_ENABLED"), "Y", ["checkbox"]],
+            ["disk_delete_cache", Loc::getMessage("DD_TOOLS_DISK_DELETE_CACHE"), "Y", ["checkbox"]],
             Loc::getMessage("DD_TOOLS_BLOCK3"),
-            [
-                "disk_email_enabled",
-                Loc::getMessage("DD_TOOLS_DISK_EMAIL_ENABLED"),
-                "Y",
-                ["checkbox"]
-            ], [
-                "disk_email",
-                Loc::getMessage("DD_TOOLS_DISK_EMAIL"),
-                Loc::getMessage("DD_TOOLS_DISK_EMAIL_DEFAULT"),
-                ["text", 20, 50]
-            ],
+            ["disk_email_enabled", Loc::getMessage("DD_TOOLS_DISK_EMAIL_ENABLED"), "Y", ["checkbox"]],
+            ["disk_email", Loc::getMessage("DD_TOOLS_DISK_EMAIL"), Loc::getMessage("DD_TOOLS_DISK_EMAIL_DEFAULT"), ["text", 20, 50]],
             Loc::getMessage("DD_TOOLS_BLOCK4"),
-            [
-                "disk_type_filesystem",
-                Loc::getMessage("DD_TOOLS_DISK_TYPE_FILESYSTEM"),
-                "1",
-                ["selectbox", Loc::getMessage("DD_TOOLS_DISK_TYPE_FILESYSTEM_DEFAULT")]
-            ], [
-                "disk_free_space",
-                Loc::getMessage("DD_TOOLS_DISK_FREE_SPACE"),
-                Loc::getMessage("DD_TOOLS_DISK_FREE_SPACE_DEFAULT"),
-                ["text", 5, 50]
-            ], [
-                "disk_all_space",
-                Loc::getMessage("DD_TOOLS_DISK_ALL_SPACE"),
-                Loc::getMessage("DD_TOOLS_DISK_ALL_SPACE_DEFAULT"),
-                ["text", 5, 50]
-            ],
+            ["disk_type_filesystem", Loc::getMessage("DD_TOOLS_DISK_TYPE_FILESYSTEM"), 1, ["selectbox", Loc::getMessage("DD_TOOLS_DISK_TYPE_FILESYSTEM_DEFAULT")]],
+            ["disk_free_space", Loc::getMessage("DD_TOOLS_DISK_FREE_SPACE"), Loc::getMessage("DD_TOOLS_DISK_FREE_SPACE_DEFAULT"), ["text", 5, 50]],
+            ["disk_all_space", Loc::getMessage("DD_TOOLS_DISK_ALL_SPACE"), Loc::getMessage("DD_TOOLS_DISK_ALL_SPACE_DEFAULT"), ["text", 5, 50]],
         ]
     ], [
         "DIV" => "TAB4",
+        "TAB" => Loc::getMessage("DD_TOOLS_TAB4"),
+        "TITLE" => Loc::getMessage("DD_TOOLS_TAB4_TITLE"),
+        "OPTIONS" => [
+            ["smtp_enabled", Loc::getMessage("DD_TOOLS_SMTP_ENABLED"), "Y", ["checkbox"]],
+            ["smtp_host", Loc::getMessage("DD_TOOLS_SMTP_HOST"), "smtp.yandex.ru", ["text", 40, 50]],
+            ["smtp_secure", Loc::getMessage("DD_TOOLS_SMTP_SMTP_SECURE"), "0", ["selectbox", Loc::getMessage("DD_TOOLS_SMTP_SMTP_SECURE_DEFAULT")]],
+            ["smtp_port", Loc::getMessage("DD_TOOLS_SMTP_PORT"), 465, ["text", 5, 50]],
+            Loc::getMessage("DD_TOOLS_BLOCK5"),
+            ["smtp_login", Loc::getMessage("DD_TOOLS_SMTP_LOGIN"), Loc::getMessage("DD_TOOLS_SMTP_EMAIL_SENDER_DEFAULT"), ["text", 20, 50]],
+            ["smtp_password", Loc::getMessage("DD_TOOLS_SMTP_PASSWORD"), "", ["text", 20, 50]],
+            ["smtp_email_sender", Loc::getMessage("DD_TOOLS_SMTP_EMAIL_SENDER"), Loc::getMessage("DD_TOOLS_SMTP_EMAIL_SENDER_DEFAULT"), ["text", 20, 50]],
+            ["smtp_name_sender", Loc::getMessage("DD_TOOLS_SMTP_NAME_SENDER"), Loc::getMessage("DD_TOOLS_SMTP_NAME_SENDER_DEFAULT"), ["text", 30, 50]],
+            Loc::getMessage("DD_TOOLS_BLOCK6"),
+            ["smtp_dkim_enabled", Loc::getMessage("DD_TOOLS_SMTP_DKIM_ENABLED"), "N", ["checkbox"]],
+            ["smtp_dkim_domain", Loc::getMessage("DD_TOOLS_SMTP_DKIM_DOMAIN"), Loc::getMessage("DD_TOOLS_SMTP_DKIM_DOMAIN_DEFAULT"), ["text", 40, 50]],
+            ["smtp_dkim_selector", Loc::getMessage("DD_TOOLS_SMTP_DKIM_SELECTOR"), Loc::getMessage("DD_TOOLS_SMTP_DKIM_SELECTOR_DEFAULT"), ["text", 40, 50]],
+            ["smtp_dkim_passphrase", Loc::getMessage("DD_TOOLS_SMTP_DKIM_PASSPHRASE"), "", ["text", 40, 50]],
+            ["smtp_dkim_private_key", Loc::getMessage("DD_TOOLS_SMTP_DKIM_PRIVATE_KEY"), Loc::getMessage("DD_TOOLS_SMTP_DKIM_PRIVATE_KEY_DEFAULT"), ["textarea", 15, 60]],
+            ["", "<a href='#' id='smtp_test'>" . Loc::getMessage("DD_TOOLS_SMTP_TEST") . "</a>", "<div id='smtp_test_result'>...</div>", ["statichtml"]],
+            ['note' => Loc::getMessage("DD_TOOLS_HELP_TAB4")],
+        ]
+    ], [
+        "DIV" => "TAB5",
         "TAB" => Loc::getMessage("MAIN_TAB_RIGHTS"),
         "TITLE" => Loc::getMessage("MAIN_TAB_TITLE_RIGHTS")
     ]
@@ -163,11 +134,14 @@ if ($request->isPost() && check_bitrix_sessid()) {
                 $optionValue = $request->getPost($arOption[0]);
 
                 // Метод getPost() не работает с input типа checkbox, для работы сделан этот костыль
+                if ($arOption[0] == "smtp_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "log_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "log_email_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "disk_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "disk_delete_cache") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "disk_email_enabled") $optionValue = $optionValue ?: "N";
+                if ($arOption[0] == "smtp_enabled") $optionValue = $optionValue ?: "N";
+                if ($arOption[0] == "smtp_dkim_enabled") $optionValue = $optionValue ?: "N";
                 // Настройка агента очистки кеша
                 if ($arOption[0] == "cache_period") {
 
@@ -199,7 +173,9 @@ if ($request->isPost() && check_bitrix_sessid()) {
 
                 // Устанавливаем выбранные значения параметров и сохраняем в базу данных, хранить можем только текст,
                 // значит если приходит массив, то разбиваем его через запятую, если не массив сохраняем как есть
-                Option::set($module_id, $arOption[0], is_array($optionValue) ? implode(",", $optionValue) : $optionValue);
+                if ($arOption[0]) {
+                    Option::set($module_id, $arOption[0], is_array($optionValue) ? implode(",", $optionValue) : $optionValue);
+                }
             }
 
             // Проверяем POST запрос, если инициатором выступила кнопка с name="default" сохраняем дефолтные
@@ -233,20 +209,9 @@ $tabControl->Begin();
           method="post">
 
         <?php foreach ($aTabs as $aTab) {
-
             if ($aTab["OPTIONS"]) {
                 $tabControl->BeginNextTab();
                 __AdmSettingsDrawList($module_id, $aTab["OPTIONS"]);
-                $help = Loc::getMessage("DD_TOOLS_HELP_" . $aTab["DIV"]);
-                if ($help) { ?>
-                    <tr>
-                        <td valign="top" width="100%" colspan="2">
-                            <?= BeginNote(); ?>
-                            <?= Loc::getMessage("DD_TOOLS_HELP_" . $aTab["DIV"]); ?>
-                            <?= EndNote(); ?>
-                        </td>
-                    </tr>
-                <?php }
             }
         }
 
@@ -262,6 +227,45 @@ $tabControl->Begin();
         <input class="adm-btn-save" type="submit" name="Update" value="<?= Loc::getMessage("DD_TOOLS_BTN_APPLY") ?>"/>
         <input type="submit" name="default" value="<?= Loc::getMessage("DD_TOOLS_BTN_DEFAULT") ?>"/>
     </form>
+
+<?php
+$ajaxPath = '';
+if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/dd.tools/")) {
+    $ajaxPath = "/bitrix/modules/dd.tools/ajax/smtp_test.php";
+} elseif (is_dir($_SERVER["DOCUMENT_ROOT"] . "/local/modules/dd.tools/")) {
+    $ajaxPath = "/local/modules/dd.tools/ajax/smtp_test.php";
+}
+?>
+
+    <script>
+        BX.ready(function () {
+            BX.bind(BX("smtp_test"), "click", function (event) {
+                event.preventDefault();
+                BX("smtp_test_result").innerHTML = "Проверка...";
+
+                BX.ajax({
+                    url: "<?= \CUtil::JSEscape($ajaxPath) ?>",
+                    method: "POST",
+                    dataType: "json",
+                    timeout: 30,
+                    data: {
+                        sessid: BX.bitrix_sessid()
+                    },
+                    onsuccess: function (result) {
+                        if (result.success) {
+                            BX("smtp_test_result").innerHTML = "<span style='color: green'>Успешно: " + result.message + "</span>";
+                        } else {
+                            BX("smtp_test_result").innerHTML = "<span style='color: red'>Ошибка: " + result.message + "</span>";
+                        }
+                        console.log("SMTP DEBUG:", result.debug);
+                    },
+                    onfailure: function () {
+                        BX("smtp_test_result").innerHTML = "Ошибка AJAX-запроса";
+                    }
+                });
+            });
+        });
+    </script>
 
 <?php
 $tabControl->End();

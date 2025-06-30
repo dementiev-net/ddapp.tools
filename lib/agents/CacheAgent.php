@@ -2,10 +2,10 @@
 
 namespace DD\Tools;
 
+use Bitrix\Main\IO\Directory;
 use DD\Tools\Helpers\LogHelper;
 use DD\Tools\Helpers\FileHelper;
 use DD\Tools\Helpers\CacheHelper;
-use Bitrix\Main\IO\Directory;
 
 class cacheAgent
 {

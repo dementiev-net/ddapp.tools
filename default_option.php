@@ -1,7 +1,6 @@
 <?php
 $dd_tools_default_option = [
-    "cache_period" => "NO",
-    "cache_size" => "",
+    "cache_period" => 0,
     "disk_all_space" => 0,
     "disk_delete_cache" => "Y",
     "disk_email" => "admin@yoursite.ru",
@@ -17,5 +16,17 @@ $dd_tools_default_option = [
     "log_max_files" => 20,
     "log_min_level" => 1,
     "log_path" => "/upload/logs/",
-    "maint_period" => 30
+    "maint_period" => 30,
+    "smtp_dkim_domain" => "yoursite.ru",
+    "smtp_dkim_enabled" => "N",
+    "smtp_dkim_passphrase" => "",
+    "smtp_dkim_private_key" => "-----BEGIN RSA PRIVATE KEY-----",
+    "smtp_dkim_selector" => "mail",
+    "smtp_email_sender" => "admin@yoursite.ru",
+    "smtp_enabled" => "Y",
+    "smtp_login" => "admin@yoursite.ru",
+    "smtp_name_sender" => "yoursite.ru",
+    "smtp_password" => "",
+    "smtp_host" => 465,
+    "smtp_secure" => ""
 ];

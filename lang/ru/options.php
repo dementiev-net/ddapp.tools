@@ -5,11 +5,15 @@ $MESS["DD_TOOLS_TAB2"] = "Логирование";
 $MESS["DD_TOOLS_TAB2_TITLE"] = "Настройка логирования модуля";
 $MESS["DD_TOOLS_TAB3"] = "Свободное место";
 $MESS["DD_TOOLS_TAB3_TITLE"] = "Настройка мониторинга остатка места на диске";
+$MESS["DD_TOOLS_TAB4"] = "SMTP почта";
+$MESS["DD_TOOLS_TAB4_TITLE"] = "Настройка отправки писем через SMTP";
 
 $MESS["DD_TOOLS_BLOCK1"] = "Основные настройки";
 $MESS["DD_TOOLS_BLOCK2"] = "Настройки ротации";
 $MESS["DD_TOOLS_BLOCK3"] = "Настройки email уведомлений при критических ошибках";
 $MESS['DD_TOOLS_BLOCK4'] = "Настройки ограничения места";
+$MESS['DD_TOOLS_BLOCK5'] = "Авторизация";
+$MESS['DD_TOOLS_BLOCK6'] = "Настройка DKIM подписи";
 
 $MESS["DD_TOOLS_MAINT_PERIOD"] = "Периодичность плана обслуживания, дни";
 $MESS["DD_TOOLS_CACHE_PERIOD"] = "Периодичность очистки кеша";
@@ -50,15 +54,40 @@ $MESS["DD_TOOLS_DISK_EMAIL"] = "E-Mail";
 $MESS["DD_TOOLS_DISK_EMAIL_DEFAULT"] = "admin@yoursite.ru";
 $MESS['DD_TOOLS_DISK_TYPE_FILESYSTEM'] = "Тип определения свободного места";
 $MESS['DD_TOOLS_DISK_TYPE_FILESYSTEM_DEFAULT'] = [
-    "1" => "Функции disk_free_space(), disk_total_space()",
-    "2" => "Функция обхода всех папок и файлов"
+    "1" => "Функции PHP",
+    "2" => "Функция обхода папок"
 ];;
 $MESS["DD_TOOLS_DISK_FREE_SPACE"] = "Необходимый запас свободного места, Мб";
 $MESS["DD_TOOLS_DISK_FREE_SPACE_DEFAULT"] = "3000";
 $MESS['DD_TOOLS_DISK_ALL_SPACE'] = "Всего выделено места, Мб";
 $MESS['DD_TOOLS_DISK_ALL_SPACE_DEFAULT'] = "0";
-$MESS['TYPE_FILESYSTEM_1'] = "Функции disk_free_space(), disk_total_space()";
-$MESS['TYPE_FILESYSTEM_2'] = "Функция обхода всех папок и файлов";
+$MESS['TYPE_FILESYSTEM_1'] = "Функции PHP";
+$MESS['TYPE_FILESYSTEM_2'] = "Функция обхода папок";
+
+$MESS["DD_TOOLS_SMTP_ENABLED"] = "Отправлять письма через SMTP";
+$MESS["DD_TOOLS_SMTP_HOST"] = "SMTP сервер";
+$MESS["DD_TOOLS_SMTP_SMTP_SECURE"] = "Тип защищенного соединения";
+$MESS["DD_TOOLS_SMTP_SMTP_SECURE_DEFAULT"] = [
+    "0" => "Без авторизации",
+    "1" => "SSL",
+    "2" => "TLS",
+];
+$MESS["DD_TOOLS_SMTP_PORT"] = "Порт";
+$MESS["DD_TOOLS_SMTP_LOGIN"] = "Логин от почты";
+$MESS["DD_TOOLS_SMTP_PASSWORD"] = "Пароль от почты";
+$MESS["DD_TOOLS_SMTP_EMAIL_SENDER"] = "E-mail адрес отправителя";
+$MESS["DD_TOOLS_SMTP_EMAIL_SENDER_DEFAULT"] = "admin@yoursite.ru";
+$MESS["DD_TOOLS_SMTP_NAME_SENDER"] = "Имя отправителя";
+$MESS["DD_TOOLS_SMTP_NAME_SENDER_DEFAULT"] = "yoursite.ru";
+$MESS["DD_TOOLS_SMTP_DKIM_ENABLED"] = "Использовать цифровую подпись";
+$MESS["DD_TOOLS_SMTP_DKIM_DOMAIN"] = "Домен";
+$MESS["DD_TOOLS_SMTP_DKIM_DOMAIN_DEFAULT"] = "yoursite.ru";
+$MESS["DD_TOOLS_SMTP_DKIM_SELECTOR"] = "Селектор";
+$MESS["DD_TOOLS_SMTP_DKIM_SELECTOR_DEFAULT"] = "mail";
+$MESS["DD_TOOLS_SMTP_DKIM_PASSPHRASE"] = "Ключевая фраза";
+$MESS["DD_TOOLS_SMTP_DKIM_PRIVATE_KEY"] = "Приватный ключ";
+$MESS["DD_TOOLS_SMTP_DKIM_PRIVATE_KEY_DEFAULT"] = "-----BEGIN RSA PRIVATE KEY-----";
+$MESS["DD_TOOLS_SMTP_TEST"] = "Тестировать соединение";
 
 $MESS["DD_TOOLS_BTN_APPLY"] = "Применить";
 $MESS["DD_TOOLS_BTN_DEFAULT"] = "По умолчанию";
@@ -82,7 +111,7 @@ LogHelper::configure([
     'log_max_files' => 10,
     'log_critical_email' => [
         'enabled' => 'Y',
-        'email' => 'admin@yoursite.com',
+        'email' => 'admin@yoursite.ru',
     ]
 ]);
 </pre>
@@ -118,4 +147,20 @@ try {
 <h4>Очистка старых логов (можно добавить в cron):</h4>
 <pre>
 LogHelper::cleanOldLogs('system', 30); // удалить логи старше 30 дней
+</pre>";
+$MESS["DD_TOOLS_HELP_TAB3"] = "";
+$MESS["DD_TOOLS_HELP_TAB4"] = "
+<h4>Генерация приватного ключа:</h4>
+<pre>
+openssl genrsa -out dkim_private.key 2048
+</pre>
+<h4>Генерация публичного ключа:</h4>
+<pre>
+openssl rsa -in dkim_private.key -pubout -out dkim_public.key
+</pre>
+<h4>Создание DNS записи (пример для селектора \"default\"):</h4>
+<pre>
+# Тип: TXT
+# Имя: default._domainkey.yoursite.ru
+# Значение: v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
 </pre>";

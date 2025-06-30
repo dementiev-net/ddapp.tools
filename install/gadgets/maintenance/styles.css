@@ -28,8 +28,8 @@
 }
 
 .maintenance .items-list {
-    max-height: 200px;
-    overflow-y: auto;
+    /*max-height: 200px;*/
+    /*overflow-y: auto;*/
 }
 
 .maintenance .items-list .item-row {

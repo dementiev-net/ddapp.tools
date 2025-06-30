@@ -22,7 +22,7 @@ $MESS["DD_MAINT_FIELD_VALUE_TYPE"] = [
     "PREVENTIVE" => "Профилактическое"
 ];
 
-$MESS["DD_MAINTBTN_TO_LIST"] = "К списку";
+$MESS["DD_MAINT_BTN_TO_LIST"] = "К списку";
 
 $MESS["DD_MAINT_MESSAGE_EDIT_OK"] = "Изменения применены";
 $MESS["DD_MAINT_MESSAGE_ERROR"] = "Ошибка сохранения:";

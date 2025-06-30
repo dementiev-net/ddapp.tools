@@ -189,8 +189,8 @@ echo $context->Show();
         <tr>
             <td><?= Loc::getMessage("DD_MAINT_DESCRIPTION_FIELD") ?>:</td>
             <td>
-                <textarea name="DESCRIPTION" rows="5"
-                          cols="50"><?= htmlspecialcharsEx($arFields["DESCRIPTION"]) ?></textarea>
+                <textarea name="DESCRIPTION" rows="10"
+                          cols="65"><?= htmlspecialcharsEx($arFields["DESCRIPTION"]) ?></textarea>
             </td>
         </tr>
 

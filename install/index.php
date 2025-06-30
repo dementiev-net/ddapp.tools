@@ -28,7 +28,7 @@ class DD_Tools extends CModule
     public $PARTNER_URI;
     public $SHOW_SUPER_ADMIN_GROUP_RIGHTS;
     public $MODULE_GROUP_RIGHTS;
-    private const SUPER_AGENT_INTERVAL = "120";
+    private const CACHE_AGENT_INTERVAL = "0";
     private const FREE_SPACE_AGENT_INTERVAL = "3600";
 
     function __construct()
@@ -349,11 +349,11 @@ class DD_Tools extends CModule
      */
     function installAgents()
     {
-        $agent = \CAgent::AddAgent("\\DD\\Tools\\superAgent::run();", $this->MODULE_ID, "N", self::SUPER_AGENT_INTERVAL, "", "Y", "", 100);
+        $agent = \CAgent::AddAgent("\\DD\\Tools\\cacheAgent::run();", $this->MODULE_ID, "N", self::CACHE_AGENT_INTERVAL, "", "N", "", 100);
         if (!$agent) {
             Debug::writeToFile([
                 "DATE" => date("Y-m-d H:i:s"),
-                "ERROR" => "Не удалось добавить агента superAgent"
+                "ERROR" => "Не удалось добавить агента cacheAgent"
             ], "CAgent::AddAgent", "/upload/logs/dd.tools.install.log");
         }
 

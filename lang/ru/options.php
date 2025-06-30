@@ -10,9 +10,17 @@ $MESS["DD_TOOLS_BLOCK1"] = "Основные настройки";
 $MESS["DD_TOOLS_BLOCK2"] = "Настройки ротации";
 $MESS["DD_TOOLS_BLOCK3"] = "Настройки email уведомлений при критических ошибках";
 $MESS['DD_TOOLS_BLOCK4'] = "Настройки ограничения места";
-$MESS['DD_TOOLS_BLOCK5'] = "План обслуживания";
 
-$MESS["DD_TOOLS_MAN_PERIOD"] = "Периодичность обслуживания, дни";
+$MESS["DD_TOOLS_MAINT_PERIOD"] = "Периодичность плана обслуживания, дни";
+$MESS["DD_TOOLS_CACHE_PERIOD"] = "Периодичность очистки кеша";
+$MESS["DD_TOOLS_CACHE_PERIOD_DEFAULT"] = [
+    "0" => "Никогда",
+    "1" => "День",
+    "2" => "Неделя",
+    "3" => "Месяц",
+    "4" => "Год"
+];
+$MESS["DD_TOOLS_CACHE_SIZE"] = "размер: ";
 
 $MESS["DD_TOOLS_LOG_ENABLED"] = "Активность";
 $MESS["DD_TOOLS_LOG_MIN_LEVEL"] = "Минимальный уровень логирования";

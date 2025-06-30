@@ -14,11 +14,11 @@ class Maintenance
      */
     public static function getMaintenanceItems()
     {
-        $items = MaintenanceTable::getList(array(
-            "select" => array("ID", "NAME", "LINK", "TYPE"),
-            "filter" => array("ACTIVE" => "Y"),
-            "order" => array("PRIORITY" => "ASC")
-        ))->fetchAll();
+        $items = MaintenanceTable::getList([
+            "select" => ["ID", "NAME", "LINK", "TYPE"],
+            "filter" => ["ACTIVE" => "Y"],
+            "order" => ["PRIORITY" => "ASC"]
+        ])->fetchAll();
 
         $completedItems = self::getCompletedItems();
 
@@ -34,8 +34,8 @@ class Maintenance
      */
     public static function getCompletedItems()
     {
-        $completed = Option::get("dd.tools", "maint_completed_items", "");
-        return $completed ? explode(",", $completed) : array();
+        $completed = Option::get("dd.tools", "maint_completed_items");
+        return $completed ? explode(",", $completed) : [];
     }
 
     /**
@@ -57,18 +57,18 @@ class Maintenance
      */
     public static function checkLastCompletionDate()
     {
-        $lastDate = Option::get("dd.tools", "maint_last_date", "");
+        $lastDate = Option::get("dd.tools", "maint_last_date");
         if ($lastDate) {
             $lastDateTime = DateTime::createFromUserTime($lastDate);
             $now = new DateTime();
             $diff = $now->getTimestamp() - $lastDateTime->getTimestamp();
 
-            $days = Option::get("dd.tools", "maint_period", 30);
+            $days = Option::get("dd.tools", "maint_period");
 
             // Если прошло время (30 дней по умолчанию)
             if ($diff > $days * 24 * 60 * 60) {
-                Option::delete("dd.tools", array("name" => "maint_last_date"));
-                Option::delete("dd.tools", array("name" => "maint_completed_items"));
+                Option::delete("dd.tools", ["name" => "maint_last_date"]);
+                Option::delete("dd.tools", ["name" => "maint_completed_items"]);
                 return true; // Данные были сброшены
             }
         }

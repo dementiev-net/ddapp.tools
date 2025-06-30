@@ -247,7 +247,7 @@ if ($request->get("save_success") === "Y") {
 // Сообщение
 $items = Maintenance::getMaintenanceItems();
 $isCompleted = Maintenance::checkIfAllCompleted($items);
-$lastCompletionDate = Option::get("dd.tools", "maint_last_date", "");
+$lastCompletionDate = Option::get("dd.tools", "maint_last_date");
 
 $ob = new \CAdminMessage([]);
 $planMessage = "";

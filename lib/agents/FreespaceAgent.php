@@ -16,6 +16,7 @@ class freespaceAgent
     private const TIME_OUT = 30;
 
     /**
+     * Запуск
      * @return string
      */
     static public function run()
@@ -23,12 +24,12 @@ class freespaceAgent
         // Настройка логирования
         LogHelper::configure();
 
-        LogHelper::info("cron", "FreespaceAgent run!");
+        LogHelper::info("cron", "freespaceAgent run!");
 
         try {
             self::doFreeSpace();
         } catch (\Exception $e) {
-            LogHelper::error("cron", "FreespaceAgent error: " . $e->getMessage());
+            LogHelper::error("cron", "freespaceAgent error: " . $e->getMessage());
         }
 
         return "\\DD\\Tools\\freespaceAgent::run();";
@@ -47,18 +48,18 @@ class freespaceAgent
 
         // Получение параметров
         $config = [
-            'wantSpace' => (float)Option::get("dd.tools", "disk_free_space", 3000) * (1024 * 1024),
-            'emailTo' => Option::get("dd.tools", "disk_email", "admin@yoursite.ru"),
-            'deleteCache' => Option::get("dd.tools", "disk_delete_cache", "N") === "Y",
-            'enabled' => Option::get("dd.tools", "disk_enabled", "N") === "Y",
-            'emailNotifier' => Option::get("dd.tools", "disk_email_enabled", "N") === "Y",
-            'typeFilesystem' => Option::get("dd.tools", "disk_type_filesystem", 1),
-            'allSpace' => (float)Option::get("dd.tools", "disk_all_space", 0)
+            'wantSpace' => (float)Option::get("dd.tools", "disk_free_space") * (1024 * 1024),
+            'emailTo' => Option::get("dd.tools", "disk_email"),
+            'deleteCache' => Option::get("dd.tools", "disk_delete_cache") === "Y",
+            'enabled' => Option::get("dd.tools", "disk_enabled") === "Y",
+            'emailNotifier' => Option::get("dd.tools", "disk_email_enabled") === "Y",
+            'typeFilesystem' => Option::get("dd.tools", "disk_type_filesystem"),
+            'allSpace' => (float)Option::get("dd.tools", "disk_all_space")
         ];
 
         // Проверка активности агента
         if (!$config['enabled']) {
-            LogHelper::warning("cron", "FreespaceAgent is disabled");
+            LogHelper::warning("cron", "freespaceAgent is disabled");
             return;
         }
 

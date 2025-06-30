@@ -38,4 +38,42 @@ class CacheHelper
         $taggedCache = \Bitrix\Main\Application::getInstance()->getTaggedCache();
         $taggedCache->clearByTag($tag);
     }
+
+    /**
+     * Вычисляет размер папок кеша
+     * @return int
+     */
+    public static function checkCacheSize(): int
+    {
+        $folderCache = self::dirSize($_SERVER['DOCUMENT_ROOT'] . "/bitrix/cache/");
+        $folderManagedCache = self::dirSize($_SERVER['DOCUMENT_ROOT'] . "/bitrix/managed_cache/");
+        $folderStackCache = self::dirSize($_SERVER['DOCUMENT_ROOT'] . "/bitrix/stack_cache/");
+
+        return ($folderCache + $folderManagedCache + $folderStackCache);
+    }
+
+    /**
+     * Вычисляет размер папки
+     * @param $dir
+     * @return int
+     */
+    public static function dirSize($dir): int
+    {
+        if (!is_dir($dir)) {
+            return 0;
+        }
+
+        $size = 0;
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS)
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $size += $file->getSize();
+            }
+        }
+
+        return $size;
+    }
 }

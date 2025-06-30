@@ -13,17 +13,17 @@ if (!CModule::IncludeModule("dd.tools")) {
 
 Loc::loadMessages(__FILE__);
 
-$typeFilesystem = Option::get("dd.tools", "disk_type_filesystem", 1);
+$typeFilesystem = Option::get("dd.tools", "disk_type_filesystem");
 
 if (!$typeFilesystem) {
     return;
 }
 
-$wantSpace = Option::get("dd.tools", "disk_free_space", 3000) * (1024 * 1024);
+$wantSpace = Option::get("dd.tools", "disk_free_space") * (1024 * 1024);
 
 if ($typeFilesystem == 2) {
-    $busyPlace = Option::get("dd.tools", "disk_busy_place", 0);
-    $totalSpace = Option::get("dd.tools", "disk_all_space", 0);
+    $busyPlace = Option::get("dd.tools", "disk_busy_place");
+    $totalSpace = Option::get("dd.tools", "disk_all_space");
     $freeSpace = $totalSpace - $busyPlace;
 } else {
     $totalSpace = disk_total_space($_SERVER["DOCUMENT_ROOT"]);

@@ -4,6 +4,8 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\HttpApplication;
 use Bitrix\Main\Config\Option;
+use DD\Tools\Helpers\FileHelper;
+use DD\Tools\Helpers\CacheHelper;
 
 Loc::loadMessages(__FILE__);
 
@@ -15,6 +17,8 @@ if ($POST_RIGHT != "W") $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"))
 
 Loader::includeModule($module_id);
 
+$cacheSize = FileHelper::formatBytes(CacheHelper::checkCacheSize());
+
 // Настройки модуля для админки, в том числе значения по умолчанию
 $aTabs = [
     [
@@ -22,12 +26,21 @@ $aTabs = [
         "TAB" => Loc::getMessage("DD_TOOLS_TAB1"),
         "TITLE" => Loc::getMessage("DD_TOOLS_TAB1_TITLE"),
         "OPTIONS" => [
-            Loc::getMessage("DD_TOOLS_BLOCK5"),
             [
                 "maint_period",
-                Loc::getMessage("DD_TOOLS_MAN_PERIOD"),
+                Loc::getMessage("DD_TOOLS_MAINT_PERIOD"),
                 "30",
                 ["text", 5, 50]
+            ], [
+                "cache_period",
+                Loc::getMessage("DD_TOOLS_CACHE_PERIOD"),
+                "NO",
+                ["selectbox", Loc::getMessage("DD_TOOLS_CACHE_PERIOD_DEFAULT")]
+            ], [
+                "cache_size",
+                "<span style='color: #999;'>" . Loc::getMessage("DD_TOOLS_CACHE_SIZE") . $cacheSize . "</span>",
+                "",
+                ["custom"]
             ],
         ]
     ], [
@@ -155,12 +168,42 @@ if ($request->isPost() && check_bitrix_sessid()) {
                 if ($arOption[0] == "disk_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "disk_delete_cache") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "disk_email_enabled") $optionValue = $optionValue ?: "N";
+                // Настройка агента очистки кеша
+                if ($arOption[0] == "cache_period") {
 
-                // Устанавливаем выбранные значения параметров и сохраняем в базу данных, хранить можем только текст, значит если приходит массив, то разбиваем его через запятую, если не массив сохраняем как есть
+                    $cachePeriod = (int)$optionValue;
+                    $agentName = "\\DD\\Tools\\cacheAgent::run();";
+
+                    // Получим текущий агент
+                    $res = \CAgent::GetList([], ["NAME" => $agentName]);
+
+                    if ($agent = $res->Fetch()) {
+
+                        if ($cachePeriod === 0) {
+                            // Деактивируем и ставим интервал 0
+                            \CAgent::Update($agent["ID"], ["ACTIVE" => "N", "AGENT_INTERVAL" => 0]);
+
+                        } else {
+                            $interval = match ($cachePeriod) {
+                                1 => 1 * 24 * 3600,       // день
+                                2 => 7 * 24 * 3600,       // неделя
+                                3 => 30 * 24 * 3600,      // месяц
+                                4 => 365 * 24 * 3600,     // год
+                                default => 7 * 24 * 3600, // по умолчанию — неделя
+                            };
+
+                            CAgent::Update($agent["ID"], ["ACTIVE" => "Y", "AGENT_INTERVAL" => $interval]);
+                        }
+                    }
+                }
+
+                // Устанавливаем выбранные значения параметров и сохраняем в базу данных, хранить можем только текст,
+                // значит если приходит массив, то разбиваем его через запятую, если не массив сохраняем как есть
                 Option::set($module_id, $arOption[0], is_array($optionValue) ? implode(",", $optionValue) : $optionValue);
             }
 
-            // Проверяем POST запрос, если инициатором выступила кнопка с name="default" сохраняем дефолтные настройки в базу данных
+            // Проверяем POST запрос, если инициатором выступила кнопка с name="default" сохраняем дефолтные
+            // настройки в базу данных
             if ($request["default"]) {
                 Option::set($module_id, $arOption[0], $arOption[2]);
             }
@@ -168,13 +211,11 @@ if ($request->isPost() && check_bitrix_sessid()) {
     }
 }
 
-// Отрисовываем форму, для этого создаем новый экземпляр класса CAdminTabControl, куда и передаём массив с настройками
 $tabControl = new CAdminTabControl(
     "tabControl",
     $aTabs
 );
 
-// Отображаем заголовки закладок
 $tabControl->Begin();
 ?>
 
@@ -196,12 +237,12 @@ $tabControl->Begin();
             if ($aTab["OPTIONS"]) {
                 $tabControl->BeginNextTab();
                 __AdmSettingsDrawList($module_id, $aTab["OPTIONS"]);
-                $help = Loc::getMessage("DD_TOOLS_HELP_" . $aTab['DIV']);
+                $help = Loc::getMessage("DD_TOOLS_HELP_" . $aTab["DIV"]);
                 if ($help) { ?>
                     <tr>
                         <td valign="top" width="100%" colspan="2">
                             <?= BeginNote(); ?>
-                            <?= Loc::getMessage("DD_TOOLS_HELP_" . $aTab['DIV']); ?>
+                            <?= Loc::getMessage("DD_TOOLS_HELP_" . $aTab["DIV"]); ?>
                             <?= EndNote(); ?>
                         </td>
                     </tr>

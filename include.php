@@ -20,7 +20,7 @@ Loader::registerAutoLoadClasses("dd.tools", [
         "DD\\Tools\\Entity\\MaintenanceTable" => "lib/entity/MaintenanceTable.php",
 
         // Агенты
-        "DD\\Tools\\superAgent" => "lib/agents/SuperAgent.php",
+        "DD\\Tools\\cacheAgent" => "lib/agents/CacheAgent.php",
         "DD\\Tools\\freespaceAgent" => "lib/agents/FreespaceAgent.php",
 
         // Helper-классы

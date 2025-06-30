@@ -20,7 +20,7 @@ Maintenance::checkLastCompletionDate();
 
 $items = Maintenance::getMaintenanceItems();
 $isCompleted = Maintenance::checkIfAllCompleted($items);
-$lastCompletionDate = Option::get("dd.tools", "maint_last_date", "");
+$lastCompletionDate = Option::get("dd.tools", "maint_last_date");
 
 $class = $isCompleted ? "completed" : "incomplete";
 ?>

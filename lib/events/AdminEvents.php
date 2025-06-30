@@ -36,7 +36,7 @@ class AdminEvents
                         $arNewActions[] = [
                             "ICON" => "",
                             "TEXT" => Loc::getMessage("DD_ADMIN_EVENT_ACTION_RUN"),
-                            "ACTION" => $lAdmin->ActionDoGroup($v->id, "dd_agent_run", "&lang=" . LANGUAGE_ID . "&agent_id=" . $v->id),
+                            "ACTION" => $lAdmin->ActionDoGroup($v->id, "dd_agent_run", "&lang=" . LANG . "&agent_id=" . $v->id),
                         ];
                     }
                     $arNewActions[] = $act;

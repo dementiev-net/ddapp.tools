@@ -35,7 +35,7 @@ $context = new CAdminContextMenu([
     [
         "TEXT" => Loc::getMessage("DD_MAINT_BTN_TO_LIST"),
         "ICON" => "btn_list",
-        "LINK" => "/bitrix/admin/dd_maintenance_list.php?lang=" . LANG . "&mid=" . $module_id,
+        "LINK" => "/bitrix/admin/dd_maintenance_list.php?lang=" . LANG,
         "TITLE" => "К списку записей"
     ]
 ]);
@@ -69,6 +69,7 @@ if ($isEdit) {
 
 // Обработка формы
 if ($request->isPost() && check_bitrix_sessid()) {
+
     $arFields["NAME"] = trim($request->getPost("NAME"));
     $arFields["LINK"] = trim($request->getPost("LINK"));
     $arFields["DESCRIPTION"] = trim($request->getPost("DESCRIPTION"));
@@ -101,9 +102,9 @@ if ($request->isPost() && check_bitrix_sessid()) {
 
             if ($result->isSuccess()) {
                 // Обработка действий кнопок
-                if ($request->getPost("save")) LocalRedirect("/bitrix/admin/dd_maintenance_list.php?ID=" . $ID . "&lang=" . LANG . "&mid=" . $module_id . "&" . GetFilterParams("F_") . "&save_success=Y");
-                if ($request->getPost("apply")) LocalRedirect("/bitrix/admin/dd_maintenance_edit.php?ID=" . $ID . "&lang=" . LANG . "&mid=" . $module_id . "&" . GetFilterParams("F_") . "&apply_success=Y");
-                LocalRedirect("/bitrix/admin/dd_maintenance_list.php?lang=" . LANG . "&mid=" . $module_id . "&" . GetFilterParams("F_"));
+                if ($request->getPost("save")) LocalRedirect("/bitrix/admin/dd_maintenance_list.php?ID=" . $ID . "&lang=" . LANG . "&" . GetFilterParams("F_") . "&save_success=Y");
+                if ($request->getPost("apply")) LocalRedirect("/bitrix/admin/dd_maintenance_edit.php?ID=" . $ID . "&lang=" . LANG . "&" . GetFilterParams("F_") . "&apply_success=Y");
+                LocalRedirect("/bitrix/admin/dd_maintenance_list.php?lang=" . LANG . "&" . GetFilterParams("F_"));
 
             } else {
                 $arErrors = $result->getErrorMessages();
@@ -137,7 +138,7 @@ echo $context->Show();
 ?>
 
     <form method="POST"
-          action="<?= $APPLICATION->GetCurPage() ?>?lang=<?= LANGUAGE_ID ?><?php if ($ID > 0) echo "&ID=" . $ID ?>"
+          action="<?= $APPLICATION->GetCurPage() ?>?lang=<?= LANG ?><?php if ($ID > 0) echo "&ID=" . $ID ?>"
           enctype="multipart/form-data">
         <?= bitrix_sessid_post() ?>
 
@@ -216,7 +217,7 @@ echo $context->Show();
 
         <?php $tabControl->Buttons([
             "disabled" => $btnDisabled,
-            "back_url" => "/bitrix/admin/dd_maintenance_list.php?lang=" . LANG . "&mid=" . $module_id . "&" . GetFilterParams("F_")
+            "back_url" => "/bitrix/admin/dd_maintenance_list.php?lang=" . LANG . "&" . GetFilterParams("F_")
         ]); ?>
 
         <?php $tabControl->End(); ?>

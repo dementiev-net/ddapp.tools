@@ -22,6 +22,6 @@ if ($errorException = $APPLICATION->getException()) {
 ?>
 
 <form action="<?= $APPLICATION->GetCurPage() ?>">
-    <input type="hidden" name="lang" value="<?= LANGUAGE_ID ?>">
+    <input type="hidden" name="lang" value="<?= LANG ?>">
     <input type="submit" name="" value="<?= Loc::getMessage("MOD_BACK") ?>">
 </form>

@@ -63,6 +63,7 @@ $lAdmin->AddFilter($filterFields, $arFilter);
 
 // Обработка действий
 if (($arID = $lAdmin->GroupAction()) && $moduleAccessLevel == "W") {
+
     if (!empty($_REQUEST["action_all_rows_" . $sTableID]) && $_REQUEST["action_all_rows_" . $sTableID] === "Y") {
 
         $rsData = MaintenanceTable::getList([

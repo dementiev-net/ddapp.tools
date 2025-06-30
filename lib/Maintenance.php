@@ -63,7 +63,7 @@ class Maintenance
             $now = new DateTime();
             $diff = $now->getTimestamp() - $lastDateTime->getTimestamp();
 
-            $days = Option::get("dd.tools", "maint_period", "30");
+            $days = Option::get("dd.tools", "maint_period", 30);
 
             // Если прошло время (30 дней по умолчанию)
             if ($diff > $days * 24 * 60 * 60) {

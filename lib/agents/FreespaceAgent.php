@@ -2,16 +2,16 @@
 
 namespace DD\Tools;
 
-use DD\Tools\Helpers\LogHelper;
+use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Mail\Event;
 use Bitrix\Main\SiteTable;
 use Bitrix\Main\IO\Directory;
+use DD\Tools\Helpers\LogHelper;
 use DD\Tools\Helpers\FileHelper;
 
 class freespaceAgent
 {
-    private const MODULE_ID = "dd.tools";
     private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DD_TOOLS_FREE_SPACE";
     private const TIME_OUT = 30;
 
@@ -47,13 +47,13 @@ class freespaceAgent
 
         // Получение параметров
         $config = [
-            'wantSpace' => (float)Option::get(self::MODULE_ID, "disk_free_space", 3000) * (1024 * 1024),
-            'emailTo' => Option::get(self::MODULE_ID, "disk_email", ""),
-            'deleteCache' => Option::get(self::MODULE_ID, "disk_delete_cache", "N") === "Y",
-            'enabled' => Option::get(self::MODULE_ID, "disk_enabled", "N") === "Y",
-            'emailNotifier' => Option::get(self::MODULE_ID, "disk_email_enabled", "N") === "Y",
-            'typeFilesystem' => Option::get(self::MODULE_ID, "disk_type_filesystem"),
-            'allSpace' => (float)Option::get(self::MODULE_ID, "disk_all_space", 0)
+            'wantSpace' => (float)Option::get("dd.tools", "disk_free_space", 3000) * (1024 * 1024),
+            'emailTo' => Option::get("dd.tools", "disk_email", "admin@yoursite.ru"),
+            'deleteCache' => Option::get("dd.tools", "disk_delete_cache", "N") === "Y",
+            'enabled' => Option::get("dd.tools", "disk_enabled", "N") === "Y",
+            'emailNotifier' => Option::get("dd.tools", "disk_email_enabled", "N") === "Y",
+            'typeFilesystem' => Option::get("dd.tools", "disk_type_filesystem", 1),
+            'allSpace' => (float)Option::get("dd.tools", "disk_all_space", 0)
         ];
 
         // Проверка активности агента
@@ -66,7 +66,7 @@ class freespaceAgent
         $spaceInfo = self::getSpaceInfo($config);
 
         // Сохранение информации о занятом пространстве
-        Option::set(self::MODULE_ID, "disk_busy_place", $spaceInfo['busySpace']);
+        Option::set("dd.tools", "disk_busy_place", $spaceInfo['busySpace']);
 
         LogHelper::info("cron", sprintf(
             "Space info - Free: %s, Total: %s, Busy: %s, Want: %s",

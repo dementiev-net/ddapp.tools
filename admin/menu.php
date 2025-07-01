@@ -73,7 +73,15 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
                     "icon" => "imi_typography",
                     "page_icon" => "pi_typography",
                     "items_id" => "main",
-                ],[
+                ], [
+                    "text" => Loc::getMessage("DD_TOOLS_MENU_DATA_IMPORT"),
+                    "title" => Loc::getMessage("DD_TOOLS_MENU_DATA_IMPORT_TITLE"),
+                    "url" => "dd_data_import.php?lang=" . LANG,
+                    "sort" => 10,
+                    "icon" => "imi_typography",
+                    "page_icon" => "pi_typography",
+                    "items_id" => "main",
+                ], [
                     "text" => Loc::getMessage("DD_TOOLS_MENU_DATA_IMAGES"),
                     "title" => Loc::getMessage("DD_TOOLS_MENU_DATA_IMAGES_TITLE"),
                     "url" => "dd_data_images.php?lang=" . LANG,

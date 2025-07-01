@@ -8,6 +8,7 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\TypeTable;
 use Bitrix\Iblock\PropertyTable;
+use Bitrix\Main\UI\Extension;
 use DD\Tools\Helpers\LogHelper;
 use DD\Tools\Entity\DataExportTable;
 
@@ -27,8 +28,19 @@ LogHelper::configure();
 
 // Подключаем необходимые модули
 Loader::includeModule("iblock");
+Extension::load("ui.dialogs.messagebox");
 
 $APPLICATION->SetTitle("Экспорт");
+
+// Контекстное меню
+$context = new CAdminContextMenu([
+    [
+        "TEXT" => "Выгрузить" . Loc::getMessage("DD_MAINT_BTN_TO_LIST"),
+        "ICON" => "btn_green",
+        "LINK" => "#",
+        "TITLE" => "К списку записей"
+    ]
+]);
 
 $request = Application::getInstance()->getContext()->getRequest();
 
@@ -194,11 +206,25 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_after.php");
 ?>
 
+    <div class="adm-info-message-wrap adm-info-message-gray" id="export_message">
+        <div class="adm-info-message">
+            <div class="adm-info-message-title">Экспорт завершен</div>
+            Успешно экспортировано записей: <span id="export_message_ok">890</span>
+            <br>С ошибками: <span id="export_message_error">0</span>
+            <p id="export_message_file">Файл: <a href="/upload/232324-234-3.xls">/upload/232324-234-3.xls</a></p>
+        </div>
+    </div>
+
+<?php
+echo $context->Show();
+?>
+
     <style>
         .data-export-form .profile-settings,
         .data-export-form .fields-selection,
         .data-export-form .csv-settings,
-        .data-export-form .excel-settings {
+        .data-export-form .excel-settings,
+        .adm-info-message-wrap {
             display: none;
         }
 
@@ -426,7 +452,8 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
         </tr>
 
         <?php $tabControl->Buttons(); ?>
-        <input type="submit" value="Сохранить" class="adm-btn-save">
+
+        <input type="submit" value="Сохранить">
         <input type="button" id="cancel-btn" value="Отмена">
 
         <?php $tabControl->End(); ?>
@@ -541,6 +568,8 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
                     const response = await this.makeRequest("get_profile", {profile_id: profileId});
                     const profile = response.data;
 
+                    //console.log("Profile settings:", profile.SETTINGS, typeof profile.SETTINGS);
+
                     this.currentProfileId = profileId;
                     this.fillForm(profile);
                     this.toggleSettings(true);
@@ -569,7 +598,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
             async deleteProfile() {
                 const profileId = document.getElementById("profile-select").value;
                 if (!profileId) {
-                    alert("Выберите профиль для удаления");
+                    BX.UI.Dialogs.MessageBox.alert("Выберите профиль для удаления", "Сообщение");
                     return;
                 }
 
@@ -579,10 +608,10 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
                         this.loadProfiles();
                         this.toggleSettings(false);
                         this.resetForm();
-                        alert("Профиль удален");
+                        BX.UI.Dialogs.MessageBox.alert("Профиль удален", "Сообщение");
                     } catch (error) {
                         console.error("Ошибка удаления профиля:", error);
-                        alert("Ошибка удаления профиля");
+                        BX.UI.Dialogs.MessageBox.alert("Ошибка удаления профиля", "Сообщение");
                     }
                 }
             }
@@ -701,7 +730,8 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
 
                 try {
                     const response = await this.makeRequest("save_profile", data);
-                    alert(response.message);
+
+                    BX.UI.Dialogs.MessageBox.alert(response.message, "Сообщение");
 
                     if (!this.currentProfileId && response.id) {
                         this.currentProfileId = response.id;
@@ -711,19 +741,25 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
                     this.loadProfiles();
                 } catch (error) {
                     console.error("Ошибка сохранения профиля:", error);
-                    alert("Ошибка сохранения профиля");
+                    BX.UI.Dialogs.MessageBox.alert("Ошибка сохранения профиля", "Сообщение");
                 }
             }
 
             async makeRequest(action, data = {}) {
                 data.action = action;
 
+                const formData = new FormData();
+                Object.keys(data).forEach(key => {
+                    if (typeof data[key] === 'object' && data[key] !== null) {
+                        formData.append(key, JSON.stringify(data[key]));
+                    } else {
+                        formData.append(key, data[key]);
+                    }
+                });
+
                 const response = await fetch(window.location.href, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    body: new URLSearchParams(data)
+                    body: formData
                 });
 
                 const result = await response.json();
@@ -959,28 +995,40 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
                 if (!settingsJson) return;
 
                 try {
-                    const settings = JSON.parse(settingsJson);
+                    let settings = JSON.parse(settingsJson);
 
-                    Object.keys(settings).forEach(key => {
-                        if (key === "export_fields" && Array.isArray(settings[key])) {
-                            // Восстанавливаем выбранные поля в сохраненном порядке
-                            this.restoreFieldsOrder(settings[key]);
-                        } else {
-                            const input = document.querySelector(`[name="settings[${key}]"]`);
-                            if (input) {
-                                if (input.type === "checkbox") {
-                                    input.checked = settings[key] === "Y";
-                                } else {
-                                    input.value = settings[key];
+                    // Если результат парсинга - строка, парсим еще раз
+                    if (typeof settings === 'string') {
+                        settings = JSON.parse(settings);
+                    }
+
+                    //console.log("Final parsed settings:", settings);
+                    //console.log("Type:", typeof settings);
+
+                    // Теперь должен быть объект
+                    if (typeof settings === 'object' && !Array.isArray(settings)) {
+                        Object.keys(settings).forEach(key => {
+                            if (key === "export_fields" && Array.isArray(settings[key])) {
+                                this.restoreFieldsOrder(settings[key]);
+                            } else {
+                                const input = document.querySelector(`[name="settings[${key}]"]`);
+
+                                //console.log(`Looking for input: settings[${key}]`, input);
+
+                                if (input) {
+                                    if (input.type === "checkbox") {
+                                        input.checked = settings[key] === "Y";
+                                    } else {
+                                        input.value = settings[key];
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 } catch (error) {
                     console.error("Ошибка парсинга настроек:", error);
                 }
             }
-
 
             toggleSettings(show) {
                 document.querySelectorAll(".profile-settings").forEach(el => {
@@ -1046,7 +1094,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
             }
         }
 
-        // Инициализируем менеджер профилей
+        // Инициализируем
         BX.ready(function () {
             new ExportProfileManager();
         });

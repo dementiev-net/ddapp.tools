@@ -20,8 +20,8 @@ Loader::registerAutoLoadClasses("dd.tools", [
         "DD\\Tools\\Events\\ContentEvents" => "lib/events/ContentEvents.php",
 
         // ORM сущности
-        "DD\\Tools\\Entity\\DataTable" => "lib/entity/DataTable.php",
         "DD\\Tools\\Entity\\MaintenanceTable" => "lib/entity/MaintenanceTable.php",
+        "DD\\Tools\\Entity\\DataExportTable" => "lib/entity/DataExportTable.php",
 
         // Агенты
         "DD\\Tools\\cacheAgent" => "lib/agents/CacheAgent.php",
@@ -42,13 +42,36 @@ Loader::registerAutoLoadClasses("dd.tools", [
 if (!function_exists('custom_mail') && Option::get("dd.tools", "smtp_enabled") == "Y") {
     function custom_mail($to, $subject, $message, $additional_headers = "", $additional_parameters = "")
     {
-        $smtp = new CWebprostorSmtp(false, $additional_headers);
-        $result = $smtp->SendMail($to, $subject, $message, $additional_headers, $additional_parameters);
+        //$smtp = new CWebprostorSmtp(false, $additional_headers);
+        //$result = $smtp->SendMail($to, $subject, $message, $additional_headers, $additional_parameters);
 
-        if ($result) {
-            return true;
-        } else {
-            return false;
-        }
+//        $mailer = new \DD\Tools\CustomMail();
+//        $result = $mailer->send([
+//            'to' => ['info@dementiev.net'],
+//            //'cc' => 'copy@example.com',
+//            'subject' => 'Письмо с вложением',
+//            'html_body' => '<h1>HTML письмо</h1><p>Содержание</p>',
+//            'text_body' => 'Альтернативный текст',
+////    'attachments' => [
+////        '/path/to/file.pdf',
+////        [
+////            'path' => '/path/to/image.jpg',
+////            'name' => 'photo.jpg',
+////            'type' => 'image/jpeg'
+////        ]
+////    ],
+//            'headers' => [
+//                'X-Custom-Header' => 'Custom Value'
+//            ]
+//        ]);
+
+//        echo "<pre>11";
+//        print_r($result);
+//        die;
+        //if ($result) {
+        //    return true;
+        //} else {
+        //    return false;
+        //}
     }
 }

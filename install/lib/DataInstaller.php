@@ -5,7 +5,6 @@ namespace DD\Tools\Install;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Type\DateTime;
-use DD\Tools\Entity\DataTable;
 use DD\Tools\Entity\MaintenanceTable;
 
 class DataInstaller
@@ -25,35 +24,10 @@ class DataInstaller
         Loader::includeModule($this->moduleId);
         Loader::includeModule("iblock");
 
-        $this->addDefaultData();
         $this->addDefaultMaintenance();
         $this->addIblockElements();
 
         return true;
-    }
-
-    /**
-     * @return void
-     */
-    private function addDefaultData()
-    {
-        $defaultElements = [
-            ["ACTIVE" => "N", "SITE" => "[\"s1\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self"],
-            ["ACTIVE" => "N", "SITE" => "[\"s2\"]", "LINK" => " ", "LINK_PICTURE" => "/bitrix/components/dd.tools/popup.baner/templates/.default/img/banner2.jpg", "ALT_PICTURE" => " ", "EXCEPTIONS" => " ", "DATE" => new DateTime(date("d.m.Y H:i:s")), "TARGET" => "self"]
-        ];
-
-        foreach ($defaultElements as $elementData) {
-
-            $result = DataTable::add($elementData);
-
-            if (!$result->isSuccess()) {
-                Debug::writeToFile([
-                    "DATE" => date("Y-m-d H:i:s"),
-                    "ERRORS" => $result->getErrorMessages(),
-                    "FIELDS" => $elementData,
-                ], "DataTable::add", "/upload/logs/dd.tools.install.log");
-            }
-        }
     }
 
     /**

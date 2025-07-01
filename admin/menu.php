@@ -34,7 +34,7 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
             "page_icon" => "sys_menu_icon",
             "items_id" => "menu_dd_tools_2",
             "menu_id" => "global_menu_dd_tools_2",
-            "url" => "settings.php?lang=" . LANGUAGE_ID . "&mid=dd.tools",
+            "url" => "settings.php?lang=" . LANG . "&mid=dd.tools",
             "sort" => 100,
             "items" => []
         ];
@@ -47,7 +47,7 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
             "page_icon" => "extension_menu_icon",
             "items_id" => "menu_dd_tools_3",
             "menu_id" => "global_menu_dd_tools_3",
-            "url" => "dd_maintenance_list.php?lang=" . LANGUAGE_ID . "&mid=dd.tools",
+            "url" => "dd_maintenance_list.php?lang=" . LANG,
             "more_url" => [
                 "dd_maintenance_edit.php", // можно также добавить GET параметры, если нужно
             ],
@@ -57,26 +57,26 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
 
         // Первое меню
         $arMenu1 = [
-            "text" => Loc::getMessage("DD_TOOLS_MENU_TEXT"),
-            "title" => Loc::getMessage("DD_TOOLS_MENU_TITLE"),
-            "icon" => "form_menu_icon",
-            "page_icon" => "form_menu_icon",
+            "text" => Loc::getMessage("DD_TOOLS_MENU_DATA_TEXT"),
+            "title" => Loc::getMessage("DD_TOOLS_MENU_DATA_TITLE"),
+            "icon" => "workflow_menu_icon",
+            "page_icon" => "workflow_menu_icon",
             "items_id" => "menu_dd_tools",
             "menu_id" => "global_menu_dd_tools",
             "sort" => 110,
             "items" => [
                 [
-                    "text" => Loc::getMessage("DD_TOOLS_MENU_TEST1"),
-                    "title" => Loc::getMessage("DD_TOOLS_MENU_TEST1_TITLE"),
-                    "url" => "hmarketing.php?lang=" . LANGUAGE_ID,
+                    "text" => Loc::getMessage("DD_TOOLS_MENU_DATA_EXPORT"),
+                    "title" => Loc::getMessage("DD_TOOLS_MENU_DATA_EXPORT_TITLE"),
+                    "url" => "dd_data_export.php?lang=" . LANG,
                     "sort" => 10,
                     "icon" => "imi_typography",
                     "page_icon" => "pi_typography",
                     "items_id" => "main",
-                ], [
-                    "text" => Loc::getMessage("DD_TOOLS_MENU_TEST2"),
-                    "title" => Loc::getMessage("DD_TOOLS_MENU_TEST2_TITLE"),
-                    "url" => "settings.phplang=" . LANGUAGE_ID . "&mid=dd.tools",
+                ],[
+                    "text" => Loc::getMessage("DD_TOOLS_MENU_DATA_IMAGES"),
+                    "title" => Loc::getMessage("DD_TOOLS_MENU_DATA_IMAGES_TITLE"),
+                    "url" => "dd_data_images.php?lang=" . LANG,
                     "sort" => 10,
                     "icon" => "imi_typography",
                     "page_icon" => "pi_typography",

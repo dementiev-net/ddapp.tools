@@ -2,7 +2,6 @@
 
 namespace DD\Tools;
 
-use DD\Tools\Entity\DataTable;
 use Bitrix\Main\Entity\Event;
 
 class Main
@@ -11,18 +10,18 @@ class Main
      * Метод для получения строки из таблицы базы данных
      * @return mixed
      */
-    public static function get()
-    {
-        $result = DataTable::getList(
-            ["select" => ["*"]]
-        );
-
-        $row = $result->fetch();
-
-        print "<pre>";
-        print_r($row);
-        print "</pre>";
-
-        return $row;
-    }
+//    public static function get()
+//    {
+//        $result = DataTable::getList(
+//            ["select" => ["*"]]
+//        );
+//
+//        $row = $result->fetch();
+//
+//        print "<pre>";
+//        print_r($row);
+//        print "</pre>";
+//
+//        return $row;
+//    }
 }

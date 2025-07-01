@@ -9,7 +9,6 @@ use Bitrix\Main\Config\Option;
 use Bitrix\Main\EventManager;
 use Bitrix\Main\IO\Directory;
 use Bitrix\Main\ModuleManager;
-use DD\Tools\Entity\DataTable;
 use DD\Tools\Install\IblockInstaller;
 use DD\Tools\Install\DataInstaller;
 use DD\Tools\Install\EmailTemplateInstaller;
@@ -30,6 +29,7 @@ class DD_Tools extends CModule
     public $MODULE_GROUP_RIGHTS;
     private const CACHE_AGENT_INTERVAL = "0";
     private const FREE_SPACE_AGENT_INTERVAL = "3600";
+    private const CONNECTION_NAME = "default";
 
     function __construct()
     {
@@ -158,20 +158,7 @@ class DD_Tools extends CModule
         Loader::includeModule($this->MODULE_ID);
         Loader::includeModule("iblock");
 
-        $connection = Application::getConnection(DataTable::getConnectionName());
-
-        $dataTableEntity = Base::getInstance("\DD\Tools\Entity\DataTable");
-        if (!$connection->isTableExists($dataTableEntity->getDBTableName())) {
-            try {
-                $dataTableEntity->createDbTable();
-            } catch (\Exception $e) {
-                Debug::writeToFile([
-                    "DATE" => date("Y-m-d H:i:s"),
-                    "ERROR" => $e->getMessage(),
-                    "TABLE" => $dataTableEntity->getDBTableName()
-                ], "DataTable::createDbTable", "/upload/logs/dd.tools.install.log");
-            }
-        }
+        $connection = Application::getConnection(self::CONNECTION_NAME);
 
         $maintenanceTableEntity = Base::getInstance("\DD\Tools\Entity\MaintenanceTable");
 
@@ -186,6 +173,20 @@ class DD_Tools extends CModule
                 ], "MaintenanceTable::createDbTable", "/upload/logs/dd.tools.install.log");
             }
         }
+
+        $dataExportTableEntity = Base::getInstance("\DD\Tools\Entity\DataExportTable");
+
+        if (!$connection->isTableExists($dataExportTableEntity->getDBTableName())) {
+            try {
+                $dataExportTableEntity->createDbTable();
+            } catch (\Exception $e) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $e->getMessage(),
+                    "TABLE" => $dataExportTableEntity->getDBTableName()
+                ], "DataExportTable::createDbTable", "/upload/logs/dd.tools.install.log");
+            }
+        }
     }
 
     /**
@@ -197,8 +198,8 @@ class DD_Tools extends CModule
         Loader::includeModule($this->MODULE_ID);
         Loader::includeModule("iblock");
 
-        Application::getConnection(DataTable::getConnectionName())->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\DataTable")->getDBTableName());
-        Application::getConnection(DataTable::getConnectionName())->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\MaintenanceTable")->getDBTableName());
+        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\MaintenanceTable")->getDBTableName());
+        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\DataExportTable")->getDBTableName());
 
         Option::delete($this->MODULE_ID);
     }

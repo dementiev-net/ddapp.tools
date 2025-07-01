@@ -35,7 +35,7 @@ $APPLICATION->SetTitle("Экспорт");
 // Контекстное меню
 $context = new CAdminContextMenu([
     [
-        "TEXT" => "Выгрузить" . Loc::getMessage("DD_MAINT_BTN_TO_LIST"),
+        "TEXT" => "Экспортировать" . Loc::getMessage("DD_MAINT_BTN_TO_LIST"),
         "ICON" => "btn_green",
         "LINK" => "#",
         "TITLE" => "К списку записей"
@@ -47,7 +47,8 @@ $request = Application::getInstance()->getContext()->getRequest();
 // Обработка AJAX запросов
 if ($request->isPost() && !empty($request->getPost("action"))) {
 
-    switch ($_POST["action"]) {
+    switch ($request->getPost("action")) {
+
         case "get_profiles":
             $profiles = DataExportTable::getList([
                 "select" => ["ID", "NAME", "IBLOCK_TYPE_ID", "IBLOCK_ID", "EXPORT_TYPE", "SETTINGS"]
@@ -57,23 +58,23 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
             exit;
 
         case "get_profile":
-            if (!empty($_POST["profile_id"])) {
-                $profile = DataExportTable::getById($_POST["profile_id"])->fetch();
+            if (!empty($request->getPost("profile_id"))) {
+                $profile = DataExportTable::getById($request->getPost("profile_id"))->fetch();
                 echo json_encode(["success" => true, "data" => $profile]);
             }
             exit;
 
         case "save_profile":
             $fields = [
-                "NAME" => $_POST["name"],
-                "IBLOCK_TYPE_ID" => $_POST["iblock_type_id"],
-                "IBLOCK_ID" => $_POST["iblock_id"],
-                "EXPORT_TYPE" => $_POST["export_type"],
-                "SETTINGS" => json_encode($_POST["settings"])
+                "NAME" => $request->getPost("name"),
+                "IBLOCK_TYPE_ID" => $request->getPost("iblock_type_id"),
+                "IBLOCK_ID" => $request->getPost("iblock_id"),
+                "EXPORT_TYPE" => $request->getPost("export_type"),
+                "SETTINGS" => json_encode($request->getPost("settings"))
             ];
 
-            if (!empty($_POST["profile_id"])) {
-                DataExportTable::update($_POST["profile_id"], $fields);
+            if (!empty($request->getPost("profile_id"))) {
+                DataExportTable::update($request->getPost("profile_id"), $fields);
                 echo json_encode(["success" => true, "message" => "Профиль обновлен"]);
             } else {
                 $result = DataExportTable::add($fields);
@@ -82,8 +83,8 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
             exit;
 
         case "delete_profile":
-            if (!empty($_POST["profile_id"])) {
-                DataExportTable::delete($_POST["profile_id"]);
+            if (!empty($request->getPost("profile_id"))) {
+                DataExportTable::delete($request->getPost("profile_id"));
                 echo json_encode(["success" => true, "message" => "Профиль удален"]);
             }
             exit;
@@ -106,10 +107,10 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
             exit;
 
         case "get_iblocks":
-            if (!empty($_POST["type_id"])) {
+            if (!empty($request->getPost("type_id"))) {
                 $iblocks = IblockTable::getList([
                     "select" => ["ID", "NAME"],
-                    "filter" => ["IBLOCK_TYPE_ID" => $_POST["type_id"], "ACTIVE" => "Y"]
+                    "filter" => ["IBLOCK_TYPE_ID" => $request->getPost("type_id"), "ACTIVE" => "Y"]
                 ])->fetchAll();
 
                 echo json_encode(["success" => true, "data" => $iblocks]);
@@ -117,8 +118,8 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
             exit;
 
         case "get_iblock_fields":
-            if (!empty($_POST["iblock_id"])) {
-                $iblockId = intval($_POST["iblock_id"]);
+            if (!empty($request->getPost("iblock_id"))) {
+                $iblockId = intval($request->getPost("iblock_id"));
                 $fields = [];
 
                 // Стандартные поля элементов
@@ -215,9 +216,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
         </div>
     </div>
 
-<?php
-echo $context->Show();
-?>
+<?= $context->Show(); ?>
 
     <style>
         .data-export-form .profile-settings,

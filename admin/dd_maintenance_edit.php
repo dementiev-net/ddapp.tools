@@ -6,13 +6,12 @@ use Bitrix\Main\Application;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Type\DateTime;
+use DD\Tools\Maintenance;
 use DD\Tools\Helpers\LogHelper;
-use DD\Tools\Entity\MaintenanceTable;
 
 Loc::loadMessages(__FILE__);
 
 $module_id = "dd.tools";
-$sTableID = "maintenance_table";
 
 // Получим права доступа текущего пользователя на модуль
 $moduleAccessLevel = $APPLICATION->GetGroupRight($module_id);
@@ -57,8 +56,7 @@ $ob = new \CAdminMessage([]);
 
 // Получаем данные записи при редактировании
 if ($isEdit) {
-    $result = MaintenanceTable::getById($ID);
-    if ($existingData = $result->fetch()) {
+    if ($existingData = Maintenance::getById($ID)) {
         $arFields = array_merge($arFields, $existingData);
     } else {
         $ob->ShowMessage("План обслуживания не завершен");
@@ -94,9 +92,9 @@ if ($request->isPost() && check_bitrix_sessid()) {
 
         try {
             if ($isEdit) {
-                $result = MaintenanceTable::update($ID, $saveFields);
+                $result = Maintenance::update($ID, $saveFields);
             } else {
-                $result = MaintenanceTable::add($saveFields);
+                $result = Maintenance::add($saveFields);
                 $ID = $result->getId();
             }
 

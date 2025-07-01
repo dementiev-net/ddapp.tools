@@ -11,6 +11,7 @@ Loader::registerAutoLoadClasses("dd.tools", [
         "DD\\Tools\\Main" => "lib/Main.php",
         "DD\\Tools\\CustomMail" => "lib/CustomMail.php",
         "DD\\Tools\\Maintenance" => "lib/Maintenance.php",
+        "DD\\Tools\\DataExport" => "lib/DataExport.php",
 
         // Классы событий
         "DD\\Tools\\Events" => "lib/Events.php",
@@ -34,6 +35,7 @@ Loader::registerAutoLoadClasses("dd.tools", [
         "DD\\Tools\\Helpers\\ArrayHelper" => "lib/helpers/ArrayHelper.php",
         "DD\\Tools\\Helpers\\ValidationHelper" => "lib/helpers/ValidationHelper.php",
         "DD\\Tools\\Helpers\\LogHelper" => "lib/helpers/LogHelper.php",
+        "DD\\Tools\\Helpers\\IblockHelper" => "lib/helpers/IblockHelper.php",
         "DD\\Tools\\Helpers\\CacheHelper" => "lib/helpers/CacheHelper.php",
         "DD\\Tools\\Helpers\\UrlHelper" => "lib/helpers/UrlHelper.php"
     ]

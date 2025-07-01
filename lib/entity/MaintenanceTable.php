@@ -203,35 +203,4 @@ class MaintenanceTable extends DataManager
 
         return $result;
     }
-
-    /**
-     * Получить активные записи
-     * @param array $parameters
-     * @return \Bitrix\Main\DB\Result
-     */
-    public static function getActive($parameters = [])
-    {
-        $parameters["filter"]["ACTIVE"] = "Y";
-        return static::getList($parameters);
-    }
-
-    /**
-     * Деактивировать запись
-     * @param int $id
-     * @return \Bitrix\Main\Result
-     */
-    public static function deactivate($id)
-    {
-        return static::update($id, ["ACTIVE" => "N"]);
-    }
-
-    /**
-     * Активировать запись
-     * @param int $id
-     * @return \Bitrix\Main\Result
-     */
-    public static function activate($id)
-    {
-        return static::update($id, ["ACTIVE" => "Y"]);
-    }
 }

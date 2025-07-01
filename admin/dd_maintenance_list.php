@@ -1,14 +1,12 @@
 <?php
 require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_before.php");
 
-use Bitrix\Main\Loader;
 use Bitrix\Main\Web\Uri;
 use Bitrix\Main\Application;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Localization\Loc;
 use DD\Tools\Maintenance;
 use DD\Tools\Helpers\LogHelper;
-use DD\Tools\Entity\MaintenanceTable;
 
 Loc::loadMessages(__FILE__);
 
@@ -66,7 +64,7 @@ if (($arID = $lAdmin->GroupAction()) && $moduleAccessLevel == "W") {
 
     if (!empty($_REQUEST["action_all_rows_" . $sTableID]) && $_REQUEST["action_all_rows_" . $sTableID] === "Y") {
 
-        $rsData = MaintenanceTable::getList([
+        $rsData = Maintenance::getItems([
             "order" => [$by => $order],
             "filter" => $arFilter
         ]);
@@ -83,7 +81,7 @@ if (($arID = $lAdmin->GroupAction()) && $moduleAccessLevel == "W") {
         switch ($_REQUEST["action"]) {
             case "activate":
                 try {
-                    MaintenanceTable::activate($ID);
+                    Maintenance::activate($ID);
                 } catch (Exception $e) {
                     $lAdmin->AddGroupError(Loc::getMessage("DD_MAINT_MESSAGE_ERROR"), $ID);
                 }
@@ -91,7 +89,7 @@ if (($arID = $lAdmin->GroupAction()) && $moduleAccessLevel == "W") {
 
             case "deactivate":
                 try {
-                    MaintenanceTable::deactivate($ID);
+                    Maintenance::deactivate($ID);
                 } catch (Exception $e) {
                     $lAdmin->AddGroupError(Loc::getMessage("DD_MAINT_MESSAGE_ERROR"), $ID);
                 }
@@ -99,7 +97,7 @@ if (($arID = $lAdmin->GroupAction()) && $moduleAccessLevel == "W") {
 
             case "delete":
                 try {
-                    MaintenanceTable::delete($ID);
+                    Maintenance::delete($ID);
                 } catch (Exception $e) {
                     $lAdmin->AddGroupError(Loc::getMessage("DD_MAINT_MESSAGE_ERROR"), $ID);
                 }
@@ -122,7 +120,7 @@ $lAdmin->AddHeaders([
 ]);
 
 // Получение данных
-$rsData = MaintenanceTable::getList([
+$rsData = Maintenance::getItems([
     "order" => [$by => $order],
     "filter" => $arFilter,
     "select" => ["*"]
@@ -246,7 +244,7 @@ if ($request->get("save_success") === "Y") {
 }
 
 // Сообщение
-$items = Maintenance::getMaintenanceItems();
+$items = Maintenance::getAllItems();
 $isCompleted = Maintenance::checkIfAllCompleted($items);
 $lastCompletionDate = Option::get("dd.tools", "maint_last_date");
 

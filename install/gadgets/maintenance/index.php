@@ -18,7 +18,7 @@ $APPLICATION->SetAdditionalCSS("/bitrix/gadgets/dd.tools/maintenance/styles.css"
 // Проверяем и очищаем данные если прошло время
 Maintenance::checkLastCompletionDate();
 
-$items = Maintenance::getMaintenanceItems();
+$items = Maintenance::getAllItems();
 $isCompleted = Maintenance::checkIfAllCompleted($items);
 $lastCompletionDate = Option::get("dd.tools", "maint_last_date");
 

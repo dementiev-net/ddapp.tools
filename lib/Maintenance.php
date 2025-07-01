@@ -10,9 +10,32 @@ use DD\Tools\Entity\MaintenanceTable;
 class Maintenance
 {
     /**
+     * Берет по ID
+     * @param $id
+     * @return mixed
+     */
+    public static function getById($id): mixed
+    {
+        $result = MaintenanceTable::getById($id);
+
+        return $result->fetch();
+    }
+
+    /**
+     * Берет записи по условию
+     * @param $request
+     * @return mixed
+     */
+    public static function getItems($request): mixed
+    {
+        return MaintenanceTable::getList($request);
+    }
+
+    /**
+     * Берет все активные записи
      * @return array
      */
-    public static function getMaintenanceItems()
+    public static function getAllItems(): array
     {
         $items = MaintenanceTable::getList([
             "select" => ["ID", "NAME", "LINK", "TYPE"],
@@ -30,32 +53,35 @@ class Maintenance
     }
 
     /**
+     * Берет завершенные записи
      * @return array|string[]
      */
-    public static function getCompletedItems()
+    public static function getCompletedItems(): array
     {
         $completed = Option::get("dd.tools", "maint_completed_items");
         return $completed ? explode(",", $completed) : [];
     }
 
     /**
+     * Проверка на завершение
      * @param $items
      * @return bool
      */
-    public static function checkIfAllCompleted($items)
+    public static function checkIfAllCompleted($request): bool
     {
-        foreach ($items as $item) {
+        foreach ($request as $item) {
             if (!$item["COMPLETED"]) {
                 return false;
             }
         }
-        return count($items) > 0;
+        return count($request) > 0;
     }
 
     /**
+     * Проверка на окончание завершения
      * @return bool
      */
-    public static function checkLastCompletionDate()
+    public static function checkLastCompletionDate(): bool
     {
         $lastDate = Option::get("dd.tools", "maint_last_date");
         if ($lastDate) {
@@ -73,5 +99,56 @@ class Maintenance
             }
         }
         return false;
+    }
+
+    /**
+     * Деактивация
+     * @param $id
+     * @return mixed
+     */
+    public static function deactivate($id): mixed
+    {
+        return MaintenanceTable::update($id, ["ACTIVE" => "N"]);
+    }
+
+    /**
+     * Активация
+     * @param $id
+     * @return mixed
+     */
+    public static function activate($id): mixed
+    {
+        return MaintenanceTable::update($id, ["ACTIVE" => "Y"]);
+    }
+
+    /**
+     * Удаление
+     * @param $id
+     * @return mixed
+     */
+    public static function delete($id): mixed
+    {
+        return MaintenanceTable::delete($id);
+    }
+
+    /**
+     * Добавление
+     * @param $request
+     * @return mixed
+     */
+    public static function add($request): mixed
+    {
+        return MaintenanceTable::add($request);
+    }
+
+    /**
+     * Обновление
+     * @param $id
+     * @param $request
+     * @return mixed
+     */
+    public static function update($id, $request): mixed
+    {
+        return MaintenanceTable::update($id, $request);
     }
 }

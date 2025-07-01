@@ -3,14 +3,11 @@ require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_ad
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Application;
-use Bitrix\Main\Config\Option;
 use Bitrix\Main\Localization\Loc;
-use Bitrix\Iblock\IblockTable;
-use Bitrix\Iblock\TypeTable;
-use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\UI\Extension;
+use DD\Tools\Helpers\IblockHelper;
 use DD\Tools\Helpers\LogHelper;
-use DD\Tools\Entity\DataExportTable;
+use DD\Tools\DataExport;
 
 Loc::loadMessages(__FILE__);
 
@@ -50,16 +47,15 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
     switch ($request->getPost("action")) {
 
         case "get_profiles":
-            $profiles = DataExportTable::getList([
+            $profiles = DataExport::getItems([
                 "select" => ["ID", "NAME", "IBLOCK_TYPE_ID", "IBLOCK_ID", "EXPORT_TYPE", "SETTINGS"]
             ])->fetchAll();
-
             echo json_encode(["success" => true, "data" => $profiles]);
             exit;
 
         case "get_profile":
             if (!empty($request->getPost("profile_id"))) {
-                $profile = DataExportTable::getById($request->getPost("profile_id"))->fetch();
+                $profile = DataExport::getById($request->getPost("profile_id"));
                 echo json_encode(["success" => true, "data" => $profile]);
             }
             exit;
@@ -74,45 +70,32 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
             ];
 
             if (!empty($request->getPost("profile_id"))) {
-                DataExportTable::update($request->getPost("profile_id"), $fields);
+                DataExport::update($request->getPost("profile_id"), $fields);
                 echo json_encode(["success" => true, "message" => "Профиль обновлен"]);
             } else {
-                $result = DataExportTable::add($fields);
+                $result = DataExport::add($fields);
                 echo json_encode(["success" => true, "message" => "Профиль создан", "id" => $result->getId()]);
             }
             exit;
 
         case "delete_profile":
             if (!empty($request->getPost("profile_id"))) {
-                DataExportTable::delete($request->getPost("profile_id"));
+                DataExport::delete($request->getPost("profile_id"));
                 echo json_encode(["success" => true, "message" => "Профиль удален"]);
             }
             exit;
 
         case "get_iblock_types":
-            $types = [];
-
-            $res = \CIBlockType::GetList();
-            while ($type = $res->Fetch()) {
-                $lang = \CIBlockType::GetByIDLang($type["ID"], LANGUAGE_ID);
-                if ($lang) {
-                    $types[] = [
-                        "ID" => $type["ID"],
-                        "NAME" => $lang["NAME"]
-                    ];
-                }
-            }
-
+            $types = IblockHelper::getAllBlockType();
             echo json_encode(["success" => true, "data" => $types]);
             exit;
 
         case "get_iblocks":
             if (!empty($request->getPost("type_id"))) {
-                $iblocks = IblockTable::getList([
+                $iblocks = IblockHelper::getBlocks([
                     "select" => ["ID", "NAME"],
                     "filter" => ["IBLOCK_TYPE_ID" => $request->getPost("type_id"), "ACTIVE" => "Y"]
-                ])->fetchAll();
-
+                ]);
                 echo json_encode(["success" => true, "data" => $iblocks]);
             }
             exit;
@@ -122,43 +105,15 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
                 $iblockId = intval($request->getPost("iblock_id"));
                 $fields = [];
 
-                // Стандартные поля элементов
-                $standardFields = [
-                    "ID" => "ID",
-                    "NAME" => "Название",
-                    "CODE" => "Символьный код",
-                    "ACTIVE" => "Активность",
-                    "SORT" => "Сортировка",
-                    "PREVIEW_TEXT" => "Описание для анонса",
-                    "PREVIEW_PICTURE" => "Картинка для анонса",
-                    "DETAIL_TEXT" => "Детальное описание",
-                    "DETAIL_PICTURE" => "Детальная картинка",
-                    "DATE_CREATE" => "Дата создания",
-                    "CREATED_BY" => "Кем создан",
-                    "TIMESTAMP_X" => "Дата изменения",
-                    "MODIFIED_BY" => "Кем изменен",
-                    "ACTIVE_FROM" => "Начало активности",
-                    "ACTIVE_TO" => "Окончание активности",
-                    "TAGS" => "Теги",
-                    "XML_ID" => "Внешний код"
-                ];
-
-                foreach ($standardFields as $code => $name) {
-                    $fields[] = [
-                        "CODE" => $code,
-                        "NAME" => $name,
-                        "TYPE" => "FIELD",
-                        "PROPERTY_TYPE" => "",
-                        "MULTIPLE" => "N"
-                    ];
+                foreach (IblockHelper::getDefaultFieldsNames() as $code => $name) {
+                    $fields[] = ["CODE" => $code, "NAME" => $name, "TYPE" => "FIELD", "PROPERTY_TYPE" => "", "MULTIPLE" => "N"];
                 }
 
-                // Свойства инфоблока
-                $properties = PropertyTable::getList([
+                $properties = IblockHelper::getProperties([
                     "select" => ["ID", "CODE", "NAME", "PROPERTY_TYPE", "MULTIPLE", "LIST_TYPE", "USER_TYPE"],
                     "filter" => ["IBLOCK_ID" => $iblockId, "ACTIVE" => "Y"],
                     "order" => ["SORT" => "ASC", "NAME" => "ASC"]
-                ])->fetchAll();
+                ]);
 
                 foreach ($properties as $property) {
                     $propertyName = $property["NAME"];
@@ -197,7 +152,6 @@ if ($request->isPost() && !empty($request->getPost("action"))) {
                         "MULTIPLE" => $property["MULTIPLE"]
                     ];
                 }
-
                 echo json_encode(["success" => true, "data" => $fields]);
             }
             exit;
@@ -452,8 +406,8 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
 
         <?php $tabControl->Buttons(); ?>
 
-        <input type="submit" value="Сохранить">
-        <input type="button" id="cancel-btn" value="Отмена">
+        <input type="submit" value="Сохранить" <?= $btnDisabled ? "disabled" : "" ?>>
+        <input type="button" id="cancel-btn" value="Отмена" <?= $btnDisabled ? "disabled" : "" ?>>
 
         <?php $tabControl->End(); ?>
 

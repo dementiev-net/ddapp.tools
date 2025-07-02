@@ -59,25 +59,25 @@ $class = $isCompleted ? "completed" : "incomplete";
 
 <script>
     BX.ready(function () {
-        var widget = BX("maintenance");
+        var widget = BX('maintenance');
 
         if (!widget) return;
 
-        var checkboxes = widget.querySelectorAll(".maintenance .items-list .item-row .item-checkbox input");
+        var checkboxes = widget.querySelectorAll('.maintenance .items-list .item-row .item-checkbox input');
 
         checkboxes.forEach(function (checkbox) {
 
-            BX.bind(checkbox, "change", function (event) {
+            BX.bind(checkbox, 'change', function (event) {
                 var target = event.target;
                 var itemId = target.value;
                 var isChecked = target.checked;
 
                 BX.ajax({
-                    url: "/bitrix/gadgets/dd.tools/maintenance/getdata.php",
-                    method: "POST",
-                    dataType: "json",
+                    url: '/bitrix/gadgets/dd.tools/maintenance/getdata.php',
+                    method: 'POST',
+                    dataType: 'json',
                     data: {
-                        action: "toggle_item",
+                        action: 'toggle_item',
                         item_id: itemId,
                         checked: isChecked ? 1 : 0,
                         sessid: BX.bitrix_sessid()
@@ -92,20 +92,20 @@ $class = $isCompleted ? "completed" : "incomplete";
                                 }
                             });
 
-                            var header = widget.querySelector(".header");
+                            var header = widget.querySelector('.header');
 
                             if (allChecked) {
-                                BX.removeClass(widget, "incomplete");
-                                BX.addClass(widget, "completed");
+                                BX.removeClass(widget, 'incomplete');
+                                BX.addClass(widget, 'completed');
 
                                 if (response.completion_date) {
-                                    header.innerHTML = "<h4><?= Loc::getMessage("DD_MAINT_INFO_DONE") ?>: " + response.completion_date + "</h4>";
+                                    header.innerHTML = '<h4><?= Loc::getMessage("DD_MAINT_INFO_DONE") ?>: ' + response.completion_date + '</h4>';
                                 }
                             } else {
-                                header.innerHTML = "<?= Loc::getMessage("DD_MAINT_INFO_NONE") ?>";
+                                header.innerHTML = '<?= Loc::getMessage("DD_MAINT_INFO_NONE") ?>';
 
-                                BX.removeClass(widget, "completed");
-                                BX.addClass(widget, "incomplete");
+                                BX.removeClass(widget, 'completed');
+                                BX.addClass(widget, 'incomplete');
                             }
                         } else {
                             alert(response.error);

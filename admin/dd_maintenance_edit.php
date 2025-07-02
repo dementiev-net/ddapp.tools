@@ -13,6 +13,14 @@ Loc::loadMessages(__FILE__);
 
 $module_id = "dd.tools";
 
+// Подключаем модуль
+if (!CModule::IncludeModule($module_id)) {
+    require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_after.php");
+    ShowError("Модуль " . $module_id . " не установлен");
+    require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/epilog_admin.php");
+    die();
+}
+
 // Получим права доступа текущего пользователя на модуль
 $moduleAccessLevel = $APPLICATION->GetGroupRight($module_id);
 
@@ -220,12 +228,6 @@ echo $context->Show();
 
         <?php $tabControl->End(); ?>
     </form>
-
-    <script>
-        BX.ready(function () {
-            // Дополнительные скрипты при необходимости
-        });
-    </script>
 
 <?php
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/epilog_admin.php");

@@ -30,6 +30,7 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\HttpApplication;
 use Bitrix\Main\Config\Option;
+use DD\Tools\Main;
 use DD\Tools\Helpers\FileHelper;
 use DD\Tools\Helpers\CacheHelper;
 
@@ -37,6 +38,9 @@ Loc::loadMessages(__FILE__);
 
 $request = HttpApplication::getInstance()->getContext()->getRequest();
 $module_id = htmlspecialcharsbx($request["mid"] != "" ? $request["mid"] : $request["id"]);
+
+// Подключаем JS через функцию модуля
+Main::includeJS("admin/js/smtp_test.js");
 
 $POST_RIGHT = $APPLICATION->GetGroupRight($module_id);
 if ($POST_RIGHT != "W") $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"));
@@ -228,41 +232,11 @@ $tabControl->Begin();
         <input type="submit" name="default" value="<?= Loc::getMessage("DD_TOOLS_BTN_DEFAULT") ?>"/>
     </form>
 
-<?php
-$ajaxPath = '';
-if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/dd.tools/")) {
-    $ajaxPath = "/bitrix/modules/dd.tools/ajax/smtp_test.php";
-} elseif (is_dir($_SERVER["DOCUMENT_ROOT"] . "/local/modules/dd.tools/")) {
-    $ajaxPath = "/local/modules/dd.tools/ajax/smtp_test.php";
-}
-?>
-
     <script>
         BX.ready(function () {
-            BX.bind(BX("smtp_test"), "click", function (event) {
-                event.preventDefault();
-                BX("smtp_test_result").innerHTML = "Проверка...";
-
-                BX.ajax({
-                    url: "<?= \CUtil::JSEscape($ajaxPath) ?>",
-                    method: "POST",
-                    dataType: "json",
-                    timeout: 30,
-                    data: {
-                        sessid: BX.bitrix_sessid()
-                    },
-                    onsuccess: function (result) {
-                        if (result.success) {
-                            BX("smtp_test_result").innerHTML = "<span style='color: green'>Успешно: " + result.message + "</span>";
-                        } else {
-                            BX("smtp_test_result").innerHTML = "<span style='color: red'>Ошибка: " + result.message + "</span>";
-                        }
-                        console.log("SMTP DEBUG:", result.debug);
-                    },
-                    onfailure: function () {
-                        BX("smtp_test_result").innerHTML = "Ошибка AJAX-запроса";
-                    }
-                });
+            // Инициализация
+            new BX.DD.Tools.SmtpTest({
+                ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/smtp_test.php") ?>'
             });
         });
     </script>

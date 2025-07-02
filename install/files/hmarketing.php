@@ -3,7 +3,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.
 
 // Cобираем зарегистрированные через RegisterModuleDependences и AddEventHandler
 // обработчики события OnSomeEvent
-$rsHandlers = GetModuleEvents("dd.tools", "OnSomeEvent");
+$rsHandlers = GetModuleEvents(Main::MODULE_ID, "OnSomeEvent");
 
 while ($arHandler = $rsHandlers->Fetch()) {
     // выполняем каждое зарегистрированное событие по одному

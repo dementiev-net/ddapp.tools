@@ -5,6 +5,7 @@ namespace DD\Tools;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Type\DateTime;
+use DD\Tools\Main;
 use DD\Tools\Entity\MaintenanceTable;
 
 class Maintenance
@@ -58,7 +59,7 @@ class Maintenance
      */
     public static function getCompletedItems(): array
     {
-        $completed = Option::get("dd.tools", "maint_completed_items");
+        $completed = Option::get(Main::MODULE_ID, "maint_completed_items");
         return $completed ? explode(",", $completed) : [];
     }
 
@@ -83,18 +84,18 @@ class Maintenance
      */
     public static function checkLastCompletionDate(): bool
     {
-        $lastDate = Option::get("dd.tools", "maint_last_date");
+        $lastDate = Option::get(Main::MODULE_ID, "maint_last_date");
         if ($lastDate) {
             $lastDateTime = DateTime::createFromUserTime($lastDate);
             $now = new DateTime();
             $diff = $now->getTimestamp() - $lastDateTime->getTimestamp();
 
-            $days = Option::get("dd.tools", "maint_period");
+            $days = Option::get(Main::MODULE_ID, "maint_period");
 
             // Если прошло время (30 дней по умолчанию)
             if ($diff > $days * 24 * 60 * 60) {
-                Option::delete("dd.tools", ["name" => "maint_last_date"]);
-                Option::delete("dd.tools", ["name" => "maint_completed_items"]);
+                Option::delete(Main::MODULE_ID, ["name" => "maint_last_date"]);
+                Option::delete(Main::MODULE_ID, ["name" => "maint_completed_items"]);
                 return true; // Данные были сброшены
             }
         }

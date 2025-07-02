@@ -33,7 +33,7 @@ BX.DD.Tools.ExportManager.prototype = {
     },
 
     initElements: function () {
-        this.exportButton = BX(this.params.buttonId) || document.querySelector(this.params.buttonSelector || '.btn_green');
+        this.exportButton = BX(this.params.buttonId) || document.getElementById(this.params.buttonSelector || 'btn_export');
         this.messageWrap = BX(this.params.messageWrapId || 'export_message');
         this.messageOk = BX(this.params.messageOkId || 'export_message_ok');
         this.messageError = BX(this.params.messageErrorId || 'export_message_error');

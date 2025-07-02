@@ -5,24 +5,24 @@ use Bitrix\Main\Web\Uri;
 use Bitrix\Main\Application;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Localization\Loc;
+use DD\Tools\Main;
 use DD\Tools\Maintenance;
 use DD\Tools\Helpers\LogHelper;
 
 Loc::loadMessages(__FILE__);
 
-$module_id = "dd.tools";
 $sTableID = "maintenance_table";
 
 // Подключаем модуль
-if (!CModule::IncludeModule($module_id)) {
+if (!CModule::IncludeModule(Main::MODULE_ID)) {
     require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_after.php");
-    ShowError("Модуль " . $module_id . " не установлен");
+    ShowError("Модуль " . Main::MODULE_ID . " не установлен");
     require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/epilog_admin.php");
     die();
 }
 
 // Получим права доступа текущего пользователя на модуль
-$moduleAccessLevel = $APPLICATION->GetGroupRight($module_id);
+$moduleAccessLevel = $APPLICATION->GetGroupRight(Main::MODULE_ID);
 
 if ($moduleAccessLevel == "D") $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"));
 
@@ -254,7 +254,7 @@ if ($request->get("save_success") === "Y") {
 // Сообщение
 $items = Maintenance::getAllItems();
 $isCompleted = Maintenance::checkIfAllCompleted($items);
-$lastCompletionDate = Option::get("dd.tools", "maint_last_date");
+$lastCompletionDate = Option::get(Main::MODULE_ID, "maint_last_date");
 
 $ob = new \CAdminMessage([]);
 $planMessage = "";

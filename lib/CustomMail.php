@@ -7,6 +7,7 @@ use Bitrix\Main\Config\Option;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
+use DD\Tools\Main;
 use DD\Tools\Helpers\LogHelper;
 
 class CustomMail
@@ -33,7 +34,7 @@ class CustomMail
      */
     private function loadSettings(): void
     {
-        $secure = match (Option::get("dd.tools", "smtp_secure", "tls")) {
+        $secure = match (Option::get(Main::MODULE_ID, "smtp_secure", "tls")) {
             0 => "",       // без авторизации
             1 => "ssl",    // ssl
             2 => "tls",    // tls
@@ -41,19 +42,19 @@ class CustomMail
         };
 
         $this->settings = [
-            "enabled" => Option::get("dd.tools", "smtp_enabled", "N") === "Y",
-            "smtp_host" => Option::get("dd.tools", "smtp_host"),
-            "smtp_port" => (int)Option::get("dd.tools", "smtp_port"),
+            "enabled" => Option::get(Main::MODULE_ID, "smtp_enabled", "N") === "Y",
+            "smtp_host" => Option::get(Main::MODULE_ID, "smtp_host"),
+            "smtp_port" => (int)Option::get(Main::MODULE_ID, "smtp_port"),
             "smtp_secure" => $secure,
-            "smtp_username" => Option::get("dd.tools", "smtp_login"),
-            "smtp_password" => Option::get("dd.tools", "smtp_password"),
-            "from_email" => Option::get("dd.tools", "smtp_email_sender"),
-            "from_name" => Option::get("dd.tools", "smtp_name_sender"),
-            "dkim_enable" => Option::get("dd.tools", "smtp_dkim_enabled", "N") === "Y",
-            "dkim_domain" => Option::get("dd.tools", "smtp_dkim_domain"),
-            "dkim_private_key" => Option::get("dd.tools", "smtp_dkim_private_key"),
-            "dkim_selector" => Option::get("dd.tools", "smtp_dkim_selector"),
-            "dkim_passphrase" => Option::get("dd.tools", "smtp_dkim_passphrase"),
+            "smtp_username" => Option::get(Main::MODULE_ID, "smtp_login"),
+            "smtp_password" => Option::get(Main::MODULE_ID, "smtp_password"),
+            "from_email" => Option::get(Main::MODULE_ID, "smtp_email_sender"),
+            "from_name" => Option::get(Main::MODULE_ID, "smtp_name_sender"),
+            "dkim_enable" => Option::get(Main::MODULE_ID, "smtp_dkim_enabled", "N") === "Y",
+            "dkim_domain" => Option::get(Main::MODULE_ID, "smtp_dkim_domain"),
+            "dkim_private_key" => Option::get(Main::MODULE_ID, "smtp_dkim_private_key"),
+            "dkim_selector" => Option::get(Main::MODULE_ID, "smtp_dkim_selector"),
+            "dkim_passphrase" => Option::get(Main::MODULE_ID, "smtp_dkim_passphrase"),
             // Дополнительные настройки
             "charset" => "UTF-8",
             "debug_level" => 4, // 0-4

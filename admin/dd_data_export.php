@@ -12,12 +12,10 @@ use DD\Tools\DataExport;
 
 Loc::loadMessages(__FILE__);
 
-$module_id = "dd.tools";
-
 // Подключаем модуль
-if (!CModule::IncludeModule($module_id)) {
+if (!CModule::IncludeModule(Main::MODULE_ID)) {
     require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_after.php");
-    ShowError("Модуль " . $module_id . " не установлен");
+    ShowError("Модуль " . Main::MODULE_ID . " не установлен");
     require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/epilog_admin.php");
     die();
 }
@@ -28,7 +26,7 @@ Main::includeJS("admin/js/export_profile_manager.js");
 Main::includeCSS("admin/css/data_export_form.css");
 
 // Получим права доступа текущего пользователя на модуль
-$moduleAccessLevel = $APPLICATION->GetGroupRight($module_id);
+$moduleAccessLevel = $APPLICATION->GetGroupRight(Main::MODULE_ID);
 
 if ($moduleAccessLevel == "D") $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"));
 $btnDisabled = true;
@@ -50,6 +48,7 @@ $context = new CAdminContextMenu([
         "ICON" => "btn_green",
         "LINK" => "#",
         "TITLE" => "К списку записей",
+        "LINK_PARAM" => "id='btn_export' data-id='0'"
     ]
 ]);
 
@@ -186,196 +185,198 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
 
 <?= $context->Show(); ?>
 
-    <form id="data-export-form" class="data-export-form">
-        <input type="hidden" id="profile-id" name="profile_id">
-        <?= bitrix_sessid_post() ?>
+<form id="data-export-form" class="data-export-form">
+    <input type="hidden" id="profile-id" name="profile_id">
+    <?= bitrix_sessid_post() ?>
 
-        <?php
-        $tabControl = new CAdminTabControl("tabControl", [
-            [
-                "DIV" => "edit1",
-                "TAB" => "Настройки" . Loc::getMessage("DD_MAINT_TAB1"),
-                "TITLE" => "Настройки экспорта данных инфоблока" . Loc::getMessage("DD_MAINT_TAB1_TITLE")
-            ]
-        ]);
-        $tabControl->Begin();
-        ?>
+    <?php
+    $tabControl = new CAdminTabControl("tabControl", [
+        [
+            "DIV" => "edit1",
+            "TAB" => "Настройки" . Loc::getMessage("DD_MAINT_TAB1"),
+            "TITLE" => "Настройки экспорта данных инфоблока" . Loc::getMessage("DD_MAINT_TAB1_TITLE")
+        ]
+    ]);
+    $tabControl->Begin();
+    ?>
 
-        <?php $tabControl->BeginNextTab(); ?>
+    <?php $tabControl->BeginNextTab(); ?>
 
-        <tr>
-            <td width="40%" style="position: relative; top: -4px;">Профиль:</td>
-            <td width="60%">
-                <select id="profile-select" class="adm-input"></select>
-                <span style="letter-spacing: -5px; position: relative; top: -3px;">
+    <tr>
+        <td width="40%" style="position: relative; top: -4px;">Профиль:</td>
+        <td width="60%">
+            <select id="profile-select" class="adm-input" <?= $btnDisabled ? "disabled" : "" ?>></select>
+            <?php if(!$btnDisabled) { ?>
+            <span style="letter-spacing: -5px; position: relative; top: -3px;">
     					<a href="javascript:void(0)" class="adm-table-btn-edit" id="create-profile-btn"></a>
 	    				<a href="javascript:void(0);" class="adm-table-btn-delete" id="delete-profile-btn"></a>
                 </span>
-            </td>
-        </tr>
+            <?php } ?>
+        </td>
+    </tr>
 
-        <!-- Настройки профиля -->
-        <tr class="heading profile-settings">
-            <td colspan="2">Настройки</td>
-        </tr>
-        <tr class="profile-settings">
-            <td>
-                <label for="profile-name">Название профиля:</label>
-            </td>
-            <td>
-                <input type="text" id="profile-name" name="name" class="adm-input" required>
-            </td>
-        </tr>
-        <tr class="profile-settings">
-            <td>
-                <label for="iblock-type-select">Тип инфоблока:</label>
-            </td>
-            <td>
-                <select id="iblock-type-select" name="iblock_type_id" class="adm-input">
-                    <option value="">-- Выберите тип инфоблока --</option>
-                </select>
-            </td>
-        </tr>
-        <tr class="profile-settings">
-            <td>
-                <label for="iblock-select">Инфоблок:</label>
-            </td>
-            <td>
-                <select id="iblock-select" name="iblock_id" class="adm-input" disabled>
-                    <option value="">-- Сначала выберите тип --</option>
-                </select>
-            </td>
-        </tr>
-        <tr class="profile-settings">
-            <td>
-                <label for="export-type-select">Формат экспорта:</label>
-            </td>
-            <td>
-                <select id="export-type-select" name="export_type" class="adm-input">
-                    <option value="">-- Выберите формат --</option>
-                    <option value="xls">Excel (XLS)</option>
-                    <option value="csv">CSV</option>
-                </select>
-            </td>
-        </tr>
+    <!-- Настройки профиля -->
+    <tr class="heading profile-settings">
+        <td colspan="2">Настройки</td>
+    </tr>
+    <tr class="profile-settings">
+        <td>
+            <label for="profile-name">Название профиля:</label>
+        </td>
+        <td>
+            <input type="text" id="profile-name" name="name" class="adm-input" required>
+        </td>
+    </tr>
+    <tr class="profile-settings">
+        <td>
+            <label for="iblock-type-select">Тип инфоблока:</label>
+        </td>
+        <td>
+            <select id="iblock-type-select" name="iblock_type_id" class="adm-input">
+                <option value="">-- Выберите тип инфоблока --</option>
+            </select>
+        </td>
+    </tr>
+    <tr class="profile-settings">
+        <td>
+            <label for="iblock-select">Инфоблок:</label>
+        </td>
+        <td>
+            <select id="iblock-select" name="iblock_id" class="adm-input" disabled>
+                <option value="">-- Сначала выберите тип --</option>
+            </select>
+        </td>
+    </tr>
+    <tr class="profile-settings">
+        <td>
+            <label for="export-type-select">Формат экспорта:</label>
+        </td>
+        <td>
+            <select id="export-type-select" name="export_type" class="adm-input">
+                <option value="">-- Выберите формат --</option>
+                <option value="xls">Excel (XLS)</option>
+                <option value="csv">CSV</option>
+            </select>
+        </td>
+    </tr>
 
-        <!-- Выбор полей для экспорта -->
-        <tr class="heading fields-selection">
-            <td colspan="2">Поля для экспорта</td>
-        </tr>
-        <tr class="fields-selection">
-            <td colspan="2">
+    <!-- Выбор полей для экспорта -->
+    <tr class="heading fields-selection">
+        <td colspan="2">Поля для экспорта</td>
+    </tr>
+    <tr class="fields-selection">
+        <td colspan="2">
 
-                <div class="adm-detail-content-item-block-desc">
-                    <div style="margin-bottom: 10px;">
-                        <input type="button" id="select-all-fields" value="Выбрать все" class="adm-btn">
-                        <input type="button" id="deselect-all-fields" value="Снять все" class="adm-btn">
-                    </div>
+            <div class="adm-detail-content-item-block-desc">
+                <div style="margin-bottom: 10px;">
+                    <input type="button" id="select-all-fields" value="Выбрать все" class="adm-btn">
+                    <input type="button" id="deselect-all-fields" value="Снять все" class="adm-btn">
                 </div>
+            </div>
 
-                <div id="fields-container"
-                     style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
-                    <!-- Поля будут загружены динамически -->
-                </div>
+            <div id="fields-container"
+                 style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+                <!-- Поля будут загружены динамически -->
+            </div>
 
-            </td>
-        </tr>
+        </td>
+    </tr>
 
-        <!-- Настройки для CSV -->
-        <tr class="heading csv-settings">
-            <td colspan="2">Настройки CSV</td>
-        </tr>
-        <tr class="csv-settings">
-            <td>
-                <label>Разделитель:</label>
-            </td>
-            <td>
-                <select name="settings[delimiter]" class="adm-input">
-                    <option value=";">Точка с запятой (;)</option>
-                    <option value=",">Запятая (,)</option>
-                    <option value="\t">Табуляция</option>
-                </select>
-            </td>
-        </tr>
-        <tr class="csv-settings">
-            <td>
-                <label>Кодировка:</label>
-            </td>
-            <td>
-                <select name="settings[encoding]" class="adm-input">
-                    <option value="UTF-8">UTF-8</option>
-                    <option value="Windows-1251">Windows-1251</option>
-                    <option value="CP866">CP866</option>
-                </select>
-            </td>
-        </tr>
-        <tr class="csv-settings">
-            <td>
-                <label>Включить заголовки:</label>
-            </td>
-            <td>
-                <input type="checkbox" name="settings[include_headers]" value="Y" checked>
-            </td>
-        </tr>
-        <tr class="csv-settings">
-            <td>
-                <label>Обрамлять кавычками:</label>
-            </td>
-            <td>
-                <input type="checkbox" name="settings[quote_fields]" value="Y">
-            </td>
-        </tr>
+    <!-- Настройки для CSV -->
+    <tr class="heading csv-settings">
+        <td colspan="2">Настройки CSV</td>
+    </tr>
+    <tr class="csv-settings">
+        <td>
+            <label>Разделитель:</label>
+        </td>
+        <td>
+            <select name="settings[delimiter]" class="adm-input">
+                <option value=";">Точка с запятой (;)</option>
+                <option value=",">Запятая (,)</option>
+                <option value="\t">Табуляция</option>
+            </select>
+        </td>
+    </tr>
+    <tr class="csv-settings">
+        <td>
+            <label>Кодировка:</label>
+        </td>
+        <td>
+            <select name="settings[encoding]" class="adm-input">
+                <option value="UTF-8">UTF-8</option>
+                <option value="Windows-1251">Windows-1251</option>
+                <option value="CP866">CP866</option>
+            </select>
+        </td>
+    </tr>
+    <tr class="csv-settings">
+        <td>
+            <label>Включить заголовки:</label>
+        </td>
+        <td>
+            <input type="checkbox" name="settings[include_headers]" value="Y" checked>
+        </td>
+    </tr>
+    <tr class="csv-settings">
+        <td>
+            <label>Обрамлять кавычками:</label>
+        </td>
+        <td>
+            <input type="checkbox" name="settings[quote_fields]" value="Y">
+        </td>
+    </tr>
 
-        <!-- Настройки для Excel -->
-        <tr class="heading excel-settings">
-            <td colspan="2">Настройки Excel</td>
-        </tr>
-        <tr class="excel-settings">
-            <td>
-                <label>Название листа:</label>
-            </td>
-            <td>
-                <input type="text" name="settings[sheet_name]" class="adm-input" value="Экспорт">
-            </td>
-        </tr>
-        <tr class="excel-settings">
-            <td>
-                <label>Включить заголовки:</label>
-            </td>
-            <td>
-                <input type="checkbox" name="settings[include_headers]" value="Y" checked>
-            </td>
-        </tr>
-        <tr class="excel-settings">
-            <td>
-                <label>Автоширина столбцов:</label>
-            </td>
-            <td>
-                <input type="checkbox" name="settings[auto_width]" value="Y" checked>
-            </td>
-        </tr>
+    <!-- Настройки для Excel -->
+    <tr class="heading excel-settings">
+        <td colspan="2">Настройки Excel</td>
+    </tr>
+    <tr class="excel-settings">
+        <td>
+            <label>Название листа:</label>
+        </td>
+        <td>
+            <input type="text" name="settings[sheet_name]" class="adm-input" value="Экспорт">
+        </td>
+    </tr>
+    <tr class="excel-settings">
+        <td>
+            <label>Включить заголовки:</label>
+        </td>
+        <td>
+            <input type="checkbox" name="settings[include_headers]" value="Y" checked>
+        </td>
+    </tr>
+    <tr class="excel-settings">
+        <td>
+            <label>Автоширина столбцов:</label>
+        </td>
+        <td>
+            <input type="checkbox" name="settings[auto_width]" value="Y" checked>
+        </td>
+    </tr>
 
-        <?php $tabControl->Buttons(); ?>
+    <?php $tabControl->Buttons(); ?>
 
-        <input type="submit" value="Сохранить" <?= $btnDisabled ? "disabled" : "" ?>>
-        <input type="button" id="cancel-btn" value="Отмена" <?= $btnDisabled ? "disabled" : "" ?>>
+    <input type="submit" value="Сохранить" <?= $btnDisabled ? "disabled" : "" ?>>
+    <input type="button" id="cancel-btn" value="Отмена" <?= $btnDisabled ? "disabled" : "" ?>>
 
-        <?php $tabControl->End(); ?>
+    <?php $tabControl->End(); ?>
 
-    </form>
+</form>
 
-    <script>
-        BX.ready(function () {
-            // Инициализация
-            new BX.DD.Tools.ExportProfileManager({
-                ajaxUrl: '<?= Main::getAjaxUrl("admin/dd_data_export.php") ?>'
-            });
-            new BX.DD.Tools.ExportManager({
-                ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/export_csv.php") ?>',
-                beforeUnloadMessage: 'Экспорт в процессе. Покинуть страницу?',
-            });
+<script>
+    BX.ready(function () {
+        // Инициализация
+        new BX.DD.Tools.ExportProfileManager({
+            ajaxUrl: '<?= Main::getAjaxUrl("admin/dd_data_export.php") ?>'
         });
-    </script>
+        new BX.DD.Tools.ExportManager({
+            ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/export_csv.php") ?>',
+            beforeUnloadMessage: 'Экспорт в процессе. Покинуть страницу?',
+        });
+    });
+</script>
 
 <?php
-require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/epilog_admin.php");
+require ($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/epilog_admin.php");

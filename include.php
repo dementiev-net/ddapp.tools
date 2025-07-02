@@ -2,10 +2,11 @@
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
+use DD\Tools\Main;
 
 require_once __DIR__ . "/vendor/autoload.php";
 
-Loader::registerAutoLoadClasses("dd.tools", [
+Loader::registerAutoLoadClasses(Main::MODULE_ID, [
 
         // Классы
         "DD\\Tools\\Main" => "lib/Main.php",
@@ -41,7 +42,7 @@ Loader::registerAutoLoadClasses("dd.tools", [
     ]
 );
 
-if (!function_exists('custom_mail') && Option::get("dd.tools", "smtp_enabled") == "Y") {
+if (!function_exists('custom_mail') && Option::get(Main::MODULE_ID, "smtp_enabled") == "Y") {
     function custom_mail($to, $subject, $message, $additional_headers = "", $additional_parameters = "")
     {
         //$smtp = new CWebprostorSmtp(false, $additional_headers);

@@ -4,26 +4,27 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Localization\Loc;
+use DD\Tools\Main;
 use DD\Tools\Helpers\FileHelper;
 
 // Проверяем, что модуль установлен
-if (!CModule::IncludeModule("dd.tools")) {
+if (!CModule::IncludeModule(Main::MODULE_ID)) {
     return;
 }
 
 Loc::loadMessages(__FILE__);
 
-$typeFilesystem = Option::get("dd.tools", "disk_type_filesystem");
+$typeFilesystem = Option::get(Main::MODULE_ID, "disk_type_filesystem");
 
 if (!$typeFilesystem) {
     return;
 }
 
-$wantSpace = Option::get("dd.tools", "disk_free_space") * (1024 * 1024);
+$wantSpace = Option::get(Main::MODULE_ID, "disk_free_space") * (1024 * 1024);
 
 if ($typeFilesystem == 2) {
-    $busyPlace = Option::get("dd.tools", "disk_busy_place");
-    $totalSpace = Option::get("dd.tools", "disk_all_space");
+    $busyPlace = Option::get(Main::MODULE_ID, "disk_busy_place");
+    $totalSpace = Option::get(Main::MODULE_ID, "disk_all_space");
     $freeSpace = $totalSpace - $busyPlace;
 } else {
     $totalSpace = disk_total_space($_SERVER["DOCUMENT_ROOT"]);

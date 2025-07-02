@@ -8,6 +8,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_b
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Type\DateTime;
+use DD\Tools\Main;
 use DD\Tools\Entity\MaintenanceTable;
 
 if (!check_bitrix_sessid() || $_SERVER["REQUEST_METHOD"] != "POST") {
@@ -23,7 +24,7 @@ if ($action === "toggle_item") {
     $checked = intval($_POST["checked"] ?? 0);
 
     if ($itemId > 0) {
-        $completedItems = Option::get("dd.tools", "maint_completed_items");
+        $completedItems = Option::get(Main::MODULE_ID, "maint_completed_items");
         $completedArray = $completedItems ? explode(",", $completedItems) : [];
 
         if ($checked) {
@@ -34,7 +35,7 @@ if ($action === "toggle_item") {
             $completedArray = array_diff($completedArray, [$itemId]);
         }
 
-        Option::set("dd.tools", "maint_completed_items", implode(",", $completedArray));
+        Option::set(Main::MODULE_ID, "maint_completed_items", implode(",", $completedArray));
 
         // Проверяем, все ли элементы выполнены
         $allItems = MaintenanceTable::getList([
@@ -47,11 +48,11 @@ if ($action === "toggle_item") {
 
         if ($allCompleted && count($allItemIds) > 0) {
             $now = new DateTime();
-            Option::set("dd.tools", "maint_last_date", $now->toString());
+            Option::set(Main::MODULE_ID, "maint_last_date", $now->toString());
             $response["completion_date"] = FormatDate("d.m.Y H:i", $now->getTimestamp());
         } else {
             // Если не все выполнено, удаляем дату завершения
-            Option::delete("dd.tools", ["name" => "maint_last_date"]);
+            Option::delete(Main::MODULE_ID, ["name" => "maint_last_date"]);
         }
 
         $response["success"] = true;

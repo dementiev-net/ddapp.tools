@@ -8,6 +8,7 @@ use Bitrix\Main\IO\File;
 use Bitrix\Main\Application;
 use Bitrix\Main\Mail\Event;
 use Bitrix\Main\Config\Option;
+use DD\Tools\Main;
 use DD\Tools\Helpers\FileHelper;
 
 class LogHelper
@@ -36,7 +37,7 @@ class LogHelper
      */
     public static function configure(array $config = []): void
     {
-        $op = Option::getForModule("dd.tools");
+        $op = Option::getForModule(Main::MODULE_ID);
 
         self::$config = [
             "log_enabled" => $op["log_enabled"],

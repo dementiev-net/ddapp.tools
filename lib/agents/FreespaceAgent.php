@@ -7,6 +7,7 @@ use Bitrix\Main\Config\Option;
 use Bitrix\Main\Mail\Event;
 use Bitrix\Main\SiteTable;
 use Bitrix\Main\IO\Directory;
+use DD\Tools\Main;
 use DD\Tools\Helpers\LogHelper;
 use DD\Tools\Helpers\FileHelper;
 
@@ -48,13 +49,13 @@ class freespaceAgent
 
         // Получение параметров
         $config = [
-            'wantSpace' => (float)Option::get("dd.tools", "disk_free_space") * (1024 * 1024),
-            'emailTo' => Option::get("dd.tools", "disk_email"),
-            'deleteCache' => Option::get("dd.tools", "disk_delete_cache") === "Y",
-            'enabled' => Option::get("dd.tools", "disk_enabled") === "Y",
-            'emailNotifier' => Option::get("dd.tools", "disk_email_enabled") === "Y",
-            'typeFilesystem' => Option::get("dd.tools", "disk_type_filesystem"),
-            'allSpace' => (float)Option::get("dd.tools", "disk_all_space")
+            'wantSpace' => (float)Option::get(Main::MODULE_ID, "disk_free_space") * (1024 * 1024),
+            'emailTo' => Option::get(Main::MODULE_ID, "disk_email"),
+            'deleteCache' => Option::get(Main::MODULE_ID, "disk_delete_cache") === "Y",
+            'enabled' => Option::get(Main::MODULE_ID, "disk_enabled") === "Y",
+            'emailNotifier' => Option::get(Main::MODULE_ID, "disk_email_enabled") === "Y",
+            'typeFilesystem' => Option::get(Main::MODULE_ID, "disk_type_filesystem"),
+            'allSpace' => (float)Option::get(Main::MODULE_ID, "disk_all_space")
         ];
 
         // Проверка активности агента
@@ -67,7 +68,7 @@ class freespaceAgent
         $spaceInfo = self::getSpaceInfo($config);
 
         // Сохранение информации о занятом пространстве
-        Option::set("dd.tools", "disk_busy_place", $spaceInfo['busySpace']);
+        Option::set(Main::MODULE_ID, "disk_busy_place", $spaceInfo['busySpace']);
 
         LogHelper::info("cron", sprintf(
             "Space info - Free: %s, Total: %s, Busy: %s, Want: %s",

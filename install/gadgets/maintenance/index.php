@@ -4,10 +4,11 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Localization\Loc;
+use DD\Tools\Main;
 use DD\Tools\Maintenance;
 
 // Проверяем, что модуль установлен
-if (!CModule::IncludeModule("dd.tools")) {
+if (!CModule::IncludeModule(Main::MODULE_ID)) {
     return;
 }
 
@@ -20,7 +21,7 @@ Maintenance::checkLastCompletionDate();
 
 $items = Maintenance::getAllItems();
 $isCompleted = Maintenance::checkIfAllCompleted($items);
-$lastCompletionDate = Option::get("dd.tools", "maint_last_date");
+$lastCompletionDate = Option::get(Main::MODULE_ID, "maint_last_date");
 
 $class = $isCompleted ? "completed" : "incomplete";
 ?>

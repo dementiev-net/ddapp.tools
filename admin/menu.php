@@ -2,9 +2,10 @@
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\Localization\Loc;
+use DD\Tools\Main;
 
 // Проверяем, что модуль установлен
-if (!CModule::IncludeModule("dd.tools")) {
+if (!CModule::IncludeModule(Main::MODULE_ID)) {
     return [];
 }
 
@@ -21,7 +22,7 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
     global $APPLICATION;
 
     // Получим права доступа текущего пользователя на модуль
-    $POST_RIGHT = $APPLICATION->GetGroupRight("dd.tools");
+    $POST_RIGHT = $APPLICATION->GetGroupRight(Main::MODULE_ID);
     $POST_RIGHT_MAIN = $APPLICATION->GetGroupRight("main");
 
     if ($POST_RIGHT >= "R") {
@@ -107,10 +108,10 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
 
         // Добавляем оба меню
         if ($POST_RIGHT_MAIN == "W") {
-            $arGlobalMenu["global_menu_dd"]["items"]["dd.tools_set"] = $arSettingsMenu;
+            $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID . "_set"] = $arSettingsMenu;
         }
-        $arGlobalMenu["global_menu_dd"]["items"]["dd.tools_main"] = $arMaintenanceMenu;
+        $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID . "_main"] = $arMaintenanceMenu;
 
-        $arGlobalMenu["global_menu_dd"]["items"]["dd.tools"] = $arMenu1;
+        $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID] = $arMenu1;
     }
 }

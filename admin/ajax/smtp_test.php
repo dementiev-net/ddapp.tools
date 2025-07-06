@@ -24,11 +24,8 @@ if (UserHelper::hasModuleAccess("") != "W") {
 
 try {
     $mailer = new CustomMail();
-
     $result = $mailer->testConnection();
-
     echo json_encode($result);
-
 } catch (Exception $e) {
     echo json_encode(["success" => false, "message" => $e->getMessage()]);
 }

@@ -216,7 +216,11 @@ $tabControl->Begin();
         BX.ready(function () {
             // Инициализация
             new BX.DD.Tools.SmtpTest({
-                ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/smtp_test.php") ?>'
+                ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/smtp_test.php") ?>',
+                messageLoadingText: '<?= Loc::getMessage("DD_TOOLS_SMTP_TEST_LOADING") ?>',
+                messageSuccessText: '<?= Loc::getMessage("DD_TOOLS_SMTP_TEST_SUCCESS") ?>',
+                messageErrorText: '<?= Loc::getMessage("DD_TOOLS_SMTP_TEST_ERROR") ?>',
+                messageAjaxErrorText: '<?= Loc::getMessage("DD_TOOLS_SMTP_TEST_ERROR_AJAX") ?>',
             });
         });
     </script>

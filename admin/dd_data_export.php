@@ -396,7 +396,7 @@ $oMenu = new CAdminContextMenu([
             new BX.DD.Tools.ExportManager({
                 ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/data_export.php") ?>',
                 messageBeforeUnload: '<?= Loc::getMessage("DD_EXPORT_MESSAGE_BEFORE_UNLOAD")?>',
-                messageWrongServerResponse: '<?= Loc::getMessage("DD_MESSAGE_WRONG_SERVER_RESPONSE")?>',
+                messageWrongServerResponse: '<?= Loc::getMessage("DD_EXPORT_MESSAGE_WRONG_SERVER_RESPONSE")?>',
                 messageUnknownError: '<?= Loc::getMessage("DD_EXPORT_MESSAGE_UNKNOWN_ERROR")?>',
                 messageUnknownStatus: '<?= Loc::getMessage("DD_EXPORT_MESSAGE_UNKNOWN_STATUS")?>',
                 messageErrorServerConnect: '<?= Loc::getMessage("DD_EXPORT_MESSAGE_ERROR_SERVER_CONNECT")?>',

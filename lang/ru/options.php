@@ -89,8 +89,8 @@ $MESS["DD_TOOLS_SMTP_DKIM_PASSPHRASE"] = "Ключевая фраза";
 $MESS["DD_TOOLS_SMTP_DKIM_PRIVATE_KEY"] = "Приватный ключ";
 $MESS["DD_TOOLS_SMTP_DKIM_PRIVATE_KEY_DEFAULT"] = "-----BEGIN RSA PRIVATE KEY-----";
 $MESS["DD_TOOLS_SMTP_TEST"] = "Тестировать соединение";
-$MESS["DD_TOOLS_SMTP_TEST_START"] = "Проверка...";
-$MESS["DD_TOOLS_SMTP_TEST_OK"] = "Успешно: ";
+$MESS["DD_TOOLS_SMTP_TEST_LOADING"] = "Тестирование SMTP...";
+$MESS["DD_TOOLS_SMTP_TEST_SUCCESS"] = "SMTP тест пройден успешно";
 $MESS["DD_TOOLS_SMTP_TEST_ERROR"] = "Ошибка: ";
 $MESS["DD_TOOLS_SMTP_TEST_ERROR_AJAX"] = "Ошибка AJAX-запроса";
 

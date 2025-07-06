@@ -3,12 +3,15 @@
 namespace DD\Tools;
 
 use Bitrix\Main\Loader;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Config\Option;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 use DD\Tools\Main;
 use DD\Tools\Helpers\LogHelper;
+
+Loc::loadMessages(__FILE__);
 
 class CustomMail
 {
@@ -351,14 +354,14 @@ class CustomMail
             if ($result) {
                 return [
                     "success" => true,
-                    "message" => "Письмо успешно отправлено",
+                    "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_SEND_OK"),
                     "debug" => $this->smtpDebugOutput
                 ];
             }
 
             return [
                 "success" => false,
-                "message" => "Неизвестная ошибка при отправке письма",
+                "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_UNKNOWN_ERROR"),
                 "debug" => $this->smtpDebugOutput
             ];
 
@@ -394,7 +397,7 @@ class CustomMail
             if (!$smtp->connect($this->settings["smtp_host"], $this->settings["smtp_port"], 30)) {
                 return [
                     "success" => false,
-                    "message" => "Не удалось подключиться к SMTP серверу",
+                    "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_SMTP_CONNECT_ERROR"),
                     "debug" => $debugOutput
                 ];
             }
@@ -404,7 +407,7 @@ class CustomMail
                 $smtp->quit();
                 return [
                     "success" => false,
-                    "message" => "EHLO/HELO не удалось выполнить",
+                    "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_HELO_ERROR"),
                     "debug" => $debugOutput
                 ];
             }
@@ -418,7 +421,7 @@ class CustomMail
                     $smtp->quit();
                     return [
                         "success" => false,
-                        "message" => "Не удалось выполнить STARTTLS",
+                        "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_STARTTLS_ERROR"),
                         "debug" => $debugOutput
                     ];
                 }
@@ -428,7 +431,7 @@ class CustomMail
                     $smtp->quit();
                     return [
                         "success" => false,
-                        "message" => "EHLO после STARTTLS не прошёл",
+                        "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_STARTTLS_EHLO_ERROR"),
                         "debug" => $debugOutput
                     ];
                 }
@@ -441,7 +444,7 @@ class CustomMail
                 $smtp->quit();
                 return [
                     "success" => false,
-                    "message" => "Сервер не поддерживает SMTP аутентификацию",
+                    "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_AUTH_FALSE_ERROR"),
                     "debug" => $debugOutput
                 ];
             }
@@ -451,7 +454,7 @@ class CustomMail
                 $smtp->quit();
                 return [
                     "success" => false,
-                    "message" => "Ошибка SMTP аутентификации",
+                    "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_AUTH_ERROR"),
                     "debug" => $debugOutput
                 ];
             }
@@ -460,7 +463,7 @@ class CustomMail
 
             return [
                 "success" => true,
-                "message" => "Соединение с SMTP сервером успешно установлено",
+                "message" => Loc::getMessage("DD_TOOLS_SMTP_MESSAGE_CONNECT_OK"),
                 "debug" => $debugOutput
             ];
         } catch (Exception $e) {

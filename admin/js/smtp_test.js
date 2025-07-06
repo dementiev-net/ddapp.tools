@@ -139,28 +139,28 @@ BX.DD.Tools.SmtpTest.prototype = {
 
         switch (type) {
             case 'loading':
-                html = this.params.loadingText || 'Тестирование SMTP...';
+                html = this.params.messageLoadingText;
                 targetElement = this.messageLoading;
                 break;
 
             case 'success':
-                html = this.params.successText || 'SMTP тест пройден успешно';
+                html = this.params.messageSuccessText;
                 if (message) {
-                    html += ': ' + BX.util.htmlspecialchars(message);
+                    html += BX.util.htmlspecialchars(message);
                 }
                 targetElement = this.messageOk;
                 break;
 
             case 'error':
-                html = this.params.errorText || 'Ошибка SMTP теста';
+                html = this.params.messageErrorText;
                 if (message) {
-                    html += ': ' + BX.util.htmlspecialchars(message);
+                    html += BX.util.htmlspecialchars(message);
                 }
                 targetElement = this.messageError;
                 break;
 
             case 'ajax_error':
-                html = this.params.ajaxErrorText || 'Ошибка AJAX запроса';
+                html = this.params.messageAjaxErrorText;
                 targetElement = this.messageError;
                 break;
         }

@@ -20,6 +20,18 @@ use DD\Tools\Helpers\UserHelper;
 Loc::loadMessages(__FILE__);
 Loader::includeModule("iblock");
 
+// Проверка сессии Bitrix
+if (!check_bitrix_sessid()) {
+    echo json_encode(["status" => "error", "message" => Loc::getMessage("ACCESS_DENIED")]);
+    exit;
+}
+
+// Проверка доступа
+if (UserHelper::hasModuleAccess("") != "W") {
+    echo json_encode(["status" => "error", "message" => Loc::getMessage("ACCESS_DENIED")]);
+    exit;
+}
+
 // Настройка логирования
 LogHelper::configure();
 
@@ -37,7 +49,7 @@ try {
     $exportSettings = DataExport::getById($exportId);
 
     if (!$exportSettings) {
-        echo Json::encode(["status" => "error", "message" => "Настройки экспорта не найдены"]);
+        echo Json::encode(["status" => "error", "message" => Loc::getMessage("DD_EXPORT_MESSAGE_ERROR_SETTINGS")]);
         exit;
     }
 
@@ -155,7 +167,7 @@ try {
         fclose($file);
 
     } else {
-        // Excel экспорт - исправленная версия
+        // Excel экспорт
         if ($step === 0) {
             // Создаем новый файл только на первом шаге
             $writer = WriterEntityFactory::createXLSXWriter();
@@ -307,6 +319,6 @@ try {
 } catch (Exception $e) {
     echo Json::encode([
         "status" => "error",
-        "message" => "Ошибка экспорта: " . $e->getMessage()
+        "message" => $e->getMessage()
     ]);
 }

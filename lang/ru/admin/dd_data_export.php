@@ -1,50 +1,75 @@
 <?php
-//$MESS["DD_EXPORT_EXCEL_PAGE_TITLE"] = "Выгрузка информационного блока: шаг";
-//$MESS["DD_EXPORT_EXCEL_TAB1"] = "Инфоблок";
-//$MESS["DD_EXPORT_EXCEL_TAB1_TITLE"] = "Выбор информационного блока для экспорта";
-//$MESS["DD_EXPORT_EXCEL_TAB2"] = "Параметры экспорта";
-//$MESS["DD_EXPORT_EXCEL_TAB2_TITLE"] = "Настройка параметров экспорта";
-//$MESS["DD_EXPORT_EXCEL_TAB3"] = "Результат";
-//$MESS["DD_EXPORT_EXCEL_TAB3_TITLE"] = "Результат экспорта";
-//
-//
-//
-//$MESS["ITDON_EXPORTER_IBLOCK_NOT_SELECTED"] = "Информационный блок не выбран";
-//$MESS["ITDON_EXPORTER_LINES_EXPORTED"] = "Всего выгружено строк: #LINES#";
-//$MESS["ITDON_EXPORTER_DOWNLOAD_FILE"] = "Скачать файл #HREF#";
-//$MESS["ITDON_EXPORTER_EXPORT_FINISHED"] = "Выгрузка завершена";
-//$MESS["ITDON_EXPORTER_EXPORT_PROGRESS"] = "Процесс выгрузки";
-//$MESS["ITDON_EXPORTER_LINES_EXPORTED_PROGRESS"] = "Всего выгружено строк: <b>#ELEMENT_UPLOADED#</b> из <b>#ELEMENT_ALL#</b>";
-//$MESS["ITDON_EXPORTER_CHOOSE_IBLOCK"] = "Информационный блок для экспорта";
-//$MESS["ITDON_EXPORTER_CHOOSE_FORMAT"] = "Задайте свойства формата файла";
-//$MESS["ITDON_EXPORTER_DELIMITER"] = "Разделитель полей";
-//$MESS["ITDON_EXPORTER_DELIM_ZPT"] = "запятая";
-//$MESS["ITDON_EXPORTER_DELIM_TZP"] = "точка с запятой";
-//$MESS["ITDON_EXPORTER_DELIM_TAB"] = "табуляция";
-//$MESS["ITDON_EXPORTER_DELIM_VCH"] = "вертикальная черта";
-//$MESS["ITDON_EXPORTER_DELIM_OTR"] = "другой";
-//$MESS["ITDON_EXPORTER_MULTIPLE_DELIMITER"] = "Разделитель для свойств с множественным выбором";
-//$MESS["ITDON_EXPORTER_FIRST_LINE_NAMES"] = "Первая строка содержит имена полей";
-//$MESS["ITDON_EXPORTER_FIELDS_MAPPING"] = "Задайте соответствие полей в файле полям в базе";
-//$MESS["ITDON_EXPORTER_IS_FIELD_NEEDED"] = "Выгружать";
-//$MESS["ITDON_EXPORTER_FIELD_NAME"] = "Название поля";
-//$MESS["ITDON_EXPORTER_FIELD_SORT"] = "Порядок";
-//$MESS["ITDON_EXPORTER_ADDITIONAL_SETTINGS"] = "Дополнительные настройки";
-//$MESS["ITDON_EXPORTER_ONLY_ACTIVE"] = "Выгружать только активные элементы";
-//$MESS["ITDON_EXPORTER_NUMBER_OF_SECONDS_TO_COMPLETE_ONE_STEP"] = "Кол-во секунд на выполнение одного шага";
-//$MESS["ITDON_EXPORTER_NUMBER_OF_ELEMENTS_TO_COMPLETE_ONE_STEP"] = "Кол-во элементов выгружаемые за один шаг";
-//$MESS["ITDON_EXPORTER_RECOMMENDED_VALUE"] = "Рекомендуемое значение от 100 до 500";
-//$MESS["ITDON_EXPORTER_SAVE_FILE_AS"] = "Сохранить файл данных как...";
-//$MESS["ITDON_EXPORTER_FILE_NAME"] = "Имя файла данных относительно корня сайта";
-//$MESS["ITDON_EXPORTER_FILE_WARNING"] = "Если такой файл существует, то он будет перезаписан";
-//$MESS["ITDON_EXPORTER_ACCESS_DENIED"] = "Доступ закрыт";
-//$MESS["ITDON_EXPORTER_FIELD_LINK"] = "Ссылка";
-//$MESS["ITDON_EXPORTER_FIELD_SECTION_PATH"] = "Раздел";
-//$MESS["ITDON_EXPORTER_TABLE_TITLE_PROPERTY"] = "Свойства";
-//$MESS["ITDON_EXPORTER_TABLE_TITLE_COMMON"] = "Основные поля";
-//$MESS["ITDON_EXPORTER_TABLE_TITLE_PRICES_AND_QUANTITY"] = "Цены и количество";
-//$MESS["ITDON_EXPORTER_FIELD_QUANTITY"] = "Количество";
-//
-//$MESS["DD_EXPORT_EXCEL_BTN_BACK_HOME"] = "Вернуться на первый шаг";
-//$MESS["DD_EXPORT_EXCEL_BTN_BACK"] = "Назад";
-//$MESS["DD_EXPORT_EXCEL_BTN_NEXT"] = "Далее";
+$MESS["DD_PAGE_TITLE"] = "Экспорт данных инфоблока в Excel, CSV";
+
+$MESS["DD_EXPORT_TAB1"] = "Настройки";
+$MESS["DD_EXPORT_TAB1_TITLE"] = "Настройки экспорта данных инфоблока";
+
+$MESS["DD_EXPORT_BLOCK1"] = "Настройки";
+$MESS["DD_EXPORT_BLOCK2"] = "Поля для экспорта";
+$MESS["DD_EXPORT_BLOCK3"] = "Настройки CSV";
+$MESS["DD_EXPORT_BLOCK4"] = "Настройки Excel";
+
+$MESS["DD_EXPORT_SETTINGS_PROFILE"] = "Профиль";
+$MESS["DD_EXPORT_SETTINGS_PROFILE_SELECT"] = "-- Выберите --";
+$MESS["DD_EXPORT_SETTINGS_PROFILE_NAME"] = "Название профиля";
+$MESS["DD_EXPORT_SETTINGS_IBLOCK"] = "Инфоблок";
+$MESS["DD_EXPORT_SETTINGS_IBLOCK_FIELD"] = "Поля инфоблока";
+$MESS["DD_EXPORT_SETTINGS_IBLOCK_PROPERTY"] = "Свойства инфоблока";
+$MESS["DD_EXPORT_SETTINGS_IBLOCK_SELECT"] = "-- Выберите инфоблок-- ";
+$MESS["DD_EXPORT_SETTINGS_IBLOCK_SELECT_FIRST"] = "-- Сначала выберите тип --";
+$MESS["DD_EXPORT_SETTINGS_IBLOCK_TYPE"] = "Тип инфоблока";
+$MESS["DD_EXPORT_SETTINGS_IBLOCK_TYPE_SELECT"] = "-- Выберите тип инфоблока --";
+$MESS["DD_EXPORT_SETTINGS_FORMAT"] = "Формат экспорта";
+$MESS["DD_EXPORT_SETTINGS_FORMAT_SELECT"] = "-- Выберите формат --";
+$MESS["DD_EXPORT_SETTINGS_FORMAT_XLS"] = "Excel (XLS)";
+$MESS["DD_EXPORT_SETTINGS_FORMAT_CSV"] = "CSV";
+$MESS["DD_EXPORT_SETTINGS_PATH"] = "Путь к файлу экспорта";
+$MESS["DD_EXPORT_SETTINGS_DELIMITER"] = "Разделитель полей";
+$MESS["DD_EXPORT_SETTINGS_MULTI_DELIMITER"] = "Разделитель для множественных свойств";
+$MESS["DD_EXPORT_SETTINGS_DELIMITER_1"] = "запятая";
+$MESS["DD_EXPORT_SETTINGS_DELIMITER_2"] = "точка с запятой";
+$MESS["DD_EXPORT_SETTINGS_DELIMITER_3"] = "табуляция";
+$MESS["DD_EXPORT_SETTINGS_DELIMITER_4"] = "вертикальная черта";
+$MESS["DD_EXPORT_SETTINGS_NEED_CSV_HEADER"] = "Первая строка содержит имена полей";
+$MESS["DD_EXPORT_SETTINGS_NEED_EXEL_HEADER"] = "Включить заголовки";
+$MESS["DD_EXPORT_SETTINGS_FROM"] = "из";
+$MESS["DD_EXPORT_SETTINGS_FILE"] = "Файл";
+
+$MESS["DD_EXPORT_PROCESS_TITLE"] = "Экспорт";
+$MESS["DD_EXPORT_PROCESS_ITEMS_OK"] = "Успешно экспортировано записей: ";
+$MESS["DD_EXPORT_PROCESS_ITEMS_ERROR"] = "С ошибками: ";
+
+$MESS["DD_EXPORT_PROPERTY_TYPE_S"] = " (Строка)";
+$MESS["DD_EXPORT_PROPERTY_TYPE_N"] = " (Число)";
+$MESS["DD_EXPORT_PROPERTY_TYPE_L"] = " (Список)";
+$MESS["DD_EXPORT_PROPERTY_TYPE_F"] = " (Файл)";
+$MESS["DD_EXPORT_PROPERTY_TYPE_G"] = " (Привязка к разделам)";
+$MESS["DD_EXPORT_PROPERTY_TYPE_E"] = " (Привязка к элементам)";
+$MESS["DD_EXPORT_PROPERTY_TYPE_M"] = " [множественное]";
+
+$MESS["DD_EXPORT_MESSAGE_TITLE"] = "Сообщение";
+$MESS["DD_EXPORT_MESSAGE_ERROR"] = "Ошибка";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_ERROR"] = "Ошибка загрузки профилей";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_SAVE_ERROR"] = "Ошибка сохранения профиля";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_DELETE_ERROR"] = "Ошибка удаления профиля";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_SELECT_ERROR"] = "Выберите профиль для удаления";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_NAME_ERROR"] = "Заполните название профиля";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_IBLOCK_ERROR"] = "Выберите инфоблок";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_FORMAT_ERROR"] = "Выберите формат экспорта";
+$MESS["DD_EXPORT_MESSAGE_IBLOCK_TYPE_ERROR"] = "Ошибка загрузки типов инфоблоков";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_ADD"] = "Профиль обновлен";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_EDIT"] = "Профиль создан";
+$MESS["DD_EXPORT_MESSAGE_PROFILE_DELETE"] = "Профиль удален";
+$MESS["DD_EXPORT_MESSAGE_BEFORE_UNLOAD"] = "Экспорт в процессе. Покинуть страницу?";
+$MESS["DD_EXPORT_MESSAGE_BEFORE_DELETE"] = "Вы уверены, что хотите удалить этот профиль?";
+$MESS["DD_MESSAGE_WRONG_SERVER_RESPONSE"] = "Некорректный ответ сервера";
+$MESS["DD_EXPORT_MESSAGE_UNKNOWN_ERROR"] = "Неизвестная ошибка";
+$MESS["DD_EXPORT_MESSAGE_UNKNOWN_STATUS"] = "Неизвестный статус";
+$MESS["DD_EXPORT_MESSAGE_ERROR_SERVER_CONNECT"] = "Ошибка запроса к серверу";
+
+$MESS["DD_EXPORT_BTN_EXPORT"] = "Экспортировать";
+$MESS["DD_EXPORT_BTN_EXPORT_TITLE"] = "Экспортировать выбранный профиль";
+$MESS["DD_EXPORT_BTN_SAVE"] = "Сохранить";
+$MESS["DD_EXPORT_BTN_CANCEL"] = "Отмена";
+$MESS["DD_EXPORT_BTN_SELECT_ALL"] = "Выбрать все";
+$MESS["DD_EXPORT_BTN_DESELECT_ALL"] = "Снять все";

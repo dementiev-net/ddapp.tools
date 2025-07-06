@@ -2,6 +2,8 @@
 
 namespace DD\Tools\Helpers;
 
+use DD\Tools\Main;
+
 class UserHelper
 {
     /**
@@ -28,15 +30,15 @@ class UserHelper
 
     /**
      * Проверяет права пользователя на модуль
-     * @param int $userId
      * @param string $moduleId
-     * @return bool
+     * @return mixed
      */
-    public static function hasModuleAccess(int $userId, string $moduleId): bool
+    public static function hasModuleAccess(string $moduleId)
     {
         global $APPLICATION;
 
-        $currentUserId = $APPLICATION->GetGroupRight($moduleId, [], $userId);
-        return $currentUserId !== "D";
+        if (!$moduleId) $moduleId = Main::MODULE_ID;
+
+        return $APPLICATION->GetGroupRight($moduleId);
     }
 }

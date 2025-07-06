@@ -11,10 +11,14 @@ BX.DD.Tools.ExportManager = function (params) {
     this.exportButton = null;
     this.messageWrap = null;
     this.messageOk = null;
+    this.messageProgressA = null;
+    this.messageProgressB = null;
+    this.messageProgressC = null;
     this.messageError = null;
     this.messageFile = null;
 
     this.isExporting = false;
+    this.progressSize = 500;
     this.exported = 0;
     this.total = 0;
     this.errorsCount = 0;
@@ -27,6 +31,9 @@ BX.DD.Tools.ExportManager = function (params) {
 BX.DD.Tools.ExportManager.prototype = {
 
     init: function () {
+
+        console.log('ExportManager: Params', this.params);
+
         this.initElements();
         this.bindEvents();
         this.initBeforeUnload();
@@ -36,6 +43,9 @@ BX.DD.Tools.ExportManager.prototype = {
         this.exportButton = BX(this.params.buttonId) || document.getElementById(this.params.buttonSelector || 'btn_export');
         this.messageWrap = BX(this.params.messageWrapId || 'export_message');
         this.messageOk = BX(this.params.messageOkId || 'export_message_ok');
+        this.messageProgressA = BX(this.params.messageProgressAId || 'progress_percent_a');
+        this.messageProgressB = BX(this.params.messageProgressAId || 'progress_percent_b');
+        this.messageProgressC = BX(this.params.messageProgressAId || 'progress_percent_c');
         this.messageError = BX(this.params.messageErrorId || 'export_message_error');
         this.messageFile = BX(this.params.messageFileId || 'export_message_file');
 
@@ -44,7 +54,7 @@ BX.DD.Tools.ExportManager.prototype = {
             return false;
         }
 
-        if (!this.messageWrap || !this.messageOk || !this.messageError || !this.messageFile) {
+        if (!this.messageWrap) {
             console.warn('ExportManager: Message elements not found');
             return false;
         }
@@ -53,7 +63,9 @@ BX.DD.Tools.ExportManager.prototype = {
     },
 
     bindEvents: function () {
-        if (!this.exportButton) return;
+        if (!this.exportButton) {
+            return;
+        }
 
         BX.bind(this.exportButton, 'click', BX.proxy(this.onExportClick, this));
     },
@@ -64,8 +76,12 @@ BX.DD.Tools.ExportManager.prototype = {
 
     onExportClick: function (e) {
         e.preventDefault();
+        var exportIdInput = document.querySelector('[name="profile_id"]');
 
-        if (this.isExporting) {
+        if (!exportIdInput) {
+            return;
+        }
+        if (!exportIdInput.value) {
             return;
         }
 
@@ -75,7 +91,7 @@ BX.DD.Tools.ExportManager.prototype = {
     onBeforeUnload: function (e) {
         if (this.isExporting) {
             e.preventDefault();
-            e.returnValue = this.params.beforeUnloadMessage || 'Экспорт еще не завершен. Вы уверены, что хотите покинуть страницу?';
+            e.returnValue = this.params.messageBeforeUnload;
             return e.returnValue;
         }
     },
@@ -90,14 +106,16 @@ BX.DD.Tools.ExportManager.prototype = {
         this.setButtonState(true);
         this.showProgress();
         this.resetMessages();
-
         this.exportStep(0);
     },
 
     exportStep: function (step) {
         var self = this;
         var data = this.getAjaxData(step) || {};
+
         data.sessid = this.sessid;
+
+        console.log('ExportManager: AJAX', data);
 
         BX.ajax({
             url: this.getAjaxUrl(),
@@ -124,30 +142,28 @@ BX.DD.Tools.ExportManager.prototype = {
             totalExported: this.exported,
             exportId: this.getExportId(),
             sessid: BX.bitrix_sessid(),
-            action: this.params.action || 'export_csv'
+            action: this.params.action || 'export'
         };
     },
 
     getExportId: function () {
-        if (this.params.exportId) {
-            return this.params.exportId;
-        }
-
+        if (this.params.exportId) return this.params.exportId;
         if (this.exportButton && this.exportButton.dataset.exportId) {
             return this.exportButton.dataset.exportId;
         }
 
-        var exportIdInput = document.querySelector('[name="export_id"]');
+        var exportIdInput = document.querySelector('[name="profile_id"]');
+
         if (exportIdInput) {
             return exportIdInput.value;
         }
 
-        return 123; // fallback
+        return 0; // fallback
     },
 
     handleResponse: function (response, currentStep) {
         if (!response) {
-            this.finishExport('Некорректный ответ сервера');
+            this.finishExport(this.params.messageWrongServerResponse);
             return;
         }
 
@@ -159,10 +175,10 @@ BX.DD.Tools.ExportManager.prototype = {
                 this.handleDone(response);
                 break;
             case 'error':
-                this.finishExport(response.message || 'Неизвестная ошибка');
+                this.finishExport(response.message || this.params.messageUnknownError);
                 break;
             default:
-                this.finishExport('Неизвестный статус: ' + response.status);
+                this.finishExport(this.params.messageUnknownStatus + ': ' + response.status);
         }
     },
 
@@ -186,8 +202,10 @@ BX.DD.Tools.ExportManager.prototype = {
     },
 
     handleFailure: function (xhr) {
+
         console.error('ExportManager AJAX Error:', xhr);
-        this.finishExport('Ошибка запроса к серверу (HTTP ' + (xhr.status || 'unknown') + ')');
+
+        this.finishExport(this.params.messageErrorServerConnect + ' (HTTP ' + (xhr.status || 'unknown') + ')');
     },
 
     updateCounters: function (response) {
@@ -197,11 +215,13 @@ BX.DD.Tools.ExportManager.prototype = {
     },
 
     updateProgress: function () {
-        var progressText = this.exported + " из " + this.total;
+        var progressText = this.exported + ' ' + this.params.messageFrom + ' ' + this.total;
 
         if (this.total > 0) {
             var percent = Math.round((this.exported / this.total) * 100);
-            progressText += ' (' + percent + '%)';
+            this.messageProgressA.style.width = this.calculatePercent(percent) + 'px';
+            this.messageProgressB.textContent = percent + '%';
+            this.messageProgressC.textContent = percent + '%';
         }
 
         this.messageOk.textContent = progressText;
@@ -212,11 +232,9 @@ BX.DD.Tools.ExportManager.prototype = {
         if (!response.fileUrl) return;
 
         var fileName = response.fileName || response.fileUrl.split('/').pop();
-        var linkHtml = 'Файл: <a href="' +
-            BX.util.htmlspecialchars(response.fileUrl) +
-            '" target="_blank">' +
-            BX.util.htmlspecialchars(fileName) +
-            '</a>';
+        var linkHtml = this.params.messageFile + ': <a href="' +
+            BX.util.htmlspecialchars(response.fileUrl) + '" target="_blank">' +
+            BX.util.htmlspecialchars(fileName) + '</a>';
 
         this.messageFile.innerHTML = linkHtml;
     },
@@ -252,14 +270,23 @@ BX.DD.Tools.ExportManager.prototype = {
 
     resetMessages: function () {
         if (this.messageOk) {
-            this.messageOk.textContent = "0 из 0";
+            this.messageOk.textContent = '0 ' + this.params.messageFrom + ' 0';
+        }
+        if (this.messageProgressA) {
+            this.messageProgressA.style.width = '0px';
+        }
+        if (this.messageProgressB) {
+            this.messageProgressB.textContent = '0%';
+        }
+        if (this.messageProgressC) {
+            this.messageProgressC.textContent = '0%';
         }
         if (this.messageError) {
-            this.messageError.textContent = "0";
+            this.messageError.textContent = '0';
             this.messageError.style.color = '';
         }
         if (this.messageFile) {
-            this.messageFile.innerHTML = "";
+            this.messageFile.innerHTML = '';
         }
     },
 
@@ -292,5 +319,9 @@ BX.DD.Tools.ExportManager.prototype = {
             errorsCount: this.errorsCount,
             percent: this.total > 0 ? Math.round((this.exported / this.total) * 100) : 0
         };
+    },
+
+    calculatePercent: function (percent) {
+        return Math.round((this.progressSize * percent) / 100);
     }
 };

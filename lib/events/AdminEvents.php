@@ -35,7 +35,7 @@ class AdminEvents
                     if ($act["ICON"] == "delete") {
                         $arNewActions[] = [
                             "ICON" => "",
-                            "TEXT" => Loc::getMessage("DD_ADMIN_EVENT_ACTION_RUN"),
+                            "TEXT" => Loc::getMessage("DD_EVENT_ACTION_RUN"),
                             "ACTION" => $lAdmin->ActionDoGroup($v->id, "dd_agent_run", "&lang=" . LANG . "&agent_id=" . $v->id),
                         ];
                     }

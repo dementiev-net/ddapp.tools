@@ -28,7 +28,7 @@ class DataExport
      */
     public static function getItems($request): mixed
     {
-        return DataExportTable::getList($request);
+        return DataExportTable::getList($request)->fetchAll();
     }
 
     /**

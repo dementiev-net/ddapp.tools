@@ -63,7 +63,7 @@ class PageEvents
                 \CTimeZone::Enable();
 
                 if (strlen($eval_result)) {
-                    $userMessageText = Loc::getMessage("DD_PAGE_EVENT_ACTION_RUN_OK");
+                    $userMessageText = Loc::getMessage("DD_EVENT_ACTION_RUN_OK");
                 }
 
                 unset($_REQUEST["action"]);

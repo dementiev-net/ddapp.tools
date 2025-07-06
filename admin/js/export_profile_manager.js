@@ -7,6 +7,7 @@ BX.namespace('BX.DD.Tools');
 
 BX.DD.Tools.ExportProfileManager = function (params) {
 
+    this.params = params || {};
     this.currentProfileId = null;
     this.availableFields = [];
     this.ajaxUrl = params && params.ajaxUrl ? params.ajaxUrl : window.location.href;
@@ -18,8 +19,12 @@ BX.DD.Tools.ExportProfileManager = function (params) {
 BX.DD.Tools.ExportProfileManager.prototype = {
 
     init: function () {
+
+        console.log('ExportProfileManager: Params', this.params);
+
+        this.toggleButtons(false);
         this.bindEvents();
-        this.loadProfiles();
+        this.loadProfiles("");
         this.loadIblockTypes();
     },
 
@@ -27,21 +32,24 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         var self = this;
 
         // Выбор профиля
-        var profileSelect = document.getElementById("profile-select");
+        var profileSelect = document.getElementById("profile_select");
         if (profileSelect) {
             BX.bind(profileSelect, 'change', function () {
                 if (this.value) {
                     self.loadProfile(this.value);
                 } else {
+                    self.resetForm();
                     self.toggleSettings(false);
                     self.toggleFieldsSelection(false);
                     self.hideExportSettings();
                 }
             });
+        } else {
+            console.warn('ExportProfileManager: Select profiles not found');
         }
 
         // Создание нового профиля
-        var createBtn = document.getElementById("create-profile-btn");
+        var createBtn = document.getElementById("create_profile_btn");
         if (createBtn) {
             BX.bind(createBtn, 'click', function () {
                 self.createNewProfile();
@@ -49,7 +57,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         }
 
         // Удаление профиля
-        var deleteBtn = document.getElementById("delete-profile-btn");
+        var deleteBtn = document.getElementById("delete_profile_btn");
         if (deleteBtn) {
             BX.bind(deleteBtn, 'click', function () {
                 self.deleteProfile();
@@ -57,7 +65,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         }
 
         // Изменение типа инфоблока
-        var iblockTypeSelect = document.getElementById("iblock-type-select");
+        var iblockTypeSelect = document.getElementById("iblock_type_select");
         if (iblockTypeSelect) {
             BX.bind(iblockTypeSelect, 'change', function () {
                 self.loadIblocks(this.value);
@@ -65,7 +73,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         }
 
         // Изменение инфоблока
-        var iblockSelect = document.getElementById("iblock-select");
+        var iblockSelect = document.getElementById("iblock_select");
         if (iblockSelect) {
             BX.bind(iblockSelect, 'change', function () {
                 if (this.value) {
@@ -77,7 +85,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         }
 
         // Изменение типа экспорта
-        var exportTypeSelect = document.getElementById("export-type-select");
+        var exportTypeSelect = document.getElementById("export_type_select");
         if (exportTypeSelect) {
             BX.bind(exportTypeSelect, 'change', function () {
                 self.showExportSettings(this.value);
@@ -85,7 +93,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         }
 
         // Выбор всех полей
-        var selectAllBtn = document.getElementById("select-all-fields");
+        var selectAllBtn = document.getElementById("select_all_fields");
         if (selectAllBtn) {
             BX.bind(selectAllBtn, 'click', function () {
                 self.selectAllFields(true);
@@ -93,7 +101,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         }
 
         // Снятие всех полей
-        var deselectAllBtn = document.getElementById("deselect-all-fields");
+        var deselectAllBtn = document.getElementById("deselect_all_fields");
         if (deselectAllBtn) {
             BX.bind(deselectAllBtn, 'click', function () {
                 self.selectAllFields(false);
@@ -101,7 +109,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         }
 
         // Сохранение формы
-        var form = document.getElementById("data-export-form");
+        var form = document.getElementById("data_export_form");
         if (form) {
             BX.bind(form, 'submit', function (e) {
                 BX.PreventDefault(e);
@@ -110,7 +118,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         }
 
         // Отмена
-        var cancelBtn = document.getElementById("cancel-btn");
+        var cancelBtn = document.getElementById("cancel_btn");
         if (cancelBtn) {
             BX.bind(cancelBtn, 'click', function () {
                 self.toggleSettings(false);
@@ -122,10 +130,11 @@ BX.DD.Tools.ExportProfileManager.prototype = {
     createNewProfile: function () {
         this.currentProfileId = null;
         this.resetForm();
+        this.toggleButtons(true);
         this.toggleSettings(true);
     },
 
-    loadProfiles: function () {
+    loadProfiles: function (selectId) {
         var self = this;
 
         BX.showWait();
@@ -133,24 +142,29 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         this.makeRequest('get_profiles', {}, function (response) {
             BX.closeWait();
 
-            var select = document.getElementById('profile-select');
-            if (!select) return;
+            var profileSelect = document.getElementById('profile_select');
+            if (!profileSelect) return;
 
             // Очищаем опции кроме первой
-            select.innerHTML = '<option value="">-- Выберите --</option>';
+            profileSelect.innerHTML = '<option value="">' + self.params.messageProfileSelect + '</option>';
 
             if (response.data && response.data.length) {
                 response.data.forEach(function (profile) {
                     var option = document.createElement('option');
                     option.value = profile.ID;
                     option.textContent = profile.NAME;
-                    select.appendChild(option);
+                    profileSelect.appendChild(option);
                 });
             }
+            // Выбираем нужный
+            if (selectId) {
+                profileSelect.value = selectId;
+            }
+
         }, function (error) {
             BX.closeWait();
-            console.error('Ошибка загрузки профилей:', error);
-            self.showError('Ошибка загрузки профилей');
+            self.showError(self.params.messageProfileLoadError);
+            console.error('ExportProfileManager Load Profile Error:', error);
         });
     },
 
@@ -162,6 +176,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         this.makeRequest('get_profile', {profile_id: profileId}, function (response) {
             var profile = response.data;
 
+            self.toggleButtons(true);
             self.currentProfileId = profileId;
             self.fillForm(profile);
             self.toggleSettings(true);
@@ -169,7 +184,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
             // Загружаем инфоблоки если есть тип
             if (profile.IBLOCK_TYPE_ID) {
                 self.loadIblocks(profile.IBLOCK_TYPE_ID, function () {
-                    var iblockSelect = document.getElementById('iblock-select');
+                    var iblockSelect = document.getElementById('iblock_select');
                     if (iblockSelect) {
                         iblockSelect.value = profile.IBLOCK_ID;
                     }
@@ -193,39 +208,34 @@ BX.DD.Tools.ExportProfileManager.prototype = {
             }
         }, function (error) {
             BX.closeWait();
-            console.error('Ошибка загрузки профиля:', error);
-            self.showError('Ошибка загрузки профиля');
+            self.showError(self.params.messageProfileLoadError);
+            console.error('ExportProfileManager Load Profile Error:', error);
         });
     },
 
     deleteProfile: function () {
         var self = this;
-        var profileSelect = document.getElementById('profile-select');
+        var profileSelect = document.getElementById('profile_select');
         if (!profileSelect) return;
 
         var profileId = profileSelect.value;
 
         if (!profileId) {
-            this.showAlert('Выберите профиль для удаления');
+            this.showAlert(self.params.messageProfileSelectError);
             return;
         }
 
-        // Используем стандартный confirm если BX.UI недоступен
-        var confirmed = false;
-        if (typeof BX.UI !== 'undefined' && BX.UI.Dialogs && BX.UI.Dialogs.MessageBox) {
-            BX.UI.Dialogs.MessageBox.confirm(
-                'Вы уверены, что хотите удалить этот профиль?',
-                'Подтверждение удаления',
-                function () {
+        const messageBox = BX.UI.Dialogs.MessageBox.create({
+                message: self.params.messageBeforeDelete,
+                title: self.params.messageTitle,
+                buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
+                onOk: function (messageBox) {
                     self.doDeleteProfile(profileId);
-                }
-            );
-        } else {
-            confirmed = confirm('Вы уверены, что хотите удалить этот профиль?');
-            if (confirmed) {
-                self.doDeleteProfile(profileId);
+                    messageBox.close();
+                },
             }
-        }
+        );
+        messageBox.show();
     },
 
     doDeleteProfile: function (profileId) {
@@ -235,14 +245,14 @@ BX.DD.Tools.ExportProfileManager.prototype = {
 
         this.makeRequest('delete_profile', {profile_id: profileId}, function () {
             BX.closeWait();
-            self.loadProfiles();
+            self.loadProfiles("");
             self.toggleSettings(false);
             self.resetForm();
-            self.showAlert('Профиль удален');
+            self.showAlert(self.params.messageProfileDeleteOk);
         }, function (error) {
             BX.closeWait();
-            console.error('Ошибка удаления профиля:', error);
-            self.showError('Ошибка удаления профиля');
+            self.showError(self.params.messageProfileDeleteError);
+            console.error('ExportProfileManager Delete Profile Error:', error);
         });
     },
 
@@ -250,10 +260,10 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         var self = this;
 
         this.makeRequest('get_iblock_types', {}, function (response) {
-            var select = document.getElementById('iblock-type-select');
+            var select = document.getElementById('iblock_type_select');
             if (!select) return;
 
-            select.innerHTML = '<option value="">-- Выберите тип инфоблока --</option>';
+            select.innerHTML = '<option value="">' + self.params.messageIblockTypeSelect + '</option>';
 
             if (response.data && response.data.length) {
                 response.data.forEach(function (type) {
@@ -264,24 +274,25 @@ BX.DD.Tools.ExportProfileManager.prototype = {
                 });
             }
         }, function (error) {
-            console.error('Ошибка загрузки типов инфоблоков:', error);
+            self.showError(self.params.messageIblockSelectError);
+            console.error('ExportProfileManager Load Profile Type Error:', error);
         });
     },
 
     loadIblocks: function (typeId, callback) {
         var self = this;
-        var select = document.getElementById('iblock-select');
+        var select = document.getElementById('iblock_select');
         if (!select) return;
 
         if (!typeId) {
-            select.innerHTML = '<option value="">-- Сначала выберите тип --</option>';
+            select.innerHTML = '<option value="">' + self.params.messageIblockTypeSelectFirst + '</option>';
             select.disabled = true;
             this.toggleFieldsSelection(false);
             return;
         }
 
         this.makeRequest('get_iblocks', {type_id: typeId}, function (response) {
-            select.innerHTML = '<option value="">-- Выберите инфоблок --</option>';
+            select.innerHTML = '<option value="">' + self.params.messageIblockSelect + '</option>';
 
             if (response.data && response.data.length) {
                 response.data.forEach(function (iblock) {
@@ -298,7 +309,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
                 callback();
             }
         }, function (error) {
-            console.error('Ошибка загрузки инфоблоков:', error);
+            console.error('ExportProfileManager Load Profile Error:', error);
         });
     },
 
@@ -319,19 +330,19 @@ BX.DD.Tools.ExportProfileManager.prototype = {
                 callback();
             }
         }, function (error) {
-            console.error('Ошибка загрузки полей инфоблока:', error);
+            console.error('ExportProfileManager Load Iblock Fields Error:', error);
         });
     },
 
     saveProfile: function () {
         var self = this;
-        var form = document.getElementById('data-export-form');
+        var form = document.getElementById('data_export_form');
         if (!form) return;
 
         var formData = new FormData(form);
         var data = {};
 
-        // Собираем обычные поля
+        // // Собираем обычные поля
         for (var pair of formData.entries()) {
             var key = pair[0];
             var value = pair[1];
@@ -346,7 +357,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         var exportFields = [];
 
         // Получаем поля в порядке их расположения на форме
-        var fieldsContainer = document.getElementById('fields-container');
+        var fieldsContainer = document.getElementById('fields_container');
         if (fieldsContainer) {
             var fieldItems = fieldsContainer.querySelectorAll('.field-item');
 
@@ -397,17 +408,18 @@ BX.DD.Tools.ExportProfileManager.prototype = {
 
             if (!self.currentProfileId && response.id) {
                 self.currentProfileId = response.id;
-                var profileIdInput = document.getElementById('profile-id');
+                var profileIdInput = document.getElementById('profile_id');
                 if (profileIdInput) {
                     profileIdInput.value = response.id;
                 }
             }
 
-            self.loadProfiles();
+            self.loadProfiles(self.currentProfileId);
+
         }, function (error) {
             BX.closeWait();
-            console.error('Ошибка сохранения профиля:', error);
-            self.showError('Ошибка сохранения профиля');
+            self.showError(self.params.messageProfileSaveError);
+            console.error('ExportProfileManager Save Profile Error:', error);
         });
     },
 
@@ -416,77 +428,42 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         data.action = action;
         data.sessid = this.sessid;
 
-        // Используем BX.ajax если доступен, иначе fetch
-        if (typeof BX.ajax === 'function') {
-            BX.ajax({
-                url: this.ajaxUrl,
-                method: 'POST',
-                data: data,
-                dataType: 'json',
-                onsuccess: function (result) {
-                    if (result && result.success) {
-                        if (successCallback) {
-                            successCallback(result);
-                        }
-                    } else {
-                        if (errorCallback) {
-                            errorCallback(result && result.message ? result.message : 'Ошибка запроса');
-                        }
+        BX.ajax({
+            url: this.ajaxUrl,
+            method: 'POST',
+            data: data,
+            dataType: 'json',
+            onsuccess: function (result) {
+                if (result && result.success) {
+                    if (successCallback) {
+                        successCallback(result);
                     }
-                },
-                onfailure: function (error) {
-                    if (errorCallback) {
-                        errorCallback('Ошибка соединения');
-                    }
-                }
-            });
-        } else {
-            // Fallback на fetch
-            var formData = new FormData();
-            Object.keys(data).forEach(function (key) {
-                if (typeof data[key] === 'object' && data[key] !== null) {
-                    formData.append(key, JSON.stringify(data[key]));
                 } else {
-                    formData.append(key, data[key]);
-                }
-            });
-
-            fetch(this.ajaxUrl, {
-                method: 'POST',
-                body: formData
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (result) {
-                    if (result && result.success) {
-                        if (successCallback) {
-                            successCallback(result);
-                        }
-                    } else {
-                        if (errorCallback) {
-                            errorCallback(result && result.message ? result.message : 'Ошибка запроса');
-                        }
-                    }
-                })
-                .catch(function (error) {
                     if (errorCallback) {
-                        errorCallback('Ошибка соединения');
+                        console.error('ExportProfileManager Connect Error', result);
+                        errorCallback(result && result.message ? result.message : this.params.messageErrorServerConnect);
                     }
-                });
-        }
+                }
+            },
+            onfailure: function (error) {
+                if (errorCallback) {
+                    console.error('ExportProfileManager Connect Error:', error);
+                    errorCallback(this.params.messageErrorServerConnect);
+                }
+            }
+        });
     },
 
     renderFieldsSelection: function () {
-        var container = document.getElementById('fields-container');
+        var container = document.getElementById('fields_container');
         if (!container) return;
 
         container.innerHTML = '';
 
         // Группируем поля по типам
         var fieldGroups = {
-            'FIELD': 'Поля инфоблока',
-            'PROPERTY': 'Свойства инфоблока'
+            'FIELD': this.params.messageIblockField,
+            'PROPERTY': this.params.messageIblockField
         };
 
         var self = this;
@@ -523,7 +500,6 @@ BX.DD.Tools.ExportProfileManager.prototype = {
                 var dragHandle = document.createElement('span');
                 dragHandle.className = 'drag-handle';
                 dragHandle.innerHTML = '⋮⋮';
-                dragHandle.title = 'Перетащите для изменения порядка';
 
                 var checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
@@ -578,9 +554,9 @@ BX.DD.Tools.ExportProfileManager.prototype = {
             placeholder.className = 'field-item';
             placeholder.style.height = target.offsetHeight + 'px';
             placeholder.style.background = '#e3f2fd';
-            placeholder.style.border = '2px dashed #2196f3';
+            placeholder.style.border = '1px dashed #2196f3';
             placeholder.style.opacity = '0.5';
-            placeholder.innerHTML = '<span style="color: #2196f3; text-align: center; display: block;">Отпустите здесь</span>';
+            placeholder.innerHTML = '<span style="color: #2196f3; text-align: center; display: block;"></span>';
 
             if (e.dataTransfer) {
                 e.dataTransfer.effectAllowed = 'move';
@@ -646,7 +622,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
     },
 
     updateFieldsOrder: function () {
-        var fieldsContainer = document.getElementById('fields-container');
+        var fieldsContainer = document.getElementById('fields_container');
         if (!fieldsContainer) return;
 
         var allFields = fieldsContainer.querySelectorAll('.field-item');
@@ -710,16 +686,16 @@ BX.DD.Tools.ExportProfileManager.prototype = {
     },
 
     fillForm: function (profile) {
-        var profileIdInput = document.getElementById('profile-id');
+        var profileIdInput = document.getElementById('profile_id');
         if (profileIdInput) profileIdInput.value = profile.ID;
 
-        var profileNameInput = document.getElementById('profile-name');
+        var profileNameInput = document.getElementById('profile_name');
         if (profileNameInput) profileNameInput.value = profile.NAME;
 
-        var iblockTypeSelect = document.getElementById('iblock-type-select');
+        var iblockTypeSelect = document.getElementById('iblock_type_select');
         if (iblockTypeSelect) iblockTypeSelect.value = profile.IBLOCK_TYPE_ID || '';
 
-        var exportTypeSelect = document.getElementById('export-type-select');
+        var exportTypeSelect = document.getElementById('export_type_select');
         if (exportTypeSelect) exportTypeSelect.value = profile.EXPORT_TYPE || '';
     },
 
@@ -728,6 +704,8 @@ BX.DD.Tools.ExportProfileManager.prototype = {
 
         try {
             var settings = JSON.parse(settingsJson);
+
+            console.log("ExportProfileManager: Profile settings:", settings);
 
             // Если результат парсинга - строка, парсим еще раз
             if (typeof settings === 'string') {
@@ -755,7 +733,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
                 });
             }
         } catch (error) {
-            console.error('Ошибка парсинга настроек:', error);
+            console.error('ExportProfileManager Settings Parser Error:', error);
         }
     },
 
@@ -766,30 +744,39 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         });
 
         if (!show) {
-            var profileSelect = document.getElementById('profile-select');
+            var profileSelect = document.getElementById('profile_select');
             if (profileSelect) {
                 profileSelect.value = '';
             }
         }
     },
 
+    toggleButtons: function (show) {
+        const buttonIds = ['submit_btn', 'cancel_btn'];
+        buttonIds.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = !show;
+        });
+    },
+
     resetForm: function () {
-        var form = document.getElementById('data-export-form');
+        var form = document.getElementById('data_export_form');
         if (form && form.reset) {
             form.reset();
         }
 
-        var profileIdInput = document.getElementById('profile-id');
+        var profileIdInput = document.getElementById('profile_id');
         if (profileIdInput) {
             profileIdInput.value = '';
         }
 
-        var iblockSelect = document.getElementById('iblock-select');
+        var iblockSelect = document.getElementById('iblock_select');
         if (iblockSelect) {
             iblockSelect.innerHTML = '<option value="">-- Сначала выберите тип --</option>';
             iblockSelect.disabled = true;
         }
 
+        this.toggleButtons(false);
         this.toggleSettings(false);
         this.toggleFieldsSelection(false);
         this.hideExportSettings();
@@ -843,7 +830,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
 
     showAlert: function (message) {
         if (typeof BX.UI !== 'undefined' && BX.UI.Dialogs && BX.UI.Dialogs.MessageBox) {
-            BX.UI.Dialogs.MessageBox.alert(message, 'Сообщение');
+            BX.UI.Dialogs.MessageBox.alert(message, this.params.messageTitle);
         } else {
             alert(message);
         }
@@ -851,9 +838,10 @@ BX.DD.Tools.ExportProfileManager.prototype = {
 
     showError: function (message) {
         if (typeof BX.UI !== 'undefined' && BX.UI.Dialogs && BX.UI.Dialogs.MessageBox) {
-            BX.UI.Dialogs.MessageBox.alert(message, 'Ошибка');
+            BX.UI.Dialogs.MessageBox.alert(message, this.params.messageError);
         } else {
-            alert('Ошибка: ' + message);
+            alert(this.params.messageError + ': ' + message);
         }
+        console.error('ExportProfileManager Error:', message);
     }
 };

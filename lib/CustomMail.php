@@ -16,13 +16,12 @@ class CustomMail
     private const TEST_CONNECTION_TIMEOUT = 5;
     private $mailer;
     private $settings;
+    private $smtpDebugOutput = [];
 
     public function __construct()
     {
         // Настройка логирования
         LogHelper::configure();
-        //LogHelper::error("cron", "cacheAgent error: " . $e->getMessage());
-        //LogHelper::info("cron", "- Cache folder: " . FileHelper::formatBytes($folderCache));
 
         $this->loadSettings();
         $this->initMailer();
@@ -58,14 +57,6 @@ class CustomMail
             // Дополнительные настройки
             "charset" => "UTF-8",
             "debug_level" => 4, // 0-4
-        ];
-
-        $this->settings = [
-            "smtp_host" => "server31.hosting.reg.ru",
-            "smtp_port" => 465,
-            "smtp_secure" => "SSL",
-            "smtp_username" => "info@mit1a.ru",
-            "smtp_password" => "Uf@VgtzT*CF7n]",
         ];
     }
 
@@ -123,7 +114,6 @@ class CustomMail
 
         } catch (Exception $e) {
             $this->smtpDebugOutput[] = "Ошибка инициализации PHPMailer: " . $e->getMessage();
-            // Пробросим дальше, чтобы перехватить в initMailer() или send()
             throw $e;
         }
     }
@@ -142,19 +132,119 @@ class CustomMail
             $this->mailer->DKIM_identity = $this->mailer->From;
         } catch (Exception $e) {
             $this->smtpDebugOutput[] = "Ошибка настройки DKIM: " . $e->getMessage();
-            // Пробросим дальше, чтобы перехватить в initMailer() или send()
             throw $e;
         }
     }
 
     /**
+     * Отправка письма в стиле mail()
+     * @param string $to Получатель
+     * @param string $subject Тема письма
+     * @param string $message Сообщение
+     * @param string $additional_headers Дополнительные заголовки
+     * @param string $additional_parameters Дополнительные параметры
+     * @return array
+     */
+    public function mailStyle($to, $subject, $message, $additional_headers = "", $additional_parameters = ""): array
+    {
+        $params = [
+            "to" => $to,
+            "subject" => $subject,
+            "body" => $message
+        ];
+
+        // Парсинг дополнительных заголовков
+        if (!empty($additional_headers)) {
+            $headers = $this->parseHeaders($additional_headers);
+            if (!empty($headers)) {
+                $params["headers"] = $headers;
+            }
+        }
+
+        return $this->send($params);
+    }
+
+    /**
+     * Парсинг заголовков из строки
+     * @param string $headerString
+     * @return array
+     */
+    private function parseHeaders(string $headerString): array
+    {
+        $headers = [];
+        $lines = explode("\n", $headerString);
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+
+            $pos = strpos($line, ':');
+            if ($pos === false) continue;
+
+            $name = trim(substr($line, 0, $pos));
+            $value = trim(substr($line, $pos + 1));
+
+            // Обработка специальных заголовков
+            switch (strtolower($name)) {
+                case 'from':
+                    if (preg_match('/(.+?)\s*<(.+?)>/', $value, $matches)) {
+                        $headers['from'] = $matches[2];
+                        $headers['from_name'] = trim($matches[1], '"');
+                    } else {
+                        $headers['from'] = $value;
+                    }
+                    break;
+                case 'cc':
+                    $headers['cc'] = $this->parseEmailList($value);
+                    break;
+                case 'bcc':
+                    $headers['bcc'] = $this->parseEmailList($value);
+                    break;
+                case 'content-type':
+                    if (strpos(strtolower($value), 'text/html') !== false) {
+                        $headers['is_html'] = true;
+                    }
+                    break;
+                default:
+                    $headers[$name] = $value;
+            }
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Парсинг списка email адресов
+     * @param string $emailList
+     * @return array
+     */
+    private function parseEmailList(string $emailList): array
+    {
+        $emails = [];
+        $parts = explode(',', $emailList);
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if (empty($part)) continue;
+
+            if (preg_match('/(.+?)\s*<(.+?)>/', $part, $matches)) {
+                $emails[$matches[2]] = trim($matches[1], '"');
+            } else {
+                $emails[] = $part;
+            }
+        }
+
+        return $emails;
+    }
+
+    /**
      * Отправка письма
-     * @param $params
+     * @param array $params
      * @return array
      */
     public function send($params = []): array
     {
-        $this->smtpDebugOutput = []; // Очистим перед отправкой
+        $this->smtpDebugOutput = [];
 
         try {
             // Очистка предыдущих данных
@@ -200,15 +290,18 @@ class CustomMail
             }
 
             // Отправитель
-            if (!empty($params["from"])) {
-                $fromName = $params["from_name"] ?? "";
-                $this->mailer->setFrom($params["from"], $fromName);
+            if (!empty($params["from"]) || !empty($params["headers"]["from"])) {
+                $from = $params["from"] ?? $params["headers"]["from"];
+                $fromName = $params["from_name"] ?? $params["headers"]["from_name"] ?? "";
+                $this->mailer->setFrom($from, $fromName);
             }
 
             // Тема письма
             $this->mailer->Subject = $params["subject"] ?? "";
 
             // Тело письма
+            $isHtml = $params["headers"]["is_html"] ?? false;
+
             if (!empty($params["html_body"])) {
                 $this->mailer->isHTML(true);
                 $this->mailer->Body = $params["html_body"];
@@ -217,7 +310,7 @@ class CustomMail
                 $this->mailer->isHTML(false);
                 $this->mailer->Body = $params["text_body"];
             } elseif (!empty($params["body"])) {
-                $this->mailer->isHTML(strip_tags($params["body"]) !== $params["body"]);
+                $this->mailer->isHTML($isHtml || (strip_tags($params["body"]) !== $params["body"]));
                 $this->mailer->Body = $params["body"];
             }
 
@@ -239,8 +332,11 @@ class CustomMail
 
             // Заголовки
             if (!empty($params["headers"])) {
-                foreach ((array)$params["headers"] as $name => $value) {
-                    $this->mailer->addCustomHeader($name, $value);
+                foreach ($params["headers"] as $name => $value) {
+                    // Пропускаем специальные заголовки, которые уже обработаны
+                    if (!in_array(strtolower($name), ['from', 'from_name', 'cc', 'bcc', 'is_html'])) {
+                        $this->mailer->addCustomHeader($name, $value);
+                    }
                 }
             }
 
@@ -303,12 +399,59 @@ class CustomMail
                 ];
             }
 
+            // EHLO / HELO
+            if (!$smtp->hello('localhost')) {
+                $smtp->quit();
+                return [
+                    "success" => false,
+                    "message" => "EHLO/HELO не удалось выполнить",
+                    "debug" => $debugOutput
+                ];
+            }
+
+            // Получение расширений сервера
+            $caps = $smtp->getServerExtList();
+
+            // Если сервер поддерживает STARTTLS — выполнить
+            if (isset($caps['STARTTLS'])) {
+                if (!$smtp->startTLS()) {
+                    $smtp->quit();
+                    return [
+                        "success" => false,
+                        "message" => "Не удалось выполнить STARTTLS",
+                        "debug" => $debugOutput
+                    ];
+                }
+
+                // Повторный EHLO после TLS
+                if (!$smtp->hello('localhost')) {
+                    $smtp->quit();
+                    return [
+                        "success" => false,
+                        "message" => "EHLO после STARTTLS не прошёл",
+                        "debug" => $debugOutput
+                    ];
+                }
+
+                $caps = $smtp->getServerExtList();
+            }
+
+            // Проверка, поддерживается ли AUTH
+            if (!isset($caps['AUTH'])) {
+                $smtp->quit();
+                return [
+                    "success" => false,
+                    "message" => "Сервер не поддерживает SMTP аутентификацию",
+                    "debug" => $debugOutput
+                ];
+            }
+
             // Аутентификация
             if (!$smtp->authenticate($this->settings["smtp_username"], $this->settings["smtp_password"])) {
                 $smtp->quit();
                 return [
                     "success" => false,
-                    "message" => "Ошибка аутентификации SMTP",
+                    "message" => "Ошибка SMTP аутентификации",
                     "debug" => $debugOutput
                 ];
             }
@@ -320,7 +463,6 @@ class CustomMail
                 "message" => "Соединение с SMTP сервером успешно установлено",
                 "debug" => $debugOutput
             ];
-
         } catch (Exception $e) {
             return [
                 "success" => false,

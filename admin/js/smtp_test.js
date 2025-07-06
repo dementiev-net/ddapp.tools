@@ -92,9 +92,7 @@ BX.DD.Tools.SmtpTest.prototype = {
 
         // Выводим отладочную информацию
         if (result && result.debug) {
-            console.group('SMTP Test Debug');
-            console.log(result.debug);
-            console.groupEnd();
+            console.log('SMTP Test Debug:', result.debug);
         }
     },
 
@@ -141,12 +139,12 @@ BX.DD.Tools.SmtpTest.prototype = {
 
         switch (type) {
             case 'loading':
-                html = this.params.loadingText || BX.message('DD_TOOLS_SMTP_TEST_START') || 'Тестирование SMTP...';
+                html = this.params.loadingText || 'Тестирование SMTP...';
                 targetElement = this.messageLoading;
                 break;
 
             case 'success':
-                html = this.params.successText || BX.message('DD_TOOLS_SMTP_TEST_OK') || 'SMTP тест пройден успешно';
+                html = this.params.successText || 'SMTP тест пройден успешно';
                 if (message) {
                     html += ': ' + BX.util.htmlspecialchars(message);
                 }
@@ -154,7 +152,7 @@ BX.DD.Tools.SmtpTest.prototype = {
                 break;
 
             case 'error':
-                html = this.params.errorText || BX.message('DD_TOOLS_SMTP_TEST_ERROR') || 'Ошибка SMTP теста';
+                html = this.params.errorText || 'Ошибка SMTP теста';
                 if (message) {
                     html += ': ' + BX.util.htmlspecialchars(message);
                 }
@@ -162,7 +160,7 @@ BX.DD.Tools.SmtpTest.prototype = {
                 break;
 
             case 'ajax_error':
-                html = this.params.ajaxErrorText || BX.message('DD_TOOLS_SMTP_TEST_ERROR_AJAX') || 'Ошибка AJAX запроса';
+                html = this.params.ajaxErrorText || 'Ошибка AJAX запроса';
                 targetElement = this.messageError;
                 break;
         }

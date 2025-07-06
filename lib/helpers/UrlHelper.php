@@ -2,6 +2,8 @@
 
 namespace DD\Tools\Helpers;
 
+use Bitrix\Main\Web\Uri;
+
 class UrlHelper
 {
     /**
@@ -27,8 +29,24 @@ class UrlHelper
      */
     public static function current(): string
     {
-        return (isset($_SERVER["HTTPS"]) ? "https" : "http") .
-            "://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+        return $_SERVER["REQUEST_URI"];
+    }
+
+    /**
+     * Удаляет параметр из URL
+     * @param string $param
+     * @return string
+     */
+    public static function deleteParams(string $param): string
+    {
+        $uri = new Uri(self::current());
+        $uri->deleteParams([$param]);
+
+        return "<script>
+            if (window.history.replaceState) {
+                window.history.replaceState({}, document.title, '" . $uri->getUri() . "');
+            }
+        </script>";
     }
 
     /**

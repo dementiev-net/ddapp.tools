@@ -25,6 +25,7 @@ $MESS["DD_TOOLS_CACHE_PERIOD_DEFAULT"] = [
     "4" => "Год"
 ];
 $MESS["DD_TOOLS_CACHE_SIZE"] = "размер: ";
+$MESS["DD_TOOLS_EXPORT_STEP"] = "Шаг экспорта за раз, шт.: ";
 
 $MESS["DD_TOOLS_LOG_ENABLED"] = "Активность";
 $MESS["DD_TOOLS_LOG_MIN_LEVEL"] = "Минимальный уровень логирования";

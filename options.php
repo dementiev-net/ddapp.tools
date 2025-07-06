@@ -1,36 +1,11 @@
 <?php
-/**
- * CControllerClient::GetInstalledOptions($module_id);
- * формат массива, элементы:
- * 1) ID опции (id инпута)(Берется с помощью COption::GetOptionString($module_id, $Option[0], $Option[2]) если есть)
- * 2) Отображаемое имя опции
- * 3) Значение по умолчанию (так же берется если первый элемент равен пустой строке), зависит от типа:
- *      checkbox - Y если выбран
- *      text/password - htmlspecialcharsbx($val)
- *      selectbox - одно из значений, указанных в массиве опций
- *      multiselectbox - значения через запятую, указанные в массиве опций
- * 4) Тип поля (массив)
- *      1) Тип (multiselectbox, textarea, statictext, statichtml, checkbox, text, password, selectbox, note)
- *      2) Зависит от типа:
- *         text/password - атрибут size
- *         textarea - атрибут rows
- *         selectbox/multiselectbox - массив опций формата ["Значение"=>"Название"]
- *      3) Зависит от типа:
- *         checkbox - доп атрибут для input (просто вставляется строкой в атрибуты input)
- *         textarea - атрибут cols
- *
- *      noautocomplete) для text/password, если true то атрибут autocomplete="new-password"
- *
- * 5) Disabled = 'Y' || 'N';
- * 6) $sup_text - ??? текст маленького красного примечания над названием опции
- * 7) $isChoiceSites - Нужно ли выбрать сайт??? флаг Y или N
- */
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\HttpApplication;
 use Bitrix\Main\Config\Option;
 use DD\Tools\Main;
+use DD\Tools\Helpers\UserHelper;
 use DD\Tools\Helpers\FileHelper;
 use DD\Tools\Helpers\CacheHelper;
 
@@ -39,11 +14,13 @@ Loc::loadMessages(__FILE__);
 $request = HttpApplication::getInstance()->getContext()->getRequest();
 $module_id = htmlspecialcharsbx($request["mid"] != "" ? $request["mid"] : $request["id"]);
 
-// Подключаем JS через функцию модуля
+// Подключаем JS
 Main::includeJS("admin/js/smtp_test.js");
 
-$POST_RIGHT = $APPLICATION->GetGroupRight($module_id);
-if ($POST_RIGHT != "W") $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"));
+// Проверка доступа
+if (UserHelper::hasModuleAccess($module_id) != "W") {
+    $APPLICATION->AuthForm(Loc::getMessage("ACCESS_DENIED"));
+}
 
 Loader::includeModule($module_id);
 
@@ -59,6 +36,7 @@ $aTabs = [
             ["maint_period", Loc::getMessage("DD_TOOLS_MAINT_PERIOD"), 30, ["text", 5, 50]],
             ["cache_period", Loc::getMessage("DD_TOOLS_CACHE_PERIOD"), 0, ["selectbox", Loc::getMessage("DD_TOOLS_CACHE_PERIOD_DEFAULT")]],
             ["", "", Loc::getMessage("DD_TOOLS_CACHE_SIZE") . $cacheSize, ["statichtml"]],
+            ["export_step", Loc::getMessage("DD_TOOLS_EXPORT_STEP"), 100, ["text", 5, 50]],
         ]
     ], [
         "DIV" => "TAB2",
@@ -185,7 +163,9 @@ if ($request->isPost() && check_bitrix_sessid()) {
             // Проверяем POST запрос, если инициатором выступила кнопка с name="default" сохраняем дефолтные
             // настройки в базу данных
             if ($request["default"]) {
-                Option::set($module_id, $arOption[0], $arOption[2]);
+                if ($arOption[0]) {
+                    Option::set($module_id, $arOption[0], $arOption[2]);
+                }
             }
         }
     }

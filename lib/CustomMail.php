@@ -148,7 +148,7 @@ class CustomMail
      * @param string $additional_parameters Дополнительные параметры
      * @return array
      */
-    public function mailStyle($to, $subject, $message, $additional_headers = "", $additional_parameters = ""): array
+    public function send($to, $subject, $message, $additional_headers = "", $additional_parameters = ""): array
     {
         $params = [
             "to" => $to,
@@ -164,7 +164,7 @@ class CustomMail
             }
         }
 
-        return $this->send($params);
+        return $this->mail($params);
     }
 
     /**
@@ -245,7 +245,7 @@ class CustomMail
      * @param array $params
      * @return array
      */
-    public function send($params = []): array
+    public function mail($params = []): array
     {
         $this->smtpDebugOutput = [];
 
@@ -349,7 +349,7 @@ class CustomMail
             }
 
             // Отправка
-            $result = $this->mailer->send();
+            $result = $this->mailer->mail();
 
             if ($result) {
                 return [

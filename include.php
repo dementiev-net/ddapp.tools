@@ -48,7 +48,7 @@ if (!function_exists('custom_mail') && Option::get(Main::MODULE_ID, "smtp_enable
         LogHelper::configure();
 
         $mailer = new CustomMail();
-        $result = $mailer->mailStyle($to, $subject, $message, $additional_headers, $additional_parameters);
+        $result = $mailer->send($to, $subject, $message, $additional_headers, $additional_parameters);
 
         if ($result["success"]) {
             return true;

@@ -226,7 +226,7 @@ class DD_Tools extends CModule
         $eventManager->registerEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
         $eventManager->registerEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
         // модули
-        $eventManager->registerEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", "get");
+        $eventManager->registerEventHandler($this->MODULE_ID, "OnWebHook", $this->MODULE_ID, "\DD\Tools\Main", "webhook");
         $eventManager->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeAdd", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
         $eventManager->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
 
@@ -255,7 +255,7 @@ class DD_Tools extends CModule
         $eventManager->unRegisterEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
         $eventManager->unRegisterEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
         // модули
-        $eventManager->unRegisterEventHandler($this->MODULE_ID, "OnSomeEvent", $this->MODULE_ID, "\DD\Tools\Main", "get");
+        $eventManager->unRegisterEventHandler($this->MODULE_ID, "OnWebHook", $this->MODULE_ID, "\DD\Tools\Main", "webhook");
         $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeAdd", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
         $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
 

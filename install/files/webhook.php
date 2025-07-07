@@ -1,9 +1,10 @@
 <?php
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
 
-// Cобираем зарегистрированные через RegisterModuleDependences и AddEventHandler
-// обработчики события OnSomeEvent
-$rsHandlers = GetModuleEvents(Main::MODULE_ID, "OnSomeEvent");
+use DD\Tools\Main;
+
+// Cобираем зарегистрированные обработчики события OnWebHook
+$rsHandlers = GetModuleEvents(Main::MODULE_ID, "OnWebHook");
 
 while ($arHandler = $rsHandlers->Fetch()) {
     // выполняем каждое зарегистрированное событие по одному

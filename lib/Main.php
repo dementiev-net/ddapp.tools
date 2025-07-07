@@ -102,4 +102,16 @@ class Main
 
         return $_SERVER["DOCUMENT_ROOT"] . $modulePath . '/' . ltrim($file, '/');
     }
+
+
+    /**
+     * Метод для WebHook
+     * @return mixed
+     */
+    public static function webhook()
+    {
+        echo "webhook";
+
+        return "webhook";
+    }
 }

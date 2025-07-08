@@ -11,12 +11,12 @@ if (!check_bitrix_sessid()) {
 if ($errorException = $APPLICATION->getException()) {
     // Вывод сообщения об ошибке при удалении модуля
     CAdminMessage::showMessage(
-        Loc::getMessage("DD_TOOLS_DEINSTALL_FAILED") . ": " . $errorException->GetString()
+        Loc::getMessage("DDAPP_TOOLS_DEINSTALL_FAILED") . ": " . $errorException->GetString()
     );
 } else {
     // Вывод уведомления при успешном удалении модуля
     CAdminMessage::showNote(
-        Loc::getMessage("DD_TOOLS_DEINSTALL_SUCCESS")
+        Loc::getMessage("DDAPP_TOOLS_DEINSTALL_SUCCESS")
     );
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-$dd_tools_default_option = [
+$ddapp_tools_default_option = [
     "maint_period" => 30,
     "cache_period" => 0,
     "export_step" => 100,

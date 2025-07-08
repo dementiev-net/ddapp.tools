@@ -1,11 +1,11 @@
 /**
- * DD Tools SMTP Test Module
+ * 2Dapp Tools SMTP Test Module
  * @version 1.0.0
  */
 
-BX.namespace('BX.DD.Tools');
+BX.namespace('BX.DDAPP.Tools');
 
-BX.DD.Tools.SmtpTest = function (params) {
+BX.DDAPP.Tools.SmtpTest = function (params) {
 
     this.params = params || {};
     this.testButton = null;
@@ -20,7 +20,7 @@ BX.DD.Tools.SmtpTest = function (params) {
     this.init();
 };
 
-BX.DD.Tools.SmtpTest.prototype = {
+BX.DDAPP.Tools.SmtpTest.prototype = {
 
     init: function () {
         this.initElements();

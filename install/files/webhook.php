@@ -1,7 +1,7 @@
 <?php
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
 
-use DD\Tools\Main;
+use DDAPP\Tools\Main;
 
 // Cобираем зарегистрированные обработчики события OnWebHook
 $rsHandlers = GetModuleEvents(Main::MODULE_ID, "OnWebHook");

@@ -1,11 +1,11 @@
 <?php
 
-namespace DD\Tools;
+namespace DDAPP\Tools;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Type\DateTime;
-use DD\Tools\Entity\DataExportTable;
+use DDAPP\Tools\Entity\DataExportTable;
 
 class DataExport
 {

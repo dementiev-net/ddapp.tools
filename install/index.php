@@ -9,13 +9,13 @@ use Bitrix\Main\Config\Option;
 use Bitrix\Main\EventManager;
 use Bitrix\Main\IO\Directory;
 use Bitrix\Main\ModuleManager;
-use DD\Tools\Install\IblockInstaller;
-use DD\Tools\Install\DataInstaller;
-use DD\Tools\Install\EmailTemplateInstaller;
+use DDAPP\Tools\Install\IblockInstaller;
+use DDAPP\Tools\Install\DataInstaller;
+use DDAPP\Tools\Install\EmailTemplateInstaller;
 
 Loc::loadMessages(__FILE__);
 
-class DD_Tools extends CModule
+class DDAPP_Tools extends CModule
 {
     // переменные модуля
     public $MODULE_ID;
@@ -38,11 +38,11 @@ class DD_Tools extends CModule
 
         $this->MODULE_VERSION = $arModuleVersion["VERSION"];
         $this->MODULE_VERSION_DATE = $arModuleVersion["VERSION_DATE"];
-        $this->MODULE_ID = "dd.tools";
-        $this->MODULE_NAME = "DD Tools - Утилиты разработчика";
+        $this->MODULE_ID = "ddapp.tools";
+        $this->MODULE_NAME = "2Dapp Tools - Утилиты разработчика";
         $this->MODULE_DESCRIPTION = "Модуль с полезными инструментами для разработки и администрирования";
-        $this->PARTNER_NAME = "Дмитрий Дементьев";
-        $this->PARTNER_URI = "https://dementiev.net";
+        $this->PARTNER_NAME = "2Dapp";
+        $this->PARTNER_URI = "https://2dapp.ru";
         $this->SHOW_SUPER_ADMIN_GROUP_RIGHTS = "Y"; // На странице прав доступа будут показаны администраторы и группы
         $this->MODULE_GROUP_RIGHTS = "Y"; // На странице редактирования групп будет отображаться этот модуль
     }
@@ -56,7 +56,7 @@ class DD_Tools extends CModule
         // С установкой в один шаг
         ////////////////////////////////////////////////
         // global $APPLICATION;
-        // ModuleManager::RegisterModule("dd.tools");
+        // ModuleManager::RegisterModule("ddapp.tools");
         // $this->InstallDB();
         // $this->addData();
         // $this->InstallEvents();
@@ -64,7 +64,7 @@ class DD_Tools extends CModule
         // $this->installAgents();
         //
         // $APPLICATION->includeAdminFile(
-        //     Loc::getMessage("DD_TOOLS_INSTALL_TITLE"),
+        //     Loc::getMessage("DDAPP_TOOLS_INSTALL_TITLE"),
         //     __DIR__ . "/instalInfo.php"
         // );
 
@@ -76,11 +76,11 @@ class DD_Tools extends CModule
         global $APPLICATION;
 
         if ($request["step"] < 2) {
-            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_TOOLS_INSTALL_TITLE_STEP_1"), __DIR__ . "/instalInfo-step1.php");
+            $APPLICATION->IncludeAdminFile(Loc::getMessage("DDAPP_TOOLS_INSTALL_TITLE_STEP_1"), __DIR__ . "/instalInfo-step1.php");
         }
 
         if ($request["step"] == 2) {
-            ModuleManager::RegisterModule("dd.tools");
+            ModuleManager::RegisterModule("ddapp.tools");
             $this->InstallDB();
             $this->InstallEvents();
             $this->InstallFiles();
@@ -89,11 +89,11 @@ class DD_Tools extends CModule
             $this->manageInfoblock(true);
             $this->manageEmailTemplate(true);
 
-            if ($request["add_data"] == "Y") {
+            if ($request["addapp_data"] == "Y") {
                 $this->addData();
             }
 
-            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_TOOLS_INSTALL_TITLE_STEP_2"), __DIR__ . "/instalInfo-step2.php");
+            $APPLICATION->IncludeAdminFile(Loc::getMessage("DDAPP_TOOLS_INSTALL_TITLE_STEP_2"), __DIR__ . "/instalInfo-step2.php");
         }
 
         return true;
@@ -112,10 +112,10 @@ class DD_Tools extends CModule
         // $this->UnInstallEvents();
         // $this->UnInstallFiles();
         // $this->unInstallAgents();
-        // ModuleManager::UnRegisterModule("dd.tools");
+        // ModuleManager::UnRegisterModule("ddapp.tools");
         //
         // $APPLICATION->includeAdminFile(
-        //     Loc::getMessage("DD_TOOLS_DEINSTALL_TITLE"),
+        //     Loc::getMessage("DDAPP_TOOLS_DEINSTALL_TITLE"),
         //     __DIR__ . "/deInstalInfo.php"
         // );
 
@@ -127,7 +127,7 @@ class DD_Tools extends CModule
         global $APPLICATION;
 
         if ($request["step"] < 2) {
-            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_TOOLS_DEINSTALL_TITLE_STEP_1"), __DIR__ . "/deInstalInfo-step1.php");
+            $APPLICATION->IncludeAdminFile(Loc::getMessage("DDAPP_TOOLS_DEINSTALL_TITLE_STEP_1"), __DIR__ . "/deInstalInfo-step1.php");
         }
         // проверяем какой сейчас шаг, усли 2, производим удаление
         if ($request["step"] == 2) {
@@ -141,9 +141,9 @@ class DD_Tools extends CModule
             $this->manageInfoblock(false);
             $this->manageEmailTemplate(false);
 
-            ModuleManager::UnRegisterModule("dd.tools");
+            ModuleManager::UnRegisterModule("ddapp.tools");
 
-            $APPLICATION->IncludeAdminFile(Loc::getMessage("DD_TOOLS_DEINSTALL_TITLE_STEP_2"), __DIR__ . "/deInstalInfo-step2.php");
+            $APPLICATION->IncludeAdminFile(Loc::getMessage("DDAPP_TOOLS_DEINSTALL_TITLE_STEP_2"), __DIR__ . "/deInstalInfo-step2.php");
         }
 
         return true;
@@ -160,7 +160,7 @@ class DD_Tools extends CModule
 
         $connection = Application::getConnection(self::CONNECTION_NAME);
 
-        $maintenanceTableEntity = Base::getInstance("\DD\Tools\Entity\MaintenanceTable");
+        $maintenanceTableEntity = Base::getInstance("\DDAPP\Tools\Entity\MaintenanceTable");
 
         if (!$connection->isTableExists($maintenanceTableEntity->getDBTableName())) {
             try {
@@ -170,11 +170,11 @@ class DD_Tools extends CModule
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $e->getMessage(),
                     "TABLE" => $maintenanceTableEntity->getDBTableName()
-                ], "MaintenanceTable::createDbTable", "/upload/logs/dd.tools.install.log");
+                ], "MaintenanceTable::createDbTable", "/upload/logs/ddapp.tools.install.log");
             }
         }
 
-        $dataExportTableEntity = Base::getInstance("\DD\Tools\Entity\DataExportTable");
+        $dataExportTableEntity = Base::getInstance("\DDAPP\Tools\Entity\DataExportTable");
 
         if (!$connection->isTableExists($dataExportTableEntity->getDBTableName())) {
             try {
@@ -184,11 +184,11 @@ class DD_Tools extends CModule
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $e->getMessage(),
                     "TABLE" => $dataExportTableEntity->getDBTableName()
-                ], "DataExportTable::createDbTable", "/upload/logs/dd.tools.install.log");
+                ], "DataExportTable::createDbTable", "/upload/logs/ddapp.tools.install.log");
             }
         }
 
-        $dataImportTableEntity = Base::getInstance("\DD\Tools\Entity\DataImportTable");
+        $dataImportTableEntity = Base::getInstance("\DDAPP\Tools\Entity\DataImportTable");
 
         if (!$connection->isTableExists($dataImportTableEntity->getDBTableName())) {
             try {
@@ -198,7 +198,21 @@ class DD_Tools extends CModule
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $e->getMessage(),
                     "TABLE" => $dataImportTableEntity->getDBTableName()
-                ], "DataImportTable::createDbTable", "/upload/logs/dd.tools.install.log");
+                ], "DataImportTable::createDbTable", "/upload/logs/ddapp.tools.install.log");
+            }
+        }
+
+        $dataImagesTableEntity = Base::getInstance("\DDAPP\Tools\Entity\DataImagesTable");
+
+        if (!$connection->isTableExists($dataImagesTableEntity->getDBTableName())) {
+            try {
+                $dataImagesTableEntity->createDbTable();
+            } catch (\Exception $e) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $e->getMessage(),
+                    "TABLE" => $dataImagesTableEntity->getDBTableName()
+                ], "DataImagesTable::createDbTable", "/upload/logs/ddapp.tools.install.log");
             }
         }
     }
@@ -212,9 +226,10 @@ class DD_Tools extends CModule
         Loader::includeModule($this->MODULE_ID);
         Loader::includeModule("iblock");
 
-        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\MaintenanceTable")->getDBTableName());
-        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\DataExportTable")->getDBTableName());
-        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\DataImportTable")->getDBTableName());
+        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DDAPP\Tools\Entity\MaintenanceTable")->getDBTableName());
+        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DDAPP\Tools\Entity\DataExportTable")->getDBTableName());
+        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DDAPP\Tools\Entity\DataImportTable")->getDBTableName());
+        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DDAPP\Tools\Entity\DataImagesTable")->getDBTableName());
 
         Option::delete($this->MODULE_ID);
     }
@@ -228,22 +243,22 @@ class DD_Tools extends CModule
         $eventManager = EventManager::getInstance();
 
         // страницы
-        $eventManager->registerEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
-        $eventManager->registerEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
-        $eventManager->registerEventHandler("main", "OnProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnPrologHandler");
-        $eventManager->registerEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DD\Tools\Events", "OnEpilogHandler");
+        $eventManager->registerEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnPageStartHandler");
+        $eventManager->registerEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnBeforePrologHandler");
+        $eventManager->registerEventHandler("main", "OnProlog", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnPrologHandler");
+        $eventManager->registerEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnEpilogHandler");
         // пользователь
-        $eventManager->registerEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnAfterUserLoginHandler");
-        $eventManager->registerEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforeUserLoginHandler");
+        $eventManager->registerEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnAfterUserLoginHandler");
+        $eventManager->registerEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnBeforeUserLoginHandler");
         // формы и запросы
-        $eventManager->registerEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DD\Tools\Events", "OnEndBufferContentHandler");
+        $eventManager->registerEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnEndBufferContentHandler");
         // админка
-        $eventManager->registerEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
-        $eventManager->registerEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
+        $eventManager->registerEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnAdminContextMenuShowHandler");
+        $eventManager->registerEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnAdminListDisplayHandler");
         // модули
-        $eventManager->registerEventHandler($this->MODULE_ID, "OnWebHook", $this->MODULE_ID, "\DD\Tools\Main", "webhook");
-        $eventManager->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeAdd", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
-        $eventManager->registerEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
+        $eventManager->registerEventHandler($this->MODULE_ID, "OnWebHook", $this->MODULE_ID, "\DDAPP\Tools\Main", "webhook");
+        $eventManager->registerEventHandler($this->MODULE_ID, "\DDAPP\Tools\Entity::OnBeforeAdd", $this->MODULE_ID, "\DDAPP\Tools\Events", "eventHandler");
+        $eventManager->registerEventHandler($this->MODULE_ID, "\DDAPP\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DDAPP\Tools\Events", "eventHandler");
 
         return true;
     }
@@ -257,22 +272,22 @@ class DD_Tools extends CModule
         $eventManager = EventManager::getInstance();
 
         // страницы
-        $eventManager->unRegisterEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DD\Tools\Events", "OnPageStartHandler");
-        $eventManager->unRegisterEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforePrologHandler");
-        $eventManager->unRegisterEventHandler("main", "OnProlog", $this->MODULE_ID, "\DD\Tools\Events", "OnPrologHandler");
-        $eventManager->unRegisterEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DD\Tools\Events", "OnEpilogHandler");
+        $eventManager->unRegisterEventHandler("main", "OnPageStart", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnPageStartHandler");
+        $eventManager->unRegisterEventHandler("main", "OnBeforeProlog", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnBeforePrologHandler");
+        $eventManager->unRegisterEventHandler("main", "OnProlog", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnPrologHandler");
+        $eventManager->unRegisterEventHandler("main", "OnEpilog", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnEpilogHandler");
         // пользователь
-        $eventManager->unRegisterEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnAfterUserLoginHandler");
-        $eventManager->unRegisterEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DD\Tools\Events", "OnBeforeUserLoginHandler");
+        $eventManager->unRegisterEventHandler("main", "OnAfterUserLogin", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnAfterUserLoginHandler");
+        $eventManager->unRegisterEventHandler("main", "OnBeforeUserLogin", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnBeforeUserLoginHandler");
         // формы и запросы
-        $eventManager->unRegisterEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DD\Tools\Events", "OnEndBufferContentHandler");
+        $eventManager->unRegisterEventHandler("main", "OnEndBufferContent", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnEndBufferContentHandler");
         // админка
-        $eventManager->unRegisterEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminContextMenuShowHandler");
-        $eventManager->unRegisterEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DD\Tools\Events", "OnAdminListDisplayHandler");
+        $eventManager->unRegisterEventHandler("main", "OnAdminContextMenuShow", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnAdminContextMenuShowHandler");
+        $eventManager->unRegisterEventHandler("main", "OnAdminListDisplay", $this->MODULE_ID, "\DDAPP\Tools\Events", "OnAdminListDisplayHandler");
         // модули
-        $eventManager->unRegisterEventHandler($this->MODULE_ID, "OnWebHook", $this->MODULE_ID, "\DD\Tools\Main", "webhook");
-        $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeAdd", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
-        $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DD\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DD\Tools\Events", "eventHandler");
+        $eventManager->unRegisterEventHandler($this->MODULE_ID, "OnWebHook", $this->MODULE_ID, "\DDAPP\Tools\Main", "webhook");
+        $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DDAPP\Tools\Entity::OnBeforeAdd", $this->MODULE_ID, "\DDAPP\Tools\Events", "eventHandler");
+        $eventManager->unRegisterEventHandler($this->MODULE_ID, "\DDAPP\Tools\Entity::OnBeforeUpdate", $this->MODULE_ID, "\DDAPP\Tools\Events", "eventHandler");
 
         return true;
     }
@@ -308,7 +323,7 @@ class DD_Tools extends CModule
                     Debug::writeToFile([
                         "DATE" => date("Y-m-d H:i:s"),
                         "ERROR" => "Ошибка копирования из $src в $dst"
-                    ], "CopyDirFiles", "/upload/logs/dd.tools.install.log");
+                    ], "CopyDirFiles", "/upload/logs/ddapp.tools.install.log");
                 }
             }
         }
@@ -365,20 +380,20 @@ class DD_Tools extends CModule
      */
     function installAgents()
     {
-        $agent = \CAgent::AddAgent("\\DD\\Tools\\cacheAgent::run();", $this->MODULE_ID, "N", self::CACHE_AGENT_INTERVAL, "", "N", "", 100);
+        $agent = \CAgent::AddAgent("\\DDAPP\\Tools\\cacheAgent::run();", $this->MODULE_ID, "N", self::CACHE_AGENT_INTERVAL, "", "N", "", 100);
         if (!$agent) {
             Debug::writeToFile([
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => "Не удалось добавить агента cacheAgent"
-            ], "CAgent::AddAgent", "/upload/logs/dd.tools.install.log");
+            ], "CAgent::AddAgent", "/upload/logs/ddapp.tools.install.log");
         }
 
-        $agent = \CAgent::AddAgent("\\DD\\Tools\\freespaceAgent::run();", $this->MODULE_ID, "N", self::FREE_SPACE_AGENT_INTERVAL, "", "Y", "", 100);
+        $agent = \CAgent::AddAgent("\\DDAPP\\Tools\\freespaceAgent::run();", $this->MODULE_ID, "N", self::FREE_SPACE_AGENT_INTERVAL, "", "Y", "", 100);
         if (!$agent) {
             Debug::writeToFile([
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => "Не удалось добавить агента freespaceAgent"
-            ], "CAgent::AddAgent", "/upload/logs/dd.tools.install.log");
+            ], "CAgent::AddAgent", "/upload/logs/ddapp.tools.install.log");
         }
     }
 

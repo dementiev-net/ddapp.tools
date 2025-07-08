@@ -1,6 +1,6 @@
 <?php
 
-namespace DD\Tools\Helpers;
+namespace DDAPP\Tools\Helpers;
 
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\PropertyTable;

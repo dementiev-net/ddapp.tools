@@ -1,6 +1,6 @@
 <?php
 
-namespace DD\Tools\Helpers;
+namespace DDAPP\Tools\Helpers;
 
 use Bitrix\Main\Web\Json;
 use Bitrix\Main\IO\Directory;
@@ -8,8 +8,8 @@ use Bitrix\Main\IO\File;
 use Bitrix\Main\Application;
 use Bitrix\Main\Mail\Event;
 use Bitrix\Main\Config\Option;
-use DD\Tools\Main;
-use DD\Tools\Helpers\FileHelper;
+use DDAPP\Tools\Main;
+use DDAPP\Tools\Helpers\FileHelper;
 
 class LogHelper
 {
@@ -18,7 +18,7 @@ class LogHelper
     public const LEVEL_WARNING = "WARNING";
     public const LEVEL_ERROR = "ERROR";
     public const LEVEL_CRITICAL = "CRITICAL";
-    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DD_TOOLS_CRITICAL_ERROR";
+    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DDAPP_TOOLS_CRITICAL_ERROR";
     private static array $config = [];
 
     // Приоритеты уровней логирования
@@ -227,7 +227,7 @@ class LogHelper
     {
         $logDir = Application::getDocumentRoot() . self::$config["log_path"];
 
-        return $logDir . "dd.tools.{$type}.log";
+        return $logDir . "ddapp.tools.{$type}.log";
     }
 
     /**

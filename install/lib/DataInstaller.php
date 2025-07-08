@@ -1,11 +1,11 @@
 <?php
 
-namespace DD\Tools\Install;
+namespace DDAPP\Tools\Install;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Type\DateTime;
-use DD\Tools\Entity\MaintenanceTable;
+use DDAPP\Tools\Entity\MaintenanceTable;
 
 class DataInstaller
 {
@@ -56,7 +56,7 @@ class DataInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERRORS" => $result->getErrorMessages(),
                     "FIELDS" => $elementData,
-                ], "MaintenanceTable::add", "/upload/logs/dd.tools.install.log");
+                ], "MaintenanceTable::add", "/upload/logs/ddapp.tools.install.log");
             }
         }
     }
@@ -66,18 +66,18 @@ class DataInstaller
      */
     private function addIblockElements()
     {
-        $iblockId = $this->getIblockId("dd_tools_news");
+        $iblockId = $this->getIblockId("ddapp_tools_news");
 
         if (!$iblockId) {
             return false;
         }
 
         $defaultElements = [
-            ["NAME" => "Первая новость DD Tools", "CODE" => "first_news_dd_tools", "PREVIEW_TEXT" => "Краткое описание первой новости для тестирования модуля DD Tools", "DETAIL_TEXT" => "Подробное описание первой новости. Здесь может быть много текста с различными подробностями о функционале модуля DD Tools.",
-                "PROPERTIES" => ["AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => ["новости", "dd.tools", "модуль"], "RATING" => 5, "SHOW_ON_MAIN" => "Да"]],
-            ["NAME" => "Обновление функционала", "CODE" => "functionality_update", "PREVIEW_TEXT" => "Информация о новых возможностях модуля DD Tools", "DETAIL_TEXT" => "В новой версии модуля DD Tools добавлены дополнительные функции для работы с контентом и улучшена производительность.",
+            ["NAME" => "Первая новость 2Dapp Tools", "CODE" => "first_news_ddapp_tools", "PREVIEW_TEXT" => "Краткое описание первой новости для тестирования модуля 2Dapp Tools", "DETAIL_TEXT" => "Подробное описание первой новости. Здесь может быть много текста с различными подробностями о функционале модуля 2Dapp Tools.",
+                "PROPERTIES" => ["AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => ["новости", "ddapp.tools", "модуль"], "RATING" => 5, "SHOW_ON_MAIN" => "Да"]],
+            ["NAME" => "Обновление функционала", "CODE" => "functionality_update", "PREVIEW_TEXT" => "Информация о новых возможностях модуля 2Dapp Tools", "DETAIL_TEXT" => "В новой версии модуля 2Dapp Tools добавлены дополнительные функции для работы с контентом и улучшена производительность.",
                 "PROPERTIES" => ["AUTHOR" => "Анна Сидорова", "SOURCE" => "Блог разработчиков", "TAGS" => ["обновление", "функционал", "производительность"], "RATING" => 4, "SHOW_ON_MAIN" => "Да"]],
-            ["NAME" => "Руководство по установке", "CODE" => "installation_guide", "PREVIEW_TEXT" => "Пошаговая инструкция по установке и настройке модуля", "DETAIL_TEXT" => "Данное руководство поможет вам правильно установить и настроить модуль DD Tools на вашем сайте. Следуйте инструкциям для корректной работы.",
+            ["NAME" => "Руководство по установке", "CODE" => "installation_guide", "PREVIEW_TEXT" => "Пошаговая инструкция по установке и настройке модуля", "DETAIL_TEXT" => "Данное руководство поможет вам правильно установить и настроить модуль 2Dapp Tools на вашем сайте. Следуйте инструкциям для корректной работы.",
                 "PROPERTIES" => ["AUTHOR" => "Техническая поддержка", "SOURCE" => "Документация", "TAGS" => ["установка", "настройка", "инструкция"], "RATING" => 3, "SHOW_ON_MAIN" => "Нет"]]
         ];
 
@@ -102,7 +102,7 @@ class DataInstaller
             "DATE" => date("Y-m-d H:i:s"),
             "MESSAGE" => "Инфоблок с таким CODE не найден",
             "CODE" => $code,
-        ], "CIBlock::GetList", "/upload/logs/dd.tools.install.log");
+        ], "CIBlock::GetList", "/upload/logs/ddapp.tools.install.log");
 
         return false;
     }
@@ -125,7 +125,7 @@ class DataInstaller
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => $el->LAST_ERROR,
                 "FIELDS" => $arFields,
-            ], "CIBlockElement::add", "/upload/logs/dd.tools.install.log");
+            ], "CIBlockElement::add", "/upload/logs/ddapp.tools.install.log");
         }
 
         return $elementId;

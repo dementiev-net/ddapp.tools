@@ -1,6 +1,6 @@
 <?php
 
-namespace DD\Tools\Events;
+namespace DDAPP\Tools\Events;
 
 class LoginEvents
 {

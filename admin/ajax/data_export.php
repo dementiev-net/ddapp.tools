@@ -11,10 +11,10 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Web\Json;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use DD\Tools\Main;
-use DD\Tools\DataExport;
-use DD\Tools\Helpers\LogHelper;
-use DD\Tools\Helpers\UserHelper;
+use DDAPP\Tools\Main;
+use DDAPP\Tools\DataExport;
+use DDAPP\Tools\Helpers\LogHelper;
+use DDAPP\Tools\Helpers\UserHelper;
 
 // Подключаем модуль инфоблоков
 Loc::loadMessages(__FILE__);
@@ -49,7 +49,7 @@ try {
     $exportSettings = DataExport::getById($exportId);
 
     if (!$exportSettings) {
-        echo Json::encode(["status" => "error", "message" => Loc::getMessage("DD_EXPORT_MESSAGE_ERROR_SETTINGS")]);
+        echo Json::encode(["status" => "error", "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_ERROR_SETTINGS")]);
         exit;
     }
 

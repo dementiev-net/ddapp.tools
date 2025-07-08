@@ -1,19 +1,19 @@
 <?php
 
-namespace DD\Tools;
+namespace DDAPP\Tools;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Mail\Event;
 use Bitrix\Main\SiteTable;
 use Bitrix\Main\IO\Directory;
-use DD\Tools\Main;
-use DD\Tools\Helpers\LogHelper;
-use DD\Tools\Helpers\FileHelper;
+use DDAPP\Tools\Main;
+use DDAPP\Tools\Helpers\LogHelper;
+use DDAPP\Tools\Helpers\FileHelper;
 
 class freespaceAgent
 {
-    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DD_GADGET_DISK_FREE_SPACE";
+    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DDAPP_GADGET_DISK_FREE_SPACE";
     private const TIME_OUT = 30;
 
     /**
@@ -33,7 +33,7 @@ class freespaceAgent
             LogHelper::error("cron", "freespaceAgent error: " . $e->getMessage());
         }
 
-        return "\\DD\\Tools\\freespaceAgent::run();";
+        return "\\DDAPP\\Tools\\freespaceAgent::run();";
     }
 
     /**

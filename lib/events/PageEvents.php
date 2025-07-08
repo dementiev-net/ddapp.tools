@@ -1,6 +1,6 @@
 <?php
 
-namespace DD\Tools\Events;
+namespace DDAPP\Tools\Events;
 
 use Bitrix\Main\Application;
 use Bitrix\Main\Context;
@@ -37,7 +37,7 @@ class PageEvents
         // Запуск агентов
         $action = $request["action_button"] ?? $request["action"] ?? null;
 
-        if ($action == "dd_agent_run" &&
+        if ($action == "ddapp_agent_run" &&
             Application::getInstance()->getContext()->getRequest()->getRequestedPage() == "/bitrix/admin/agent_list.php" &&
             CurrentUser::get()->canDoOperation("view_other_settings") &&
             check_bitrix_sessid() &&
@@ -63,7 +63,7 @@ class PageEvents
                 \CTimeZone::Enable();
 
                 if (strlen($eval_result)) {
-                    $userMessageText = Loc::getMessage("DD_EVENT_ACTION_RUN_OK");
+                    $userMessageText = Loc::getMessage("DDAPP_EVENT_ACTION_RUN_OK");
                 }
 
                 unset($_REQUEST["action"]);

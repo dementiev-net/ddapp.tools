@@ -1,11 +1,11 @@
 /**
- * DD Tools Export Manager
+ * 2Dapp Tools Export Manager
  * @version 1.0.0
  */
 
-BX.namespace('BX.DD.Tools');
+BX.namespace('BX.DDAPP.Tools');
 
-BX.DD.Tools.ExportManager = function (params) {
+BX.DDAPP.Tools.ExportManager = function (params) {
 
     this.params = params || {};
     this.exportButton = null;
@@ -28,7 +28,7 @@ BX.DD.Tools.ExportManager = function (params) {
     this.init();
 };
 
-BX.DD.Tools.ExportManager.prototype = {
+BX.DDAPP.Tools.ExportManager.prototype = {
 
     init: function () {
 

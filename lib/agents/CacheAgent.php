@@ -1,11 +1,11 @@
 <?php
 
-namespace DD\Tools;
+namespace DDAPP\Tools;
 
 use Bitrix\Main\IO\Directory;
-use DD\Tools\Helpers\LogHelper;
-use DD\Tools\Helpers\FileHelper;
-use DD\Tools\Helpers\CacheHelper;
+use DDAPP\Tools\Helpers\LogHelper;
+use DDAPP\Tools\Helpers\FileHelper;
+use DDAPP\Tools\Helpers\CacheHelper;
 
 class cacheAgent
 {
@@ -26,7 +26,7 @@ class cacheAgent
             LogHelper::error("cron", "cacheAgent error: " . $e->getMessage());
         }
 
-        return "\\DD\\Tools\\cacheAgent::run();";
+        return "\\DDAPP\\Tools\\cacheAgent::run();";
     }
 
     /**

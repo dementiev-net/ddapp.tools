@@ -1,11 +1,11 @@
 <?php
 
-namespace DD\Tools;
+namespace DDAPP\Tools;
 
-use DD\Tools\Events\AdminEvents;
-use DD\Tools\Events\LoginEvents;
-use DD\Tools\Events\PageEvents;
-use DD\Tools\Events\ContentEvents;
+use DDAPP\Tools\Events\AdminEvents;
+use DDAPP\Tools\Events\LoginEvents;
+use DDAPP\Tools\Events\PageEvents;
+use DDAPP\Tools\Events\ContentEvents;
 
 class Events
 {

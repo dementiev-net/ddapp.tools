@@ -1,6 +1,6 @@
 <?php
 
-namespace DD\Tools\Install;
+namespace DDAPP\Tools\Install;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Diag\Debug;
@@ -10,8 +10,8 @@ use Bitrix\Main\Mail\Internal\EventMessageTable;
 class EmailTemplateInstaller
 {
     private $moduleId;
-    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DD_TOOLS_CRITICAL_ERROR";
-    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DD_GADGET_DISK_FREE_SPACE";
+    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DDAPP_TOOLS_CRITICAL_ERROR";
+    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DDAPP_GADGET_DISK_FREE_SPACE";
 
     public function __construct($moduleId)
     {
@@ -94,7 +94,7 @@ class EmailTemplateInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERRORS" => $typeResult->getErrorMessages(),
                     "FIELDS" => $arFields
-                ], "EventTypeTable::add", "/upload/logs/dd.tools.install.log");
+                ], "EventTypeTable::add", "/upload/logs/ddapp.tools.install.log");
 
                 return false;
             }
@@ -128,7 +128,7 @@ class EmailTemplateInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $em->LAST_ERROR,
                     "FIELDS" => $arFields
-                ], "CEventMessage::add", "/upload/logs/dd.tools.install.log");
+                ], "CEventMessage::add", "/upload/logs/ddapp.tools.install.log");
             }
         }
 
@@ -161,7 +161,7 @@ class EmailTemplateInstaller
                     "ERRORS" => $result->getErrorMessages(),
                     "MESSAGE_ID" => $message["ID"],
                     "EVENT_NAME" => $eventName
-                ], "EventMessageTable::delete", "/upload/logs/dd.tools.install.log");
+                ], "EventMessageTable::delete", "/upload/logs/ddapp.tools.install.log");
             }
         }
 
@@ -180,7 +180,7 @@ class EmailTemplateInstaller
                     "ERRORS" => $result->getErrorMessages(),
                     "TYPE_ID" => $type["ID"],
                     "EVENT_NAME" => $eventName
-                ], "EventTypeTable::delete", "/upload/logs/dd.tools.install.log");
+                ], "EventTypeTable::delete", "/upload/logs/ddapp.tools.install.log");
             }
         }
     }

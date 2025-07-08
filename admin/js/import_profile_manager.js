@@ -1,11 +1,11 @@
 /**
- * DD Tools Import Profile Manager
+ * 2Dapp Tools Import Profile Manager
  * @version 1.0.0
  */
 
-BX.namespace('BX.DD.Tools');
+BX.namespace('BX.DDAPP.Tools');
 
-BX.DD.Tools.ImportProfileManager = function (params) {
+BX.DDAPP.Tools.ImportProfileManager = function (params) {
 
     this.params = params || {};
     this.currentProfileId = null;
@@ -16,7 +16,7 @@ BX.DD.Tools.ImportProfileManager = function (params) {
     this.init();
 };
 
-BX.DD.Tools.ImportProfileManager.prototype = {
+BX.DDAPP.Tools.ImportProfileManager.prototype = {
 
     init: function () {
 

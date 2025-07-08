@@ -4,10 +4,10 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\HttpApplication;
 use Bitrix\Main\Config\Option;
-use DD\Tools\Main;
-use DD\Tools\Helpers\UserHelper;
-use DD\Tools\Helpers\FileHelper;
-use DD\Tools\Helpers\CacheHelper;
+use DDAPP\Tools\Main;
+use DDAPP\Tools\Helpers\UserHelper;
+use DDAPP\Tools\Helpers\FileHelper;
+use DDAPP\Tools\Helpers\CacheHelper;
 
 Loc::loadMessages(__FILE__);
 
@@ -30,68 +30,68 @@ $cacheSize = FileHelper::formatBytes(CacheHelper::checkCacheSize());
 $aTabs = [
     [
         "DIV" => "TAB1", // Для идентификации (используется для javascript)
-        "TAB" => Loc::getMessage("DD_TOOLS_TAB1"),
-        "TITLE" => Loc::getMessage("DD_TOOLS_TAB1_TITLE"),
+        "TAB" => Loc::getMessage("DDAPP_TOOLS_TAB1"),
+        "TITLE" => Loc::getMessage("DDAPP_TOOLS_TAB1_TITLE"),
         "OPTIONS" => [
-            ["maint_period", Loc::getMessage("DD_TOOLS_MAINT_PERIOD"), 30, ["text", 5, 50]],
-            ["cache_period", Loc::getMessage("DD_TOOLS_CACHE_PERIOD"), 0, ["selectbox", Loc::getMessage("DD_TOOLS_CACHE_PERIOD_DEFAULT")]],
-            ["", "", Loc::getMessage("DD_TOOLS_CACHE_SIZE") . $cacheSize, ["statichtml"]],
-            ["export_step", Loc::getMessage("DD_TOOLS_EXPORT_STEP"), 100, ["text", 5, 50]],
+            ["maint_period", Loc::getMessage("DDAPP_TOOLS_MAINT_PERIOD"), 30, ["text", 5, 50]],
+            ["cache_period", Loc::getMessage("DDAPP_TOOLS_CACHE_PERIOD"), 0, ["selectbox", Loc::getMessage("DDAPP_TOOLS_CACHE_PERIOD_DEFAULT")]],
+            ["", "", Loc::getMessage("DDAPP_TOOLS_CACHE_SIZE") . $cacheSize, ["statichtml"]],
+            ["export_step", Loc::getMessage("DDAPP_TOOLS_EXPORT_STEP"), 100, ["text", 5, 50]],
         ]
     ], [
         "DIV" => "TAB2",
-        "TAB" => Loc::getMessage("DD_TOOLS_TAB2"),
-        "TITLE" => Loc::getMessage("DD_TOOLS_TAB2_TITLE"),
+        "TAB" => Loc::getMessage("DDAPP_TOOLS_TAB2"),
+        "TITLE" => Loc::getMessage("DDAPP_TOOLS_TAB2_TITLE"),
         "OPTIONS" => [
-            ["log_enabled", Loc::getMessage("DD_TOOLS_LOG_ENABLED"), "Y", ["checkbox"]],
-            ["log_min_level", Loc::getMessage("DD_TOOLS_LOG_MIN_LEVEL"), 1, ["selectbox", Loc::getMessage("DD_TOOLS_LOG_MIN_LEVEL_DEFAULT")]],
-            ["log_path", Loc::getMessage("DD_TOOLS_LOG_PATH"), Loc::getMessage("DD_TOOLS_LOG_PATH_DEFAULT"), ["text", 40, 50]],
-            ["log_date_format", Loc::getMessage("DD_TOOLS_LOG_DATE_FORMAT"), Loc::getMessage("DD_TOOLS_LOG_DATE_FORMAT_DEFAULT"), ["text", 10, 50]],
-            Loc::getMessage("DD_TOOLS_BLOCK2"),
-            ["log_max_file_size", Loc::getMessage("DD_TOOLS_LOG_MAX_FILE_SIZE"), Loc::getMessage("DD_TOOLS_LOG_MAX_FILE_SIZE_DEFAULT"), ["text", 10, 50]],
-            ["log_max_files", Loc::getMessage("DD_TOOLS_LOG_MAX_FILES"), Loc::getMessage("DD_TOOLS_LOG_MAX_FILES_DEFAULT"), ["text", 5, 50]],
-            Loc::getMessage("DD_TOOLS_BLOCK3"),
-            ["log_email_enabled", Loc::getMessage("DD_TOOLS_LOG_EMAIL_ENABLED"), "Y", ["checkbox"]],
-            ["log_email", Loc::getMessage("DD_TOOLS_LOG_EMAIL"), Loc::getMessage("DD_TOOLS_LOG_EMAIL_DEFAULT"), ["text", 20, 50]],
-            ['note' => Loc::getMessage("DD_TOOLS_HELP_TAB2")],
+            ["log_enabled", Loc::getMessage("DDAPP_TOOLS_LOG_ENABLED"), "Y", ["checkbox"]],
+            ["log_min_level", Loc::getMessage("DDAPP_TOOLS_LOG_MIN_LEVEL"), 1, ["selectbox", Loc::getMessage("DDAPP_TOOLS_LOG_MIN_LEVEL_DEFAULT")]],
+            ["log_path", Loc::getMessage("DDAPP_TOOLS_LOG_PATH"), Loc::getMessage("DDAPP_TOOLS_LOG_PATH_DEFAULT"), ["text", 40, 50]],
+            ["log_date_format", Loc::getMessage("DDAPP_TOOLS_LOG_DATE_FORMAT"), Loc::getMessage("DDAPP_TOOLS_LOG_DATE_FORMAT_DEFAULT"), ["text", 10, 50]],
+            Loc::getMessage("DDAPP_TOOLS_BLOCK2"),
+            ["log_max_file_size", Loc::getMessage("DDAPP_TOOLS_LOG_MAX_FILE_SIZE"), Loc::getMessage("DDAPP_TOOLS_LOG_MAX_FILE_SIZE_DEFAULT"), ["text", 10, 50]],
+            ["log_max_files", Loc::getMessage("DDAPP_TOOLS_LOG_MAX_FILES"), Loc::getMessage("DDAPP_TOOLS_LOG_MAX_FILES_DEFAULT"), ["text", 5, 50]],
+            Loc::getMessage("DDAPP_TOOLS_BLOCK3"),
+            ["log_email_enabled", Loc::getMessage("DDAPP_TOOLS_LOG_EMAIL_ENABLED"), "Y", ["checkbox"]],
+            ["log_email", Loc::getMessage("DDAPP_TOOLS_LOG_EMAIL"), Loc::getMessage("DDAPP_TOOLS_LOG_EMAIL_DEFAULT"), ["text", 20, 50]],
+            ['note' => Loc::getMessage("DDAPP_TOOLS_HELP_TAB2")],
         ]
     ], [
         "DIV" => "TAB3",
-        "TAB" => Loc::getMessage("DD_TOOLS_TAB3"),
-        "TITLE" => Loc::getMessage("DD_TOOLS_TAB3_TITLE"),
+        "TAB" => Loc::getMessage("DDAPP_TOOLS_TAB3"),
+        "TITLE" => Loc::getMessage("DDAPP_TOOLS_TAB3_TITLE"),
         "OPTIONS" => [
-            ["disk_enabled", Loc::getMessage("DD_TOOLS_DISK_ENABLED"), "Y", ["checkbox"]],
-            ["disk_delete_cache", Loc::getMessage("DD_TOOLS_DISK_DELETE_CACHE"), "Y", ["checkbox"]],
-            Loc::getMessage("DD_TOOLS_BLOCK3"),
-            ["disk_email_enabled", Loc::getMessage("DD_TOOLS_DISK_EMAIL_ENABLED"), "Y", ["checkbox"]],
-            ["disk_email", Loc::getMessage("DD_TOOLS_DISK_EMAIL"), Loc::getMessage("DD_TOOLS_DISK_EMAIL_DEFAULT"), ["text", 20, 50]],
-            Loc::getMessage("DD_TOOLS_BLOCK4"),
-            ["disk_type_filesystem", Loc::getMessage("DD_TOOLS_DISK_TYPE_FILESYSTEM"), 1, ["selectbox", Loc::getMessage("DD_TOOLS_DISK_TYPE_FILESYSTEM_DEFAULT")]],
-            ["disk_free_space", Loc::getMessage("DD_TOOLS_DISK_FREE_SPACE"), Loc::getMessage("DD_TOOLS_DISK_FREE_SPACE_DEFAULT"), ["text", 5, 50]],
-            ["disk_all_space", Loc::getMessage("DD_TOOLS_DISK_ALL_SPACE"), Loc::getMessage("DD_TOOLS_DISK_ALL_SPACE_DEFAULT"), ["text", 5, 50]],
+            ["disk_enabled", Loc::getMessage("DDAPP_TOOLS_DISK_ENABLED"), "Y", ["checkbox"]],
+            ["disk_delete_cache", Loc::getMessage("DDAPP_TOOLS_DISK_DELETE_CACHE"), "Y", ["checkbox"]],
+            Loc::getMessage("DDAPP_TOOLS_BLOCK3"),
+            ["disk_email_enabled", Loc::getMessage("DDAPP_TOOLS_DISK_EMAIL_ENABLED"), "Y", ["checkbox"]],
+            ["disk_email", Loc::getMessage("DDAPP_TOOLS_DISK_EMAIL"), Loc::getMessage("DDAPP_TOOLS_DISK_EMAIL_DEFAULT"), ["text", 20, 50]],
+            Loc::getMessage("DDAPP_TOOLS_BLOCK4"),
+            ["disk_type_filesystem", Loc::getMessage("DDAPP_TOOLS_DISK_TYPE_FILESYSTEM"), 1, ["selectbox", Loc::getMessage("DDAPP_TOOLS_DISK_TYPE_FILESYSTEM_DEFAULT")]],
+            ["disk_free_space", Loc::getMessage("DDAPP_TOOLS_DISK_FREE_SPACE"), Loc::getMessage("DDAPP_TOOLS_DISK_FREE_SPACE_DEFAULT"), ["text", 5, 50]],
+            ["disk_all_space", Loc::getMessage("DDAPP_TOOLS_DISK_ALL_SPACE"), Loc::getMessage("DDAPP_TOOLS_DISK_ALL_SPACE_DEFAULT"), ["text", 5, 50]],
         ]
     ], [
         "DIV" => "TAB4",
-        "TAB" => Loc::getMessage("DD_TOOLS_TAB4"),
-        "TITLE" => Loc::getMessage("DD_TOOLS_TAB4_TITLE"),
+        "TAB" => Loc::getMessage("DDAPP_TOOLS_TAB4"),
+        "TITLE" => Loc::getMessage("DDAPP_TOOLS_TAB4_TITLE"),
         "OPTIONS" => [
-            ["smtp_enabled", Loc::getMessage("DD_TOOLS_SMTP_ENABLED"), "Y", ["checkbox"]],
-            ["smtp_host", Loc::getMessage("DD_TOOLS_SMTP_HOST"), "smtp.yandex.ru", ["text", 40, 50]],
-            ["smtp_secure", Loc::getMessage("DD_TOOLS_SMTP_SMTP_SECURE"), "0", ["selectbox", Loc::getMessage("DD_TOOLS_SMTP_SMTP_SECURE_DEFAULT")]],
-            ["smtp_port", Loc::getMessage("DD_TOOLS_SMTP_PORT"), 465, ["text", 5, 50]],
-            Loc::getMessage("DD_TOOLS_BLOCK5"),
-            ["smtp_login", Loc::getMessage("DD_TOOLS_SMTP_LOGIN"), Loc::getMessage("DD_TOOLS_SMTP_EMAIL_SENDER_DEFAULT"), ["text", 20, 50]],
-            ["smtp_password", Loc::getMessage("DD_TOOLS_SMTP_PASSWORD"), "", ["text", 20, 50]],
-            ["smtp_email_sender", Loc::getMessage("DD_TOOLS_SMTP_EMAIL_SENDER"), Loc::getMessage("DD_TOOLS_SMTP_EMAIL_SENDER_DEFAULT"), ["text", 20, 50]],
-            ["smtp_name_sender", Loc::getMessage("DD_TOOLS_SMTP_NAME_SENDER"), Loc::getMessage("DD_TOOLS_SMTP_NAME_SENDER_DEFAULT"), ["text", 30, 50]],
-            Loc::getMessage("DD_TOOLS_BLOCK6"),
-            ["smtp_dkim_enabled", Loc::getMessage("DD_TOOLS_SMTP_DKIM_ENABLED"), "N", ["checkbox"]],
-            ["smtp_dkim_domain", Loc::getMessage("DD_TOOLS_SMTP_DKIM_DOMAIN"), Loc::getMessage("DD_TOOLS_SMTP_DKIM_DOMAIN_DEFAULT"), ["text", 40, 50]],
-            ["smtp_dkim_selector", Loc::getMessage("DD_TOOLS_SMTP_DKIM_SELECTOR"), Loc::getMessage("DD_TOOLS_SMTP_DKIM_SELECTOR_DEFAULT"), ["text", 40, 50]],
-            ["smtp_dkim_passphrase", Loc::getMessage("DD_TOOLS_SMTP_DKIM_PASSPHRASE"), "", ["text", 40, 50]],
-            ["smtp_dkim_private_key", Loc::getMessage("DD_TOOLS_SMTP_DKIM_PRIVATE_KEY"), Loc::getMessage("DD_TOOLS_SMTP_DKIM_PRIVATE_KEY_DEFAULT"), ["textarea", 15, 60]],
-            ["", "<a href='#' id='smtp_test'>" . Loc::getMessage("DD_TOOLS_SMTP_TEST") . "</a>", "<div id='smtp_test_result'>...</div>", ["statichtml"]],
-            ['note' => Loc::getMessage("DD_TOOLS_HELP_TAB4")],
+            ["smtp_enabled", Loc::getMessage("DDAPP_TOOLS_SMTP_ENABLED"), "Y", ["checkbox"]],
+            ["smtp_host", Loc::getMessage("DDAPP_TOOLS_SMTP_HOST"), "smtp.yandex.ru", ["text", 40, 50]],
+            ["smtp_secure", Loc::getMessage("DDAPP_TOOLS_SMTP_SMTP_SECURE"), "0", ["selectbox", Loc::getMessage("DDAPP_TOOLS_SMTP_SMTP_SECURE_DEFAULT")]],
+            ["smtp_port", Loc::getMessage("DDAPP_TOOLS_SMTP_PORT"), 465, ["text", 5, 50]],
+            Loc::getMessage("DDAPP_TOOLS_BLOCK5"),
+            ["smtp_login", Loc::getMessage("DDAPP_TOOLS_SMTP_LOGIN"), Loc::getMessage("DDAPP_TOOLS_SMTP_EMAIL_SENDER_DEFAULT"), ["text", 20, 50]],
+            ["smtp_password", Loc::getMessage("DDAPP_TOOLS_SMTP_PASSWORD"), "", ["text", 20, 50]],
+            ["smtp_email_sender", Loc::getMessage("DDAPP_TOOLS_SMTP_EMAIL_SENDER"), Loc::getMessage("DDAPP_TOOLS_SMTP_EMAIL_SENDER_DEFAULT"), ["text", 20, 50]],
+            ["smtp_name_sender", Loc::getMessage("DDAPP_TOOLS_SMTP_NAME_SENDER"), Loc::getMessage("DDAPP_TOOLS_SMTP_NAME_SENDER_DEFAULT"), ["text", 30, 50]],
+            Loc::getMessage("DDAPP_TOOLS_BLOCK6"),
+            ["smtp_dkim_enabled", Loc::getMessage("DDAPP_TOOLS_SMTP_DKIM_ENABLED"), "N", ["checkbox"]],
+            ["smtp_dkim_domain", Loc::getMessage("DDAPP_TOOLS_SMTP_DKIM_DOMAIN"), Loc::getMessage("DDAPP_TOOLS_SMTP_DKIM_DOMAIN_DEFAULT"), ["text", 40, 50]],
+            ["smtp_dkim_selector", Loc::getMessage("DDAPP_TOOLS_SMTP_DKIM_SELECTOR"), Loc::getMessage("DDAPP_TOOLS_SMTP_DKIM_SELECTOR_DEFAULT"), ["text", 40, 50]],
+            ["smtp_dkim_passphrase", Loc::getMessage("DDAPP_TOOLS_SMTP_DKIM_PASSPHRASE"), "", ["text", 40, 50]],
+            ["smtp_dkim_private_key", Loc::getMessage("DDAPP_TOOLS_SMTP_DKIM_PRIVATE_KEY"), Loc::getMessage("DDAPP_TOOLS_SMTP_DKIM_PRIVATE_KEY_DEFAULT"), ["textarea", 15, 60]],
+            ["", "<a href='#' id='smtp_test'>" . Loc::getMessage("DDAPP_TOOLS_SMTP_TEST") . "</a>", "<div id='smtp_test_result'>...</div>", ["statichtml"]],
+            ['note' => Loc::getMessage("DDAPP_TOOLS_HELP_TAB4")],
         ]
     ], [
         "DIV" => "TAB5",
@@ -128,7 +128,7 @@ if ($request->isPost() && check_bitrix_sessid()) {
                 if ($arOption[0] == "cache_period") {
 
                     $cachePeriod = (int)$optionValue;
-                    $agentName = "\\DD\\Tools\\cacheAgent::run();";
+                    $agentName = "\\DDAPP\\Tools\\cacheAgent::run();";
 
                     // Получим текущий агент
                     $res = \CAgent::GetList([], ["NAME" => $agentName]);
@@ -208,19 +208,19 @@ $tabControl->Begin();
 
         <?= bitrix_sessid_post(); ?>
 
-        <input class="adm-btn-save" type="submit" name="Update" value="<?= Loc::getMessage("DD_TOOLS_BTN_APPLY") ?>"/>
-        <input type="submit" name="default" value="<?= Loc::getMessage("DD_TOOLS_BTN_DEFAULT") ?>"/>
+        <input class="adm-btn-save" type="submit" name="Update" value="<?= Loc::getMessage("DDAPP_TOOLS_BTN_APPLY") ?>"/>
+        <input type="submit" name="default" value="<?= Loc::getMessage("DDAPP_TOOLS_BTN_DEFAULT") ?>"/>
     </form>
 
     <script>
         BX.ready(function () {
             // Инициализация
-            new BX.DD.Tools.SmtpTest({
+            new BX.DDAPP.Tools.SmtpTest({
                 ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/smtp_test.php") ?>',
-                messageLoadingText: '<?= Loc::getMessage("DD_TOOLS_SMTP_TEST_LOADING") ?>',
-                messageSuccessText: '<?= Loc::getMessage("DD_TOOLS_SMTP_TEST_SUCCESS") ?>',
-                messageErrorText: '<?= Loc::getMessage("DD_TOOLS_SMTP_TEST_ERROR") ?>',
-                messageAjaxErrorText: '<?= Loc::getMessage("DD_TOOLS_SMTP_TEST_ERROR_AJAX") ?>',
+                messageLoadingText: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_LOADING") ?>',
+                messageSuccessText: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_SUCCESS") ?>',
+                messageErrorText: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_ERROR") ?>',
+                messageAjaxErrorText: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_ERROR_AJAX") ?>',
             });
         });
     </script>

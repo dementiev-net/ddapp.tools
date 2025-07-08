@@ -1,6 +1,6 @@
 <?php
 
-namespace DD\Tools\Entity;
+namespace DDAPP\Tools\Entity;
 
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ORM\Data\DataManager;
@@ -21,7 +21,7 @@ class DataImportTable extends DataManager
      */
     public static function getTableName()
     {
-        return "dd_data_import";
+        return "ddapp_data_import";
     }
 
     /**

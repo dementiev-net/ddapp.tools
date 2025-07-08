@@ -1,6 +1,6 @@
 <?php
 
-namespace DD\Tools\Install;
+namespace DDAPP\Tools\Install;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Diag\Debug;
@@ -42,14 +42,14 @@ class IblockInstaller
     private function createInfoblockType()
     {
         $arFields = [
-            "ID" => "dd_tools_content",
+            "ID" => "ddapp_tools_content",
             "SECTIONS" => "Y",
             "ELEMENTS" => "Y",
             "IN_RSS" => "N",
             "SORT" => 500,
             "LANG" => [
-                "ru" => ["NAME" => "DD Tools - Контент", "SECTION_NAME" => "Разделы", "ELEMENT_NAME" => "Элементы"],
-                "en" => ["NAME" => "DD Tools - Content", "SECTION_NAME" => "Sections", "ELEMENT_NAME" => "Elements"]
+                "ru" => ["NAME" => "2Dapp Tools - Контент", "SECTION_NAME" => "Разделы", "ELEMENT_NAME" => "Элементы"],
+                "en" => ["NAME" => "2Dapp Tools - Content", "SECTION_NAME" => "Sections", "ELEMENT_NAME" => "Elements"]
             ]
         ];
 
@@ -61,7 +61,7 @@ class IblockInstaller
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => $obBlocktype->LAST_ERROR,
                 "FIELDS" => $arFields
-            ], "CIBlockType::add", "/upload/logs/dd.tools.install.log");
+            ], "CIBlockType::add", "/upload/logs/ddapp.tools.install.log");
         }
     }
 
@@ -72,9 +72,9 @@ class IblockInstaller
     {
         $arFields = [
             "ACTIVE" => "Y",
-            "NAME" => "DD Tools - Новости и статьи",
-            "CODE" => "dd_tools_news",
-            "IBLOCK_TYPE_ID" => "dd_tools_content",
+            "NAME" => "2Dapp Tools - Новости и статьи",
+            "CODE" => "ddapp_tools_news",
+            "IBLOCK_TYPE_ID" => "ddapp_tools_content",
             "SITE_ID" => ["s1"],
             "SORT" => 500,
             "GROUP_ID" => ["2" => "R"],
@@ -93,7 +93,7 @@ class IblockInstaller
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => $ib->LAST_ERROR,
                 "FIELDS" => $arFields
-            ], "CIBlock::add", "/upload/logs/dd.tools.install.log");
+            ], "CIBlock::add", "/upload/logs/ddapp.tools.install.log");
         } else {
             $this->createIblockProperties($iblockId);
         }
@@ -127,7 +127,7 @@ class IblockInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $ibp->LAST_ERROR,
                     "FIELDS" => $field,
-                ], "CIBlockProperty::add", "/upload/logs/dd.tools.install.log");
+                ], "CIBlockProperty::add", "/upload/logs/ddapp.tools.install.log");
             }
         }
     }
@@ -137,7 +137,7 @@ class IblockInstaller
      */
     private function deleteInfoblock()
     {
-        $res = \CIBlock::GetList([], ["CODE" => "dd_tools_news", "CHECK_PERMISSIONS" => "N"]);
+        $res = \CIBlock::GetList([], ["CODE" => "ddapp_tools_news", "CHECK_PERMISSIONS" => "N"]);
 
         if ($ar_res = $res->Fetch()) {
 
@@ -156,7 +156,7 @@ class IblockInstaller
                         "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении элемента",
                         "ELEMENT_ID" => $arElement["ID"],
                         "IBLOCK_ID" => $iblockId,
-                    ], "CIBlockElement::Delete", "/upload/logs/dd.tools.install.log");
+                    ], "CIBlockElement::Delete", "/upload/logs/ddapp.tools.install.log");
                 }
             }
 
@@ -173,7 +173,7 @@ class IblockInstaller
                         "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении раздела",
                         "SECTION_ID" => $arSection["ID"],
                         "IBLOCK_ID" => $iblockId,
-                    ], "CIBlockSection::Delete", "/upload/logs/dd.tools.install.log");
+                    ], "CIBlockSection::Delete", "/upload/logs/ddapp.tools.install.log");
                 }
             }
 
@@ -185,7 +185,7 @@ class IblockInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении инфоблока",
                     "IBLOCK_ID" => $iblockId,
-                ], "CIBlock::Delete", "/upload/logs/dd.tools.install.log");
+                ], "CIBlock::Delete", "/upload/logs/ddapp.tools.install.log");
             }
         }
     }
@@ -195,18 +195,18 @@ class IblockInstaller
      */
     private function deleteInfoblockType()
     {
-        $res = \CIBlock::GetList([], ["TYPE" => "dd_tools_content", "CHECK_PERMISSIONS" => "N"]);
+        $res = \CIBlock::GetList([], ["TYPE" => "ddapp_tools_content", "CHECK_PERMISSIONS" => "N"]);
 
         if (!$res->Fetch()) {
             $obBlockType = new \CIBlockType;
-            $result = $obBlockType->Delete("dd_tools_content");
+            $result = $obBlockType->Delete("ddapp_tools_content");
 
             if (!$result) {
                 Debug::writeToFile([
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении типа инфоблока",
-                    "IBLOCK_TYPE" => "dd_tools_content"
-                ], "CIBlockType::Delete", "/upload/logs/dd.tools.install.log");
+                    "IBLOCK_TYPE" => "ddapp_tools_content"
+                ], "CIBlockType::Delete", "/upload/logs/ddapp.tools.install.log");
             }
         }
     }

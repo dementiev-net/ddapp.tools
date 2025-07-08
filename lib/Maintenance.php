@@ -1,12 +1,12 @@
 <?php
 
-namespace DD\Tools;
+namespace DDAPP\Tools;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Type\DateTime;
-use DD\Tools\Main;
-use DD\Tools\Entity\MaintenanceTable;
+use DDAPP\Tools\Main;
+use DDAPP\Tools\Entity\MaintenanceTable;
 
 class Maintenance
 {

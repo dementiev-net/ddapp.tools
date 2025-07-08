@@ -1,8 +1,8 @@
 <?php
 
-namespace DD\Tools\Helpers;
+namespace DDAPP\Tools\Helpers;
 
-use DD\Tools\Main;
+use DDAPP\Tools\Main;
 
 class UserHelper
 {

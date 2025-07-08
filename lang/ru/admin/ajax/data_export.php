@@ -1,2 +1,2 @@
 <?php
-$MESS["DD_EXPORT_MESSAGE_ERROR_SETTINGS"] = "Настройки экспорта не найдены";
+$MESS["DDAPP_EXPORT_MESSAGE_ERROR_SETTINGS"] = "Настройки экспорта не найдены";

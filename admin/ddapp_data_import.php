@@ -5,11 +5,11 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Application;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\UI\Extension;
-use DD\Tools\Main;
-use DD\Tools\DataImport;
-use DD\Tools\Helpers\LogHelper;
-use DD\Tools\Helpers\UserHelper;
-use DD\Tools\Helpers\IblockHelper;
+use DDAPP\Tools\Main;
+use DDAPP\Tools\DataImport;
+use DDAPP\Tools\Helpers\LogHelper;
+use DDAPP\Tools\Helpers\UserHelper;
+use DDAPP\Tools\Helpers\IblockHelper;
 
 Loc::loadMessages(__FILE__);
 
@@ -28,7 +28,7 @@ LogHelper::configure();
 Loader::includeModule("iblock");
 Extension::load("ui.dialogs.messagebox");
 
-$APPLICATION->SetTitle(Loc::getMessage("DD_PAGE_TITLE"));
+$APPLICATION->SetTitle(Loc::getMessage("DDAPP_PAGE_TITLE"));
 
 $request = Application::getInstance()->getContext()->getRequest();
 
@@ -60,26 +60,26 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
             ];
 
             if (empty($request->getPost("name"))) {
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_NAME_ERROR")]);
+                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_NAME_ERROR")]);
                 exit;
             }
             if (empty($request->getPost("iblock_id"))) {
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_IBLOCK_ERROR")]);
+                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_IBLOCK_ERROR")]);
                 exit;
             }
             if (!empty($request->getPost("profile_id"))) {
                 DataImport::update($request->getPost("profile_id"), $fields);
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_ADD")]);
+                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_ADD")]);
             } else {
                 $result = DataImport::add($fields);
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_EDIT"), "id" => $result->getId()]);
+                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_EDIT"), "id" => $result->getId()]);
             }
             exit;
 
         case "delete_profile":
             if (!empty($request->getPost("profile_id"))) {
                 DataImport::delete($request->getPost("profile_id"));
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_DELETE")]);
+                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_DELETE")]);
             }
             exit;
 
@@ -117,13 +117,13 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                     $propertyName = $property["NAME"];
 
                     // Добавляем информацию о типе свойства
-                    $message = Loc::getMessage("DD_IMPORT_PROPERTY_TYPE_" . $property["PROPERTY_TYPE"]);
+                    $message = Loc::getMessage("DDAPP_IMPORT_PROPERTY_TYPE_" . $property["PROPERTY_TYPE"]);
                     if ($message !== null) {
                         $propertyName .= $message;
                     }
 
                     if ($property["MULTIPLE"] === "Y") {
-                        $propertyName .= Loc::getMessage("DD_IMPORT_PROPERTY_TYPE_M");
+                        $propertyName .= Loc::getMessage("DDAPP_IMPORT_PROPERTY_TYPE_M");
                     }
 
                     $fields[] = [
@@ -151,8 +151,8 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
         $tabControl = new CAdminTabControl("tabControl", [
             [
                 "DIV" => "edit1",
-                "TAB" => Loc::getMessage("DD_IMPORT_TAB1"),
-                "TITLE" => Loc::getMessage("DD_IMPORT_TAB1_TITLE")
+                "TAB" => Loc::getMessage("DDAPP_IMPORT_TAB1"),
+                "TITLE" => Loc::getMessage("DDAPP_IMPORT_TAB1_TITLE")
             ]
         ]);
         $tabControl->Begin();
@@ -162,7 +162,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
 
         <tr>
             <td width="40%"
-                style="position: relative; top: -4px;"><?= Loc::getMessage("DD_IMPORT_SETTINGS_PROFILE") ?>
+                style="position: relative; top: -4px;"><?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_PROFILE") ?>
                 :
             </td>
             <td width="60%">
@@ -178,11 +178,11 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
 
         <!-- Настройки профиля -->
         <tr class="heading profile-settings">
-            <td colspan="2"><?= Loc::getMessage("DD_IMPORT_BLOCK1") ?></td>
+            <td colspan="2"><?= Loc::getMessage("DDAPP_IMPORT_BLOCK1") ?></td>
         </tr>
         <tr class="profile-settings">
             <td>
-                <label for="profile_name"><?= Loc::getMessage("DD_IMPORT_SETTINGS_PROFILE_NAME") ?>:</label>
+                <label for="profile_name"><?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_PROFILE_NAME") ?>:</label>
             </td>
             <td>
                 <input type="text" id="profile_name" name="name" class="adm-input">
@@ -190,28 +190,28 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
         </tr>
         <tr class="profile-settings">
             <td>
-                <label for="iblock_type_select"><?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK_TYPE") ?>:</label>
+                <label for="iblock_type_select"><?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE") ?>:</label>
             </td>
             <td>
                 <select id="iblock_type_select" name="iblock_type_id" class="adm-input">
-                    <option value=""><?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT") ?></option>
+                    <option value=""><?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT") ?></option>
                 </select>
             </td>
         </tr>
         <tr class="profile-settings">
             <td>
-                <label for="iblock_select"><?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK") ?>:</label>
+                <label for="iblock_select"><?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK") ?>:</label>
             </td>
             <td>
                 <select id="iblock_select" name="iblock_id" class="adm-input" disabled>
-                    <option value=""><?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK_SELECT") ?></option>
+                    <option value=""><?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT") ?></option>
                 </select>
             </td>
         </tr>
 
         <!-- Выбор полей для экспорта -->
         <tr class="heading fields-selection">
-            <td colspan="2"><?= Loc::getMessage("DD_IMPORT_BLOCK2") ?></td>
+            <td colspan="2"><?= Loc::getMessage("DDAPP_IMPORT_BLOCK2") ?></td>
         </tr>
         <tr class="fields-selection">
             <td colspan="2">
@@ -219,9 +219,9 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
                 <div class="adm-detail-content-item-block-desc">
                     <div style="margin-bottom: 10px;">
                         <input type="button" id="select_all_fields"
-                               value="<?= Loc::getMessage("DD_IMPORT_BTN_SELECT_ALL") ?>" class="adm-btn">
+                               value="<?= Loc::getMessage("DDAPP_IMPORT_BTN_SELECT_ALL") ?>" class="adm-btn">
                         <input type="button" id="deselect_all_fields"
-                               value="<?= Loc::getMessage("DD_IMPORT_BTN_DESELECT_ALL") ?>" class="adm-btn">
+                               value="<?= Loc::getMessage("DDAPP_IMPORT_BTN_DESELECT_ALL") ?>" class="adm-btn">
                     </div>
                 </div>
                 <div id="fields_container"
@@ -235,9 +235,9 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
         <?php $tabControl->Buttons(); ?>
 
         <input type="submit" id="submit_btn"
-               value="<?= Loc::getMessage("DD_IMPORT_BTN_SAVE") ?>" <?= $btnDisabled ? "disabled" : "" ?>>
+               value="<?= Loc::getMessage("DDAPP_IMPORT_BTN_SAVE") ?>" <?= $btnDisabled ? "disabled" : "" ?>>
         <input type="button" id="cancel_btn"
-               value="<?= Loc::getMessage("DD_IMPORT_BTN_CANCEL") ?>" <?= $btnDisabled ? "disabled" : "" ?>>
+               value="<?= Loc::getMessage("DDAPP_IMPORT_BTN_CANCEL") ?>" <?= $btnDisabled ? "disabled" : "" ?>>
 
         <?php $tabControl->End(); ?>
 
@@ -246,25 +246,25 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
     <script>
         BX.ready(function () {
             // Инициализация
-            new BX.DD.Tools.ImportProfileManager({
-                ajaxUrl: '<?= Main::getAjaxUrl("admin/dd_data_import.php") ?>',
-                messageTitle: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_TITLE")?>',
-                messageError: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_ERROR")?>',
-                messageErrorServerConnect: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_ERROR_SERVER_CONNECT")?>',
-                messageBeforeDelete: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_BEFORE_DELETE")?>',
-                messageProfileSelect: '<?= Loc::getMessage("DD_IMPORT_SETTINGS_PROFILE_SELECT")?>',
-                messageIblockSelect: '<?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK_SELECT")?>',
-                messageIblockField: '<?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK_FIELD")?>',
-                messageIblockProperty: '<?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK_PROPERTY")?>',
-                messageIblockTypeSelect: '<?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT")?>',
-                messageIblockTypeSelectFirst: '<?= Loc::getMessage("DD_IMPORT_SETTINGS_IBLOCK_SELECT_FIRST")?>',
-                messageIblockFieldValidationError: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_IBLOCK_FIELD_VALIDATION_ERROR")?>',
-                messageProfileLoadError: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_ERROR")?>',
-                messageProfileSaveError: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_SAVE_ERROR")?>',
-                messageProfileSelectError: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_SELECT_ERROR")?>',
-                messageProfileDeleteError: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_DELETE_ERROR")?>',
-                messageProfileDeleteOk: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_PROFILE_DELETE")?>',
-                messageIblockSelectError: '<?= Loc::getMessage("DD_IMPORT_MESSAGE_IBLOCK_TYPE_ERROR")?>',
+            new BX.DDAPP.Tools.ImportProfileManager({
+                ajaxUrl: '<?= Main::getAjaxUrl("admin/ddapp_data_import.php") ?>',
+                messageTitle: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_TITLE")?>',
+                messageError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_ERROR")?>',
+                messageErrorServerConnect: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_ERROR_SERVER_CONNECT")?>',
+                messageBeforeDelete: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_BEFORE_DELETE")?>',
+                messageProfileSelect: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_PROFILE_SELECT")?>',
+                messageIblockSelect: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT")?>',
+                messageIblockField: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_FIELD")?>',
+                messageIblockProperty: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_PROPERTY")?>',
+                messageIblockTypeSelect: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT")?>',
+                messageIblockTypeSelectFirst: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT_FIRST")?>',
+                messageIblockFieldValidationError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_IBLOCK_FIELD_VALIDATION_ERROR")?>',
+                messageProfileLoadError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_ERROR")?>',
+                messageProfileSaveError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_SAVE_ERROR")?>',
+                messageProfileSelectError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_SELECT_ERROR")?>',
+                messageProfileDeleteError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_DELETE_ERROR")?>',
+                messageProfileDeleteOk: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_DELETE")?>',
+                messageIblockSelectError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_IBLOCK_TYPE_ERROR")?>',
             });
         });
     </script>

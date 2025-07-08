@@ -5,8 +5,8 @@ define("NOT_CHECK_PERMISSIONS", true);
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
 
 use Bitrix\Main\Localization\Loc;
-use DD\Tools\CustomMail;
-use DD\Tools\Helpers\UserHelper;
+use DDAPP\Tools\CustomMail;
+use DDAPP\Tools\Helpers\UserHelper;
 
 Loc::loadMessages(__FILE__);
 

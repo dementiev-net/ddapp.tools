@@ -1,18 +1,18 @@
-# DD.Tools - CLI инструменты для Bitrix
+# DDAPP.Tools - CLI инструменты для Bitrix
 
-Модуль dd.tools предоставляет набор CLI-инструментов для управления проектом на Bitrix.
+Модуль ddapp.tools предоставляет набор CLI-инструментов для управления проектом на Bitrix.
 
 ## Управление кешем (cache.php)
 
 ```bash
-cd /home/bitrix/www/local/modules/dd.tools/cli/
+cd /home/bitrix/www/local/modules/ddapp.tools/cli/
 php cache.php help
 ```
 
 ## Система миграций (migrate.php)
 
 ```bash
-cd /home/bitrix/www/local/modules/dd.tools/cli/
+cd /home/bitrix/www/local/modules/ddapp.tools/cli/
 php migrate.php help
 ```
 
@@ -81,7 +81,7 @@ class MigrationAddUserTable
 - Проверяйте статус миграций перед деплоем
 
 ### Именование миграций
-- Используйте snake_case: `add_user_table`, `update_iblock_properties`
+- Используйте snake_case: `addapp_user_table`, `update_iblock_properties`
 - Начинайте с глагола: `create`, `add`, `update`, `remove`, `fix`
 - Будьте описательными: `fix_user_permissions_for_catalog`
 

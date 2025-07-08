@@ -21,7 +21,7 @@ use Bitrix\Main\IO\File;
 class MigrationManager
 {
     private $connection;
-    private $migrationTable = 'dd_migrations';
+    private $migrationTable = 'ddapp_migrations';
     private $migrationDir;
 
     public function __construct()
@@ -398,7 +398,7 @@ function showHelp()
     echo "  reset              - очистить таблицу миграций (только для разработки)\n";
     echo "  help               - показать эту справку\n\n";
     echo "Примеры:\n";
-    echo "  php migrate.php create add_user_table\n";
+    echo "  php migrate.php create addapp_user_table\n";
     echo "  php migrate.php migrate\n";
     echo "  php migrate.php rollback 3\n";
     echo "  php migrate.php status\n";

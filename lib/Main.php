@@ -1,12 +1,12 @@
 <?php
 
-namespace DD\Tools;
+namespace DDAPP\Tools;
 
 use Bitrix\Main\Entity\Event;
 
 class Main
 {
-    const MODULE_ID = 'dd.tools';
+    const MODULE_ID = 'ddapp.tools';
 
     /**
      * Получает путь к модулю (local или bitrix)

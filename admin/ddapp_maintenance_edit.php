@@ -6,9 +6,9 @@ use Bitrix\Main\Application;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Type\DateTime;
-use DD\Tools\Maintenance;
-use DD\Tools\Helpers\LogHelper;
-use DD\Tools\Helpers\UserHelper;
+use DDAPP\Tools\Maintenance;
+use DDAPP\Tools\Helpers\LogHelper;
+use DDAPP\Tools\Helpers\UserHelper;
 
 Loc::loadMessages(__FILE__);
 
@@ -23,15 +23,15 @@ $request = Application::getInstance()->getContext()->getRequest();
 $ID = intval($request->get("ID"));
 $isEdit = $ID > 0;
 
-$APPLICATION->SetTitle($isEdit ? Loc::getMessage("DD_PAGE_TITLE_EDIT") : Loc::getMessage("DD_PAGE_TITLE_ADD"));
+$APPLICATION->SetTitle($isEdit ? Loc::getMessage("DDAPP_PAGE_TITLE_EDIT") : Loc::getMessage("DDAPP_PAGE_TITLE_ADD"));
 
 // Контекстное меню
 $context = new CAdminContextMenu([
     [
-        "TEXT" => Loc::getMessage("DD_MAINTENANCE_BTN_TO_LIST"),
+        "TEXT" => Loc::getMessage("DDAPP_MAINTENANCE_BTN_TO_LIST"),
         "ICON" => "btn_list",
-        "LINK" => "/bitrix/admin/dd_maintenance_list.php?lang=" . LANG,
-        "TITLE" => Loc::getMessage("DD_MAINTENANCE_BTN_TO_LIST"),
+        "LINK" => "/bitrix/admin/ddapp_maintenance_list.php?lang=" . LANG,
+        "TITLE" => Loc::getMessage("DDAPP_MAINTENANCE_BTN_TO_LIST"),
     ]
 ]);
 
@@ -72,8 +72,8 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
     $arFields["TYPE"] = trim($request->getPost("TYPE"));
 
     // Валидация
-    if (empty($arFields["NAME"])) $arErrors[] = Loc::getMessage("DD_MAINTENANCE_MESSAGE_ERROR_NAME_EMPTY");
-    if (strlen($arFields["NAME"]) > 255) $arErrors[] = Loc::getMessage("DD_MAINTENANCE_MESSAGE_ERROR_NAME_TOO_LONG");
+    if (empty($arFields["NAME"])) $arErrors[] = Loc::getMessage("DDAPP_MAINTENANCE_MESSAGE_ERROR_NAME_EMPTY");
+    if (strlen($arFields["NAME"]) > 255) $arErrors[] = Loc::getMessage("DDAPP_MAINTENANCE_MESSAGE_ERROR_NAME_TOO_LONG");
     if ($arFields["PRIORITY"] < 1) $arFields["PRIORITY"] = 1;
 
     // Сохранение
@@ -96,9 +96,9 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
 
             if ($result->isSuccess()) {
                 // Обработка действий кнопок
-                if ($request->getPost("save")) LocalRedirect("/bitrix/admin/dd_maintenance_list.php?ID=" . $ID . "&lang=" . LANG . "&" . GetFilterParams("F_") . "&save_success=Y");
-                if ($request->getPost("apply")) LocalRedirect("/bitrix/admin/dd_maintenance_edit.php?ID=" . $ID . "&lang=" . LANG . "&" . GetFilterParams("F_") . "&apply_success=Y");
-                LocalRedirect("/bitrix/admin/dd_maintenance_list.php?lang=" . LANG . "&" . GetFilterParams("F_"));
+                if ($request->getPost("save")) LocalRedirect("/bitrix/admin/ddapp_maintenance_list.php?ID=" . $ID . "&lang=" . LANG . "&" . GetFilterParams("F_") . "&save_success=Y");
+                if ($request->getPost("apply")) LocalRedirect("/bitrix/admin/ddapp_maintenance_edit.php?ID=" . $ID . "&lang=" . LANG . "&" . GetFilterParams("F_") . "&apply_success=Y");
+                LocalRedirect("/bitrix/admin/ddapp_maintenance_list.php?lang=" . LANG . "&" . GetFilterParams("F_"));
 
             } else {
                 $arErrors = $result->getErrorMessages();
@@ -113,14 +113,14 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
 
 // Показываем сообщения об успехе
 if ($request->get("apply_success") === "Y") {
-    CAdminMessage::ShowMessage(["MESSAGE" => Loc::getMessage("DD_MAINTENANCE_MESSAGE_EDIT_OK"), "TYPE" => "OK"]);
+    CAdminMessage::ShowMessage(["MESSAGE" => Loc::getMessage("DDAPP_MAINTENANCE_MESSAGE_EDIT_OK"), "TYPE" => "OK"]);
 }
 
 // Показываем ошибки
 if (!empty($arErrors)) {
     $message = new CAdminMessage([
         "TYPE" => "ERROR",
-        "MESSAGE" => Loc::getMessage("DD_MAINTENANCE_MESSAGE_ERROR"),
+        "MESSAGE" => Loc::getMessage("DDAPP_MAINTENANCE_MESSAGE_ERROR"),
         "DETAILS" => implode("<br>", $arErrors),
         "HTML" => true
     ]);
@@ -140,12 +140,12 @@ echo $context->Show();
         $tabControl = new CAdminTabControl("tabControl", [
             [
                 "DIV" => "edit1",
-                "TAB" => Loc::getMessage("DD_MAINTENANCE_TAB1"),
-                "TITLE" => Loc::getMessage("DD_MAINTENANCE_TAB1_TITLE")
+                "TAB" => Loc::getMessage("DDAPP_MAINTENANCE_TAB1"),
+                "TITLE" => Loc::getMessage("DDAPP_MAINTENANCE_TAB1_TITLE")
             ], [
                 "DIV" => "edit2",
-                "TAB" => Loc::getMessage("DD_MAINTENANCE_TAB2"),
-                "TITLE" => Loc::getMessage("DD_MAINTENANCE_TAB2_TITLE")
+                "TAB" => Loc::getMessage("DDAPP_MAINTENANCE_TAB2"),
+                "TITLE" => Loc::getMessage("DDAPP_MAINTENANCE_TAB2_TITLE")
             ]
         ]);
         $tabControl->Begin();
@@ -155,12 +155,12 @@ echo $context->Show();
 
         <?php if ($isEdit): ?>
             <tr>
-                <td><?= Loc::getMessage("DD_MAINTENANCE_ID_FIELD") ?>:</td>
+                <td><?= Loc::getMessage("DDAPP_MAINTENANCE_ID_FIELD") ?>:</td>
                 <td><?= $ID ?></td>
             </tr>
         <?php endif; ?>
         <tr>
-            <td width="40%"><?= Loc::getMessage("DD_MAINTENANCE_ACTIVE_FIELD") ?>:</td>
+            <td width="40%"><?= Loc::getMessage("DDAPP_MAINTENANCE_ACTIVE_FIELD") ?>:</td>
             <td width="60%">
                 <input type="checkbox" name="ACTIVE" value="Y" <?php if ($arFields["ACTIVE"] === "Y") echo "checked" ?>
                        id="ACTIVE">
@@ -168,21 +168,21 @@ echo $context->Show();
             </td>
         </tr>
         <tr>
-            <td><span><?= Loc::getMessage("DD_MAINTENANCE_NAME_FIELD") ?>:</span></td>
+            <td><span><?= Loc::getMessage("DDAPP_MAINTENANCE_NAME_FIELD") ?>:</span></td>
             <td>
                 <input type="text" name="NAME" value="<?= htmlspecialcharsEx($arFields["NAME"]) ?>" size="50"
                        maxlength="255">
             </td>
         </tr>
         <tr>
-            <td><span><?= Loc::getMessage("DD_MAINTENANCE_LINK_FIELD") ?>:</span></td>
+            <td><span><?= Loc::getMessage("DDAPP_MAINTENANCE_LINK_FIELD") ?>:</span></td>
             <td>
                 <input type="text" name="LINK" value="<?= htmlspecialcharsEx($arFields["LINK"]) ?>" size="70"
                        maxlength="255">
             </td>
         </tr>
         <tr>
-            <td><?= Loc::getMessage("DD_MAINTENANCE_DESCRIPTION_FIELD") ?>:</td>
+            <td><?= Loc::getMessage("DDAPP_MAINTENANCE_DESCRIPTION_FIELD") ?>:</td>
             <td>
                 <textarea name="DESCRIPTION" rows="10"
                           cols="65"><?= htmlspecialcharsEx($arFields["DESCRIPTION"]) ?></textarea>
@@ -192,26 +192,26 @@ echo $context->Show();
         <?php $tabControl->BeginNextTab(); ?>
 
         <tr>
-            <td width="40%"><?= Loc::getMessage("DD_MAINTENANCE_PRIORITY_FIELD") ?>:</td>
+            <td width="40%"><?= Loc::getMessage("DDAPP_MAINTENANCE_PRIORITY_FIELD") ?>:</td>
             <td width="60%">
                 <input type="number" name="PRIORITY" value="<?= intval($arFields["PRIORITY"]) ?>" min="1" max="100">
             </td>
         </tr>
         <tr>
-            <td><?= Loc::getMessage("DD_MAINTENANCE_TYPE_FIELD") ?>:</td>
+            <td><?= Loc::getMessage("DDAPP_MAINTENANCE_TYPE_FIELD") ?>:</td>
             <td>
                 <select name="TYPE">
-                    <option value=""><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_NO") ?></option>
-                    <option value="SCHEDULED" <?php if ($arFields["TYPE"] === "SCHEDULED") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE")["SCHEDULED"] ?></option>
-                    <option value="EMERGENCY" <?php if ($arFields["TYPE"] === "EMERGENCY") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE")["EMERGENCY"] ?></option>
-                    <option value="PREVENTIVE" <?php if ($arFields["TYPE"] === "PREVENTIVE") echo "selected" ?>><?= Loc::getMessage("DD_MAINTENANCE_FIELD_VALUE_TYPE")["PREVENTIVE"] ?></option>
+                    <option value=""><?= Loc::getMessage("DDAPP_MAINTENANCE_FIELD_VALUE_NO") ?></option>
+                    <option value="SCHEDULED" <?php if ($arFields["TYPE"] === "SCHEDULED") echo "selected" ?>><?= Loc::getMessage("DDAPP_MAINTENANCE_FIELD_VALUE_TYPE")["SCHEDULED"] ?></option>
+                    <option value="EMERGENCY" <?php if ($arFields["TYPE"] === "EMERGENCY") echo "selected" ?>><?= Loc::getMessage("DDAPP_MAINTENANCE_FIELD_VALUE_TYPE")["EMERGENCY"] ?></option>
+                    <option value="PREVENTIVE" <?php if ($arFields["TYPE"] === "PREVENTIVE") echo "selected" ?>><?= Loc::getMessage("DDAPP_MAINTENANCE_FIELD_VALUE_TYPE")["PREVENTIVE"] ?></option>
                 </select>
             </td>
         </tr>
 
         <?php $tabControl->Buttons([
             "disabled" => $btnDisabled,
-            "back_url" => "/bitrix/admin/dd_maintenance_list.php?lang=" . LANG . "&" . GetFilterParams("F_")
+            "back_url" => "/bitrix/admin/ddapp_maintenance_list.php?lang=" . LANG . "&" . GetFilterParams("F_")
         ]); ?>
 
         <?php $tabControl->End(); ?>

@@ -4,7 +4,7 @@ $MESS["DD_PAGE_TITLE"] = "Экспорт данных инфоблока в Exce
 $MESS["DD_EXPORT_TAB1"] = "Настройки";
 $MESS["DD_EXPORT_TAB1_TITLE"] = "Настройки экспорта данных инфоблока";
 
-$MESS["DD_EXPORT_BLOCK1"] = "Настройки";
+$MESS["DD_EXPORT_BLOCK1"] = "Настройки профиля";
 $MESS["DD_EXPORT_BLOCK2"] = "Поля для экспорта";
 $MESS["DD_EXPORT_BLOCK3"] = "Настройки CSV";
 $MESS["DD_EXPORT_BLOCK4"] = "Настройки Excel";

@@ -342,7 +342,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         var formData = new FormData(form);
         var data = {};
 
-        // // Собираем обычные поля
+        // Собираем обычные поля
         for (var pair of formData.entries()) {
             var key = pair[0];
             var value = pair[1];
@@ -463,7 +463,7 @@ BX.DD.Tools.ExportProfileManager.prototype = {
         // Группируем поля по типам
         var fieldGroups = {
             'FIELD': this.params.messageIblockField,
-            'PROPERTY': this.params.messageIblockField
+            'PROPERTY': this.params.messageIblockProperty
         };
 
         var self = this;
@@ -829,19 +829,10 @@ BX.DD.Tools.ExportProfileManager.prototype = {
     },
 
     showAlert: function (message) {
-        if (typeof BX.UI !== 'undefined' && BX.UI.Dialogs && BX.UI.Dialogs.MessageBox) {
-            BX.UI.Dialogs.MessageBox.alert(message, this.params.messageTitle);
-        } else {
-            alert(message);
-        }
+        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageTitle);
     },
 
     showError: function (message) {
-        if (typeof BX.UI !== 'undefined' && BX.UI.Dialogs && BX.UI.Dialogs.MessageBox) {
-            BX.UI.Dialogs.MessageBox.alert(message, this.params.messageError);
-        } else {
-            alert(this.params.messageError + ': ' + message);
-        }
-        console.error('ExportProfileManager Error:', message);
+        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageError);
     }
 };

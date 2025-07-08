@@ -3,8 +3,13 @@
 namespace DD\Tools\Events;
 
 use Bitrix\Main\Application;
-use Bitrix\Main\UI\AdminList;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\UI\AdminList;
+use Bitrix\Main\UI\Extension;
+use DD\Tools\Main;
+use DD\Tools\DataImport;
+
+Loc::loadMessages(__FILE__);
 
 class AdminEvents
 {
@@ -55,49 +60,92 @@ class AdminEvents
      */
     public static function OnAdminContextMenuShowHandler(&$items)
     {
-//        global $APPLICATION;
-//        \Bitrix\Main\UI\Extension::load("ui.dialogs.messagebox");
-//        $request = Context::getCurrent()->getRequest();
-//        $iblockCatalogId = Iblock::getByCode(Config::IBLOCK_CATALOG);
-//        $iblockOffersId = Iblock::getByCode(Config::IBLOCK_CATALOG_OFFERS);
-//        if ($APPLICATION->GetCurPage() == "/bitrix/admin/iblock_element_edit.php" && ($request["IBLOCK_ID"] == $iblockCatalogId || $request["IBLOCK_ID"] == $iblockOffersId)) {
-//            $items[] = array(
-//                "TEXT" => "Запрос в 1С",
-//                "TITLE" => "Выполнить запрос цен и остатков в 1С",
-//                "LINK" => "javascript:customScriptFunction();",
-//                "ICON" => "btn_edit",
-//            );
-//            \CJSCore::Init(array("jquery"));
-//            echo "<script>
-//            function customScriptFunction() {
-//                BX.showWait();
-//                const id = $("input[name=XML_ID]").val();
-//                if (id) {
-//                    BX.ajax({
-//                        url: "/ajax/1с_update.php?id=" + id,
-//                        method: "GET",
-//                        dataType: "json",
-//                        processData: false,
-//                        preparePost: false,
-//                        onsuccess: function(data) {
-//                            let json = $.parseJSON(data);
-//                            BX.UI.Dialogs.MessageBox.alert(
-//                                json.message,
-//                                json.status ? "Запрос остатков и цен в 1С" : "Ошибка запроса",
-//                                (messageBox, button, event) => { window.location.reload(); }
-//                            );
-//                            BX.closeWait();
-//                        },
-//                        onfailure: function(data) {
-//                            BX.UI.Dialogs.MessageBox.alert("Не получилось запросить остатки и цены в 1С", "Ошибка запроса");
-//                            BX.closeWait();
-//                        }
-//                    });
-//                } else {
-//                    BX.UI.Dialogs.MessageBox.alert("Не удалось получить внешний код товара на странице", "Ошибка запроса");
-//                    BX.closeWait();
-//                }
-//            }
-//        </script>";
+        global $APPLICATION;
+
+        $page = $APPLICATION->GetCurPage();
+        $iblockId = $_REQUEST["IBLOCK_ID"];
+
+        if ($page == "/bitrix/admin/iblock_element_edit.php" && $iblockId) {
+
+            // Проверяем, есть ли профиль для данного инфоблока
+            $profile = DataImport::getItems([
+                "filter" => ["IBLOCK_ID" => $iblockId],
+                "limit" => 1
+            ])[0];
+
+            if ($profile) {
+                Extension::load("ui.dialogs.messagebox");
+                \CJSCore::Init(["jquery"]);
+                Main::includeJS("admin/js/xlsx.full.min.js");
+                Main::includeJS("admin/js/import-excel_manager.js");
+                Main::includeCSS("admin/css/data_import_form.css");
+
+                $items[] = [
+                    "TEXT" => Loc::getMessage("DD_EVENT_MODAL_EXCEL_BTN"),
+                    "TITLE" => Loc::getMessage("DD_EVENT_MODAL_EXCEL_BTN_TITLE"),
+                    "LINK" => "javascript:openExcelModal();",
+                    "ICON" => "btn_new",
+                ];
+
+                // Получаем информацию о свойствах инфоблока
+                $properties = [];
+                $rsProps = \CIBlockProperty::GetList([], ["IBLOCK_ID" => $iblockId]);
+                while ($prop = $rsProps->Fetch()) {
+                    $properties[$prop["CODE"]] = $prop["ID"];
+                }
+
+                // Передаем настройки и свойства в JavaScript
+                $settings = json_decode($profile["SETTINGS"], true);
+                ?>
+                <script>
+                    BX.ready(function () {
+                        new BX.DD.Tools.ImportExcelManager({
+                            iblockId: <?= $iblockId ?>,
+                            settings: <?= json_encode($settings) ?>,
+                            properties: <?= json_encode($properties) ?>,
+                            modalMessageTitle: '<?= Loc::getMessage("DD_EVENT_MODAL_TITLE")?>',
+                            modalMessageFile: '<?= Loc::getMessage("DD_EVENT_MODAL_FILE")?>',
+                            modalMessageBtnClose: '<?= Loc::getMessage("DD_EVENT_MODAL_BTN_CLOSE")?>',
+                            messageTitle: '<?= Loc::getMessage("DD_EVENT_MESSAGE_TITLE")?>',
+                            messageError: '<?= Loc::getMessage("DD_EVENT_MESSAGE_ERROR")?>',
+
+
+                            messageFileImportError: '<?= Loc::getMessage("DD_EVENT_MESSAGE_FILE_IMPORT_ERROR")?>',
+                            messageFileReadtError: '<?= Loc::getMessage("DD_EVENT_MESSAGE_FILE_READ_ERROR")?>',
+                            messageImport: '<?= Loc::getMessage("DD_EVENT_MESSAGE_IMPORT_MESSAGE")?>',
+                            messageImportCellError: '<?= Loc::getMessage("DD_EVENT_MESSAGE_CELL_IS_NULL_ERROR")?>',
+                            messageImportFieldError: '<?= Loc::getMessage("DD_EVENT_MESSAGE_FIELD_NOT_FOUND_ERROR")?>',
+                            messageImportSelectorError: '<?= Loc::getMessage("DD_EVENT_MESSAGE_SELECTOR_NOT_TRUE_ERROR")?>',
+
+
+                        });
+                    });
+                </script>
+                <div id="excel_import_div" style="display:none;">
+                    <div style="margin: 20px;">
+                        <p><?= Loc::getMessage("DD_EVENT_MODAL_EXCEL_FIELDS") ?></p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <?php foreach ($settings["import_fields"] as $key => $value) { ?>
+                                <li>
+                                    <?= Loc::getMessage("DD_EVENT_MODAL_EXCEL_FIELDS_CODE") ?> '<?= $value ?>'
+                                    - <?= Loc::getMessage("DD_EVENT_MODAL_EXCEL_FIELDS_CELL") ?> <?= $settings["import_cells"][$value] ?>
+                                </li>
+                            <? } ?>
+                        </ul>
+                        <div class="adm-file-input-container">
+                            <label class="adm-file-btn adm-file-btn-success">
+                                <span class="adm-file-btn-text"><?= Loc::getMessage("DD_EVENT_MODAL_EXCEL_FILE_SELECT") ?></span>
+                                <input type="file"
+                                       id="excel-file"
+                                       class="adm-file-btn-input"
+                                       accept=".xlsx,.xls">
+                            </label>
+                            <span class="adm-file-input-filename" id="file-name"><?= Loc::getMessage("DD_EVENT_MODAL_EXCEL_FILE_NOT_SELECTED") ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?php
+            }
+        }
     }
 }

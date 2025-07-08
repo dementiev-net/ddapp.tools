@@ -187,6 +187,20 @@ class DD_Tools extends CModule
                 ], "DataExportTable::createDbTable", "/upload/logs/dd.tools.install.log");
             }
         }
+
+        $dataImportTableEntity = Base::getInstance("\DD\Tools\Entity\DataImportTable");
+
+        if (!$connection->isTableExists($dataImportTableEntity->getDBTableName())) {
+            try {
+                $dataImportTableEntity->createDbTable();
+            } catch (\Exception $e) {
+                Debug::writeToFile([
+                    "DATE" => date("Y-m-d H:i:s"),
+                    "ERROR" => $e->getMessage(),
+                    "TABLE" => $dataImportTableEntity->getDBTableName()
+                ], "DataImportTable::createDbTable", "/upload/logs/dd.tools.install.log");
+            }
+        }
     }
 
     /**
@@ -200,6 +214,7 @@ class DD_Tools extends CModule
 
         Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\MaintenanceTable")->getDBTableName());
         Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\DataExportTable")->getDBTableName());
+        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DD\Tools\Entity\DataImportTable")->getDBTableName());
 
         Option::delete($this->MODULE_ID);
     }

@@ -26,6 +26,7 @@ Loader::registerAutoLoadClasses(Main::MODULE_ID, [
         // ORM сущности
         "DD\\Tools\\Entity\\MaintenanceTable" => "lib/entity/MaintenanceTable.php",
         "DD\\Tools\\Entity\\DataExportTable" => "lib/entity/DataExportTable.php",
+        "DD\\Tools\\Entity\\DataImportTable" => "lib/entity/DataImportTable.php",
 
         // Агенты
         "DD\\Tools\\cacheAgent" => "lib/agents/CacheAgent.php",

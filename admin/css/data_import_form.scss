@@ -1,0 +1,94 @@
+.data-import-form {
+
+  .profile-settings,
+  .fields-selection {
+    display: none;
+  }
+
+  .field-item {
+    padding: 8px;
+    margin: 2px 0;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: #e9ecef;
+    }
+
+    .field-checkbox {
+      margin-right: 8px;
+    }
+
+    .field-input {
+      margin-right: 8px;
+      width: 50px;
+    }
+
+    .field-label {
+      cursor: pointer;
+    }
+  }
+
+  .field-group {
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 15px 0 10px 0 !important;
+      color: #2067b0 !important;
+    }
+  }
+
+  .sortable-container {
+    min-height: 50px;
+  }
+}
+
+.adm-info-message-wrap {
+  display: none;
+}
+
+.adm-file-input-container {
+  position: relative;
+  display: inline-block;
+  margin: 10px 0;
+
+  .adm-file-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #45c9f3;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #49ddfd;
+    }
+
+    .adm-file-btn-input {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      cursor: pointer;
+    }
+
+    .adm-file-btn-text {
+      font-size: 12px !important;
+      color: white !important;
+      font-weight: bold !important;
+      cursor: pointer !important;
+    }
+  }
+
+  .adm-file-input-filename {
+    margin-left: 10px;
+    color: #535c69;
+    font-size: 14px;
+  }
+}

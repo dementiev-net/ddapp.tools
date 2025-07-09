@@ -23,6 +23,7 @@ $MESS["DDAPP_IMAGES_SETTINGS_FILE"] = "Архив картинок, ZIP:";
 $MESS["DDAPP_IMAGES_SETTINGS_CODE"] = "Код свойства для привязки";
 $MESS["DDAPP_IMAGES_SETTINGS_FIELD"] = "Свойство для загрузки картинок";
 $MESS["DDAPP_IMAGES_SETTINGS_FIELD_SELECT"] = "-- Выберите свойство --";
+$MESS["DDAPP_IMAGES_SETTINGS_FROM"] = "из";
 
 $MESS["DDAPP_IMAGES_PROCESS_TITLE"] = "Загрузка";
 $MESS["DDAPP_IMAGES_PROCESS_ITEMS_OK"] = "Успешно загружено картинок: ";

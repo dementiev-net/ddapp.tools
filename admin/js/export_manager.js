@@ -293,6 +293,7 @@ BX.DDAPP.Tools.ExportManager.prototype = {
     showError: function (message) {
         if (this.messageError) {
             this.messageError.textContent = message;
+            this.messageError.style.fontWeight = 'normal';
             this.messageError.style.color = 'red';
         }
     },

@@ -158,19 +158,19 @@ $oMenu = new CAdminContextMenu([
         "ICON" => "btn_green",
         "LINK" => "/bitrix/admin/ddapp_maintenance_list.php?lang=" . LANG,
         "TITLE" => Loc::getMessage("DDAPP_MAINTENANCE_BTN_TO_LIST"),
-        "LINK_PARAM" => "id='btn_images'"
+        "LINK_PARAM" => "id='btn_upload'"
     ]
 ]);
 ?>
 
-    <div class="adm-info-message-wrap adm-info-message-gray" id="images_message">
+    <div class="adm-info-message-wrap adm-info-message-gray" id="upload_message">
         <div class="adm-info-message">
             <div class="adm-info-message-title"><?= Loc::getMessage("DDAPP_IMAGES_PROCESS_TITLE") ?></div>
             <?= Loc::getMessage("DDAPP_IMAGES_PROCESS_ITEMS_OK") ?><strong><span
-                        id="images_message_ok">0</span></strong>
+                        id="upload_message_ok">0</span></strong>
             <br><?= Loc::getMessage("DDAPP_IMAGES_PROCESS_ITEMS_ERROR") ?><strong><span
-                        id="images_message_error">0</span></strong>
-            <p id="images_message_file"></p>
+                        id="upload_message_error">0</span></strong>
+            <p id="upload_message_file"></p>
             <div class="adm-progress-bar-outer" style="width: 500px;">
                 <div class="adm-progress-bar-inner" id="progress_percent_a" style="width: 0;">
                     <div class="adm-progress-bar-inner-text" id="progress_percent_b" style="width: 500px;">0%</div>
@@ -332,16 +332,16 @@ $oMenu = new CAdminContextMenu([
                 messageProfileDeleteOk: '<?= Loc::getMessage("DDAPP_IMAGES_MESSAGE_PROFILE_DELETE")?>',
                 messageIblockSelectError: '<?= Loc::getMessage("DDAPP_IMAGES_MESSAGE_IBLOCK_TYPE_ERROR")?>',
             });
-            //new BX.DDAPP.Tools.ImagesManager({
-            //    ajaxUrl: '<?php //= Main::getAjaxUrl("admin/ajax/data_images.php") ?>//',
-            //    messageBeforeUnload: '<?php //= Loc::getMessage("DDAPP_IMAGES_MESSAGE_BEFORE_UNLOAD")?>//',
-            //    messageWrongServerResponse: '<?php //= Loc::getMessage("DDAPP_IMAGES_MESSAGE_WRONG_SERVER_RESPONSE")?>//',
-            //    messageUnknownError: '<?php //= Loc::getMessage("DDAPP_IMAGES_MESSAGE_UNKNOWN_ERROR")?>//',
-            //    messageUnknownStatus: '<?php //= Loc::getMessage("DDAPP_IMAGES_MESSAGE_UNKNOWN_STATUS")?>//',
-            //    messageErrorServerConnect: '<?php //= Loc::getMessage("DDAPP_IMAGES_MESSAGE_ERROR_SERVER_CONNECT")?>//',
-            //    messageFrom: '<?php //= Loc::getMessage("DDAPP_IMAGES_SETTINGS_FROM")?>//',
-            //    messageFile: '<?php //= Loc::getMessage("DDAPP_IMAGES_SETTINGS_FILE")?>//',
-            //});
+            new BX.DDAPP.Tools.ImagesManager({
+                ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/data_images.php") ?>',
+                messageBeforeUnload: '<?= Loc::getMessage("DDAPP_IMAGES_MESSAGE_BEFORE_UNLOAD")?>',
+                messageWrongServerResponse: '<?= Loc::getMessage("DDAPP_IMAGES_MESSAGE_WRONG_SERVER_RESPONSE")?>',
+                messageUnknownError: '<?= Loc::getMessage("DDAPP_IMAGES_MESSAGE_UNKNOWN_ERROR")?>',
+                messageUnknownStatus: '<?= Loc::getMessage("DDAPP_IMAGES_MESSAGE_UNKNOWN_STATUS")?>',
+                messageErrorServerConnect: '<?= Loc::getMessage("DDAPP_IMAGES_MESSAGE_ERROR_SERVER_CONNECT")?>',
+                messageFrom: '<?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_FROM")?>',
+                messageFile: '<?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_FILE")?>',
+            });
         });
     </script>
 

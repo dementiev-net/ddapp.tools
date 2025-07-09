@@ -635,7 +635,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
 
         var iblockSelect = document.getElementById('iblock_select');
         if (iblockSelect) {
-            iblockSelect.innerHTML = '<option value="">-- Сначала выберите тип --</option>';
+            iblockSelect.innerHTML = '<option value="">' + this.params.messageIblockTypeSelectFirst + '</option>';
             iblockSelect.disabled = true;
         }
 

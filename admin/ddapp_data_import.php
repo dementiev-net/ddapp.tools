@@ -103,7 +103,7 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                 $iblockId = intval($request->getPost("iblock_id"));
                 $fields = [];
 
-                foreach (IblockHelper::getDefaultFieldsNames() as $code => $name) {
+                foreach (IblockHelper::getDefaultFieldsNames("") as $code => $name) {
                     $fields[] = ["CODE" => $code, "NAME" => $name, "TYPE" => "FIELD", "PROPERTY_TYPE" => "", "MULTIPLE" => "N"];
                 }
 

@@ -1,5 +1,5 @@
 <?php
-$MESS["DDAPP_PAGE_TITLE"] = "Импорт Excel";
+$MESS["DDAPP_PAGE_TITLE"] = "Импорт Excel в форму";
 
 $MESS["DDAPP_IMPORT_TAB1"] = "Настройки";
 $MESS["DDAPP_IMPORT_TAB1_TITLE"] = "Настройки импорта данных в инфоблок";

@@ -36,6 +36,19 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
             "items" => []
         ];
 
+        // Логи
+        $arMenuLogMenu = [
+            "text" => Loc::getMessage("DDAPP_TOOLS_MENU_LOG_TEXT"),
+            "title" => Loc::getMessage("DDAPP_TOOLS_MENU_LOG_TITLE"),
+            "icon" => "learning_icon_tests",
+            "page_icon" => "learning_icon_tests",
+            "items_id" => "menu_ddapp_tools_3",
+            "menu_id" => "global_menu_ddapp_tools_3",
+            "url" => "ddapp_log.php?lang=" . LANG,
+            "sort" => 110,
+            "items" => []
+        ];
+
         // План технического обслуживания
         $arMaintenanceMenu = [
             "text" => Loc::getMessage("DDAPP_TOOLS_MENU_MAINTENANCE_TEXT"),
@@ -48,19 +61,19 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
             "more_url" => [
                 "ddapp_maintenance_edit.php", // можно также добавить GET параметры, если нужно
             ],
-            "sort" => 100,
+            "sort" => 200,
             "items" => []
         ];
 
-        // Первое меню
-        $arMenu1 = [
+        // Работа с данными
+        $arMenuDataMenu = [
             "text" => Loc::getMessage("DDAPP_TOOLS_MENU_DATA_TEXT"),
             "title" => Loc::getMessage("DDAPP_TOOLS_MENU_DATA_TITLE"),
             "icon" => "workflow_menu_icon",
             "page_icon" => "workflow_menu_icon",
             "items_id" => "menu_ddapp_tools",
             "menu_id" => "global_menu_ddapp_tools",
-            "sort" => 110,
+            "sort" => 201,
             "items" => [
                 [
                     "text" => Loc::getMessage("DDAPP_TOOLS_MENU_DATA_EXPORT"),
@@ -104,9 +117,10 @@ function OnBuildGlobalMenuHandlerDD(&$arGlobalMenu, &$arModuleMenu)
 
         // Добавляем оба меню
         if (UserHelper::hasModuleAccess("main") == "W") {
-            $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID . "_set"] = $arSettingsMenu;
+            $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID] = $arSettingsMenu;
         }
         $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID . "_main"] = $arMaintenanceMenu;
-        $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID] = $arMenu1;
+        $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID . "_data"] = $arMenuDataMenu;
+        $arGlobalMenu["global_menu_dd"]["items"][Main::MODULE_ID . "_log"] = $arMenuLogMenu;
     }
 }

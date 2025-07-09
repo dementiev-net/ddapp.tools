@@ -2,12 +2,12 @@
 
 namespace DDAPP\Tools\Helpers;
 
-use Bitrix\Main\Web\Json;
-use Bitrix\Main\IO\Directory;
-use Bitrix\Main\IO\File;
 use Bitrix\Main\Application;
 use Bitrix\Main\Mail\Event;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Web\Json;
+use Bitrix\Main\IO\Directory;
+use Bitrix\Main\IO\File;
 use DDAPP\Tools\Main;
 use DDAPP\Tools\Helpers\FileHelper;
 
@@ -20,6 +20,7 @@ class LogHelper
     public const LEVEL_CRITICAL = "CRITICAL";
     private const CRITICAL_EMAIL_TEMPLATE_CODE = "DDAPP_TOOLS_CRITICAL_ERROR";
     private static array $config = [];
+    private const ITEMS_PER_PAGE = 100;
 
     // Приоритеты уровней логирования
     private static array $levelPriorities = [
@@ -216,6 +217,173 @@ class LogHelper
             error_log("LogHelper cleanOldLogs error: " . $e->getMessage());
             return false;
         }
+    }
+
+    public static function getLogFiles(): array
+    {
+        $logPath = Option::get(Main::MODULE_ID, "log_path", "/upload/logs");
+        $fullLogPath = $_SERVER["DOCUMENT_ROOT"] . $logPath;
+
+        $files = [];
+        if (is_dir($fullLogPath)) {
+            $handle = opendir($fullLogPath);
+            while (false !== ($entry = readdir($handle))) {
+                if (preg_match('/\.log$/', $entry)) {
+                    $files[] = $entry;
+                }
+            }
+            closedir($handle);
+            sort($files);
+        }
+        return $files;
+    }
+
+    /**
+     * @param $filename
+     * @param $filters
+     * @return array
+     */
+    public static function parseLogFile($filename, $filters = []): array
+    {
+        $logPath = Option::get(Main::MODULE_ID, "log_path", "/upload/logs");
+        $fullLogPath = $_SERVER["DOCUMENT_ROOT"] . $logPath;
+
+        $filepath = $fullLogPath . '/' . $filename;
+        if (!file_exists($filepath)) {
+            return [];
+        }
+
+        $content = file_get_contents($filepath);
+        $entries = [];
+
+        // Разбиваем по записям
+        preg_match_all('/\[(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2})\] \[(\w+)\] \[User: ([^|]+) \| URL: ([^|]+) \| Memory: ([^|]+) \| Peak: ([^\]]+)\] (.+?)(?=\n\[|\n$|$)/s', $content, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $match) {
+            $entry = [
+                'datetime' => $match[1],
+                'level' => $match[2],
+                'user' => trim($match[3]),
+                'url' => trim($match[4]),
+                'memory' => trim($match[5]),
+                'peak' => trim($match[6]),
+                'message' => trim($match[7])
+            ];
+
+            // Применяем фильтры
+            if (self::applyFilters($entry, $filters)) {
+                $entries[] = $entry;
+            }
+        }
+
+        // Сортируем по дате (новые сначала)
+        usort($entries, function ($a, $b) {
+            return strtotime($b['datetime']) - strtotime($a['datetime']);
+        });
+
+        return $entries;
+    }
+
+    /**
+     * @param $entries
+     * @return array
+     */
+    public static function getUsers($entries): array
+    {
+        $users = [];
+        foreach ($entries as $entry) {
+            $user = $entry['user'];
+            if (!in_array($user, $users)) {
+                $users[] = $user;
+            }
+        }
+        sort($users);
+        return $users;
+    }
+
+    /**
+     * @param $entries
+     * @return array
+     */
+    public static function getStats($entries): array
+    {
+        $stats = [
+            'total' => count($entries),
+            'error' => 0,
+            'warning' => 0,
+            'info' => 0
+        ];
+
+        foreach ($entries as $entry) {
+            switch ($entry['level']) {
+                case 'ERROR':
+                    $stats['error']++;
+                    break;
+                case 'WARNING':
+                    $stats['warning']++;
+                    break;
+                case 'INFO':
+                    $stats['info']++;
+                    break;
+            }
+        }
+
+        return $stats;
+    }
+
+    /**
+     * @param $entries
+     * @param $page
+     * @return array
+     */
+    public static function paginate($entries, $page = 1): array
+    {
+        $offset = ($page - 1) * self::ITEMS_PER_PAGE;
+        $pagedEntries = array_slice($entries, $offset, self::ITEMS_PER_PAGE);
+
+        return [
+            'entries' => $pagedEntries,
+            'total' => count($entries),
+            'pages' => ceil(count($entries) / self::ITEMS_PER_PAGE),
+            'current_page' => $page
+        ];
+    }
+
+    /**
+     * @param $entry
+     * @param $filters
+     * @return bool
+     */
+    private static function applyFilters($entry, $filters): bool
+    {
+        // Фильтр по уровню
+        if (!empty($filters['level']) && trim($entry['level']) !== trim($filters['level'])) {
+            return false;
+        }
+
+        // Фильтр по пользователю
+        if (!empty($filters['user']) && trim($entry['user']) !== trim($filters['user'])) {
+            return false;
+        }
+
+        // Фильтр по дате
+        if (!empty($filters['date'])) {
+            $entryDate = date('Y-m-d', strtotime($entry['datetime']));
+            if ($entryDate !== $filters['date']) {
+                return false;
+            }
+        }
+
+        // Поиск по тексту
+        if (!empty($filters['search'])) {
+            $searchText = mb_strtolower(trim($filters['search']));
+            $messageText = mb_strtolower($entry['message']);
+            if (strpos($messageText, $searchText) === false) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

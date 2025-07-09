@@ -326,47 +326,16 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
 
         // Собираем настройки
         var settings = {};
-        var imagesFields = [];
 
-        // Получаем поля в порядке их расположения на форме
-        var fieldsContainer = document.getElementById('fields_container');
-        if (fieldsContainer) {
-            var fieldItems = fieldsContainer.querySelectorAll('.field-item');
-
-            fieldItems.forEach(function (fieldItem) {
-                var checkbox = fieldItem.querySelector('input[type="checkbox"]');
-                if (checkbox && checkbox.checked) {
-                    imagesFields.push(checkbox.value);
-                }
-            });
-        }
-
-        // Собираем остальные настройки
         for (var pair of formData.entries()) {
             var key = pair[0];
             var value = pair[1];
 
-            if (key.indexOf('settings[') === 0 && key !== 'settings[images_fields][]') {
+            if (key.indexOf('settings[') === 0) {
                 var settingKey = key.match(/settings\[(.+)\]/)[1];
                 settings[settingKey] = value;
             }
         }
-
-        // Добавляем выбранные поля в правильном порядке
-        if (imagesFields.length > 0) {
-            settings.images_fields = imagesFields;
-        }
-
-        // Обрабатываем чекбоксы
-        var checkboxes = form.querySelectorAll('input[type="checkbox"][name^="settings["]');
-        checkboxes.forEach(function (checkbox) {
-            if (checkbox.name !== 'settings[images_fields][]') {
-                var settingKey = checkbox.name.match(/settings\[(.+)\]/)[1];
-                if (typeof settings[settingKey] === 'undefined') {
-                    settings[settingKey] = checkbox.checked ? 'Y' : 'N';
-                }
-            }
-        });
 
         data.settings = settings;
         data.action = 'save_profile';
@@ -427,11 +396,6 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
     },
 
     renderFieldsSelection: function () {
-        var container = document.getElementById('fields_container');
-        if (!container) return;
-
-        container.innerHTML = '';
-
         // Группируем поля по типам
         var fieldGroups = {
             'FIELD': this.params.messageIblockField,
@@ -447,174 +411,16 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
 
             if (groupFields.length === 0) return;
 
-            // Контейнер группы
-            var groupDiv = document.createElement('div');
-            groupDiv.className = 'field-group';
+            var select = document.getElementById('images_field');
+            if (!select) return;
 
-            // Заголовок группы
-            var groupTitle = document.createElement('h3');
-            groupTitle.textContent = fieldGroups[groupType];
-            groupDiv.appendChild(groupTitle);
-
-            // Контейнер для сортируемых полей
-            var sortableContainer = document.createElement('div');
-            sortableContainer.className = 'sortable-container';
-            sortableContainer.setAttribute('data-group', groupType);
-
-            // Поля группы
             groupFields.forEach(function (field) {
-                var fieldDiv = document.createElement('div');
-                fieldDiv.className = 'field-item';
-                fieldDiv.setAttribute('draggable', 'true');
-                fieldDiv.setAttribute('data-field-code', field.CODE);
-
-                // Иконка перетаскивания
-                var dragHandle = document.createElement('span');
-                dragHandle.className = 'drag-handle';
-                dragHandle.innerHTML = '⋮⋮';
-
-                var checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.name = 'settings[images_fields][]';
-                checkbox.value = field.CODE;
-                checkbox.id = 'field_' + field.CODE;
-                checkbox.className = 'field-checkbox';
-
-                var label = document.createElement('label');
-                label.setAttribute('for', 'field_' + field.CODE);
-                label.textContent = field.NAME + ' [' + field.CODE + ']';
-                label.className = 'field-label';
-
-                fieldDiv.appendChild(dragHandle);
-                fieldDiv.appendChild(checkbox);
-                fieldDiv.appendChild(label);
-
-                sortableContainer.appendChild(fieldDiv);
+                var option = document.createElement('option');
+                option.value = field.CODE;
+                option.textContent = field.NAME + ' [' + field.CODE + ']';
+                select.appendChild(option);
             });
-
-            groupDiv.appendChild(sortableContainer);
-            container.appendChild(groupDiv);
         });
-
-        // Инициализируем drag & drop для всех групп
-        this.initDragAndDrop();
-    },
-
-    initDragAndDrop: function () {
-        var containers = document.querySelectorAll('.sortable-container');
-        var self = this;
-
-        containers.forEach(function (container) {
-            self.makeSortable(container);
-        });
-    },
-
-    makeSortable: function (container) {
-        var self = this;
-        var draggedElement = null;
-        var placeholder = null;
-
-        container.addEventListener('dragstart', function (e) {
-            var target = e.target.closest('.field-item');
-            if (!target) return;
-
-            draggedElement = target;
-            target.classList.add('dragging');
-
-            // Создаем placeholder
-            placeholder = document.createElement('div');
-            placeholder.className = 'field-item';
-            placeholder.style.height = target.offsetHeight + 'px';
-            placeholder.style.background = '#e3f2fd';
-            placeholder.style.border = '1px dashed #2196f3';
-            placeholder.style.opacity = '0.5';
-            placeholder.innerHTML = '<span style="color: #2196f3; text-align: center; display: block;"></span>';
-
-            if (e.dataTransfer) {
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/html', target.outerHTML);
-            }
-        });
-
-        container.addEventListener('dragend', function (e) {
-            if (draggedElement) {
-                draggedElement.classList.remove('dragging');
-                draggedElement = null;
-            }
-            if (placeholder && placeholder.parentNode) {
-                placeholder.parentNode.removeChild(placeholder);
-                placeholder = null;
-            }
-        });
-
-        container.addEventListener('dragover', function (e) {
-            e.preventDefault();
-
-            if (e.dataTransfer) {
-                e.dataTransfer.dropEffect = 'move';
-            }
-
-            if (!draggedElement || !placeholder) return;
-
-            var afterElement = self.getDragAfterElement(container, e.clientY);
-
-            if (afterElement == null) {
-                container.appendChild(placeholder);
-            } else {
-                container.insertBefore(placeholder, afterElement);
-            }
-        });
-
-        container.addEventListener('drop', function (e) {
-            e.preventDefault();
-
-            if (!draggedElement || !placeholder) return;
-
-            // Заменяем placeholder на перетаскиваемый элемент
-            placeholder.parentNode.replaceChild(draggedElement, placeholder);
-
-            // Обновляем порядок полей в настройках
-            self.updateFieldsOrder();
-        });
-    },
-
-    getDragAfterElement: function (container, y) {
-        var draggableElements = Array.from(container.querySelectorAll('.field-item:not(.dragging)'));
-
-        return draggableElements.reduce(function (closest, child) {
-            var box = child.getBoundingClientRect();
-            var offset = y - box.top - box.height / 2;
-
-            if (offset < 0 && offset > closest.offset) {
-                return {offset: offset, element: child};
-            } else {
-                return closest;
-            }
-        }, {offset: Number.NEGATIVE_INFINITY}).element;
-    },
-
-    updateFieldsOrder: function () {
-        var fieldsContainer = document.getElementById('fields_container');
-        if (!fieldsContainer) return;
-
-        var allFields = fieldsContainer.querySelectorAll('.field-item');
-        var orderedFields = [];
-
-        allFields.forEach(function (fieldElement, index) {
-            var fieldCode = fieldElement.getAttribute('data-field-code');
-            var checkbox = fieldElement.querySelector('input[type="checkbox"]');
-
-            if (checkbox && fieldCode) {
-                checkbox.setAttribute('data-sort-order', index);
-                orderedFields.push({
-                    code: fieldCode,
-                    order: index,
-                    selected: checkbox.checked
-                });
-            }
-        });
-
-        this.fieldsOrder = orderedFields;
     },
 
     toggleFieldsSelection: function (show) {
@@ -634,8 +440,8 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
         var iblockTypeSelect = document.getElementById('iblock_type_select');
         if (iblockTypeSelect) iblockTypeSelect.value = profile.IBLOCK_TYPE_ID || '';
 
-        var imagesTypeSelect = document.getElementById('images_type_select');
-        if (imagesTypeSelect) imagesTypeSelect.value = profile.EXPORT_TYPE || '';
+        var zipFileInput = document.getElementById('zip_file');
+        if (zipFileInput) zipFileInput.value = profile.ZIP_FILE || '';
     },
 
     fillImagesSettings: function (settingsJson) {
@@ -656,18 +462,9 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
             // Теперь должен быть объект
             if (typeof settings === 'object' && !Array.isArray(settings)) {
                 Object.keys(settings).forEach(function (key) {
-                    if (key === 'images_fields' && Array.isArray(settings[key])) {
-                        self.restoreFieldsOrder(settings[key]);
-                    } else {
-                        var input = document.querySelector('[name="settings[' + key + ']"]');
-
-                        if (input) {
-                            if (input.type === 'checkbox') {
-                                input.checked = settings[key] === 'Y';
-                            } else {
-                                input.value = settings[key];
-                            }
-                        }
+                    var input = document.querySelector('[name="settings[' + key + ']"]');
+                    if (input) {
+                        input.value = settings[key];
                     }
                 });
             }
@@ -711,7 +508,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
 
         var iblockSelect = document.getElementById('iblock_select');
         if (iblockSelect) {
-            iblockSelect.innerHTML = '<option value="">-- Сначала выберите тип --</option>';
+            iblockSelect.innerHTML = '<option value="">' + this.params.messageIblockTypeSelectFirst + '</option>';
             iblockSelect.disabled = true;
         }
 
@@ -720,50 +517,6 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
         this.toggleFieldsSelection(false);
         this.currentProfileId = null;
         this.availableFields = [];
-    },
-
-    restoreFieldsOrder: function (savedFields) {
-        if (!savedFields || !Array.isArray(savedFields)) return;
-
-        var self = this;
-
-        // Отмечаем выбранные поля
-        savedFields.forEach(function (fieldCode) {
-            var checkbox = document.querySelector('input[value="' + fieldCode + '"]');
-            if (checkbox) {
-                checkbox.checked = true;
-            }
-        });
-
-        // Переупорядочиваем элементы согласно сохраненному порядку
-        var containers = document.querySelectorAll('.sortable-container');
-
-        containers.forEach(function (container) {
-            var fieldItems = Array.from(container.querySelectorAll('.field-item'));
-            var sortedItems = [];
-
-            // Сначала добавляем поля в сохраненном порядке
-            savedFields.forEach(function (fieldCode) {
-                var fieldItem = fieldItems.find(function (item) {
-                    return item.getAttribute('data-field-code') === fieldCode;
-                });
-                if (fieldItem) {
-                    sortedItems.push(fieldItem);
-                }
-            });
-
-            // Затем добавляем остальные поля
-            fieldItems.forEach(function (item) {
-                if (sortedItems.indexOf(item) === -1) {
-                    sortedItems.push(item);
-                }
-            });
-
-            // Переставляем элементы в DOM
-            sortedItems.forEach(function (item) {
-                container.appendChild(item);
-            });
-        });
     },
 
     showAlert: function (message) {

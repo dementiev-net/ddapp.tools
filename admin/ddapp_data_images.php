@@ -40,7 +40,7 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
 
         case "get_profiles":
             $profiles = DataImages::getItems([
-                "select" => ["ID", "NAME", "IBLOCK_TYPE_ID", "IBLOCK_ID", "SETTINGS"]
+                "select" => ["ID", "NAME", "IBLOCK_TYPE_ID", "IBLOCK_ID", "ZIP_FILE", "SETTINGS"]
             ]);
             echo json_encode(["success" => true, "data" => $profiles]);
             exit;
@@ -57,6 +57,7 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                 "NAME" => $request->getPost("name"),
                 "IBLOCK_TYPE_ID" => $request->getPost("iblock_type_id"),
                 "IBLOCK_ID" => $request->getPost("iblock_id"),
+                "ZIP_FILE" => $request->getPost("zip_file"),
                 "SETTINGS" => json_encode($request->getPost("settings"))
             ];
 
@@ -66,6 +67,18 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
             }
             if (empty($request->getPost("iblock_id"))) {
                 echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMAGES_MESSAGE_PROFILE_IBLOCK_ERROR")]);
+                exit;
+            }
+            if (empty($request->getPost("zip_file"))) {
+                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMAGES_MESSAGE_PROFILE_FILE_ERROR")]);
+                exit;
+            }
+            if (empty($request->getPost("settings")["images_field"])) {
+                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMAGES_MESSAGE_PROFILE_FIELD_ERROR")]);
+                exit;
+            }
+            if (empty($request->getPost("settings")["images_code"])) {
+                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_IMAGES_MESSAGE_PROFILE_FIELD_CODE")]);
                 exit;
             }
             if (!empty($request->getPost("profile_id"))) {
@@ -104,13 +117,13 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                 $iblockId = intval($request->getPost("iblock_id"));
                 $fields = [];
 
-                foreach (IblockHelper::getDefaultFieldsNames() as $code => $name) {
+                foreach (IblockHelper::getDefaultFieldsNames("F") as $code => $name) {
                     $fields[] = ["CODE" => $code, "NAME" => $name, "TYPE" => "FIELD", "PROPERTY_TYPE" => "", "MULTIPLE" => "N"];
                 }
 
                 $properties = IblockHelper::getProperties([
                     "select" => ["ID", "CODE", "NAME", "PROPERTY_TYPE", "MULTIPLE", "LIST_TYPE", "USER_TYPE"],
-                    "filter" => ["IBLOCK_ID" => $iblockId, "ACTIVE" => "Y"],
+                    "filter" => ["IBLOCK_ID" => $iblockId, "ACTIVE" => "Y", "PROPERTY_TYPE" => "F"],
                     "order" => ["SORT" => "ASC", "NAME" => "ASC"]
                 ]);
 
@@ -118,11 +131,6 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                     $propertyName = $property["NAME"];
 
                     // Добавляем информацию о типе свойства
-                    $message = Loc::getMessage("DDAPP_IMAGES_PROPERTY_TYPE_" . $property["PROPERTY_TYPE"]);
-                    if ($message !== null) {
-                        $propertyName .= $message;
-                    }
-
                     if ($property["MULTIPLE"] === "Y") {
                         $propertyName .= Loc::getMessage("DDAPP_IMAGES_PROPERTY_TYPE_M");
                     }
@@ -158,8 +166,10 @@ $oMenu = new CAdminContextMenu([
     <div class="adm-info-message-wrap adm-info-message-gray" id="images_message">
         <div class="adm-info-message">
             <div class="adm-info-message-title"><?= Loc::getMessage("DDAPP_IMAGES_PROCESS_TITLE") ?></div>
-            <?= Loc::getMessage("DDAPP_IMAGES_PROCESS_ITEMS_OK") ?><strong><span id="images_message_ok">0</span></strong>
-            <br><?= Loc::getMessage("DDAPP_IMAGES_PROCESS_ITEMS_ERROR") ?><strong><span id="images_message_error">0</span></strong>
+            <?= Loc::getMessage("DDAPP_IMAGES_PROCESS_ITEMS_OK") ?><strong><span
+                        id="images_message_ok">0</span></strong>
+            <br><?= Loc::getMessage("DDAPP_IMAGES_PROCESS_ITEMS_ERROR") ?><strong><span
+                        id="images_message_error">0</span></strong>
             <p id="images_message_file"></p>
             <div class="adm-progress-bar-outer" style="width: 500px;">
                 <div class="adm-progress-bar-inner" id="progress_percent_a" style="width: 0;">
@@ -190,7 +200,8 @@ $oMenu = new CAdminContextMenu([
         <?php $tabControl->BeginNextTab(); ?>
 
         <tr>
-            <td width="40%" style="position: relative; top: -4px;"><?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_PROFILE") ?>
+            <td width="40%"
+                style="position: relative; top: -4px;"><?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_PROFILE") ?>
                 :
             </td>
             <td width="60%">
@@ -236,33 +247,18 @@ $oMenu = new CAdminContextMenu([
                 </select>
             </td>
         </tr>
-
-        <!-- Настройки импорта -->
-        <tr class="heading fields-selection">
-            <td colspan="2"><?= Loc::getMessage("DDAPP_IMAGES_BLOCK2") ?></td>
-        </tr>
-        <tr class="fields-selection">
+        <tr>
+            <td><?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_FILE") ?></td>
             <td>
-                <label for="iblock_type_select"><?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_IBLOCK_TYPE") ?>:</label>
-            </td>
-            <td>
-                <select id="iblock_type_select" name="iblock_type_id" class="adm-input">
-                    <option value=""><?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_IBLOCK_TYPE_SELECT") ?></option>
-                </select>
-            </td>
-        </tr>
-        <tr class="fields-selection">
-            <td><? echo GetMessage("FOTOART_ADM_IMP_DATA_FILE"); ?></td>
-            <td>
-                <input type="text" name="URL_DATA_FILE" value="<? echo htmlspecialcharsbx($URL_DATA_FILE); ?>"
-                       size="30">
-                <input type="button" value="<? echo GetMessage("FOTOART_ADM_IMP_OPEN"); ?>" OnClick="BtnClick()">
+                <input type="text" id="zip_file" name="zip_file"
+                       value="<? echo htmlspecialcharsbx($URL_DATA_FILE); ?>" size="30">
+                <input type="button" value="<?= Loc::getMessage("DDAPP_IMAGES_BTN_FILE") ?>" OnClick="BtnClick()">
                 <?php
                 CAdminFileDialog::ShowScript([
                     "event" => "BtnClick",
                     "arResultDest" => [
                         "FORM_NAME" => "data_images_form",
-                        "FORM_ELEMENT_NAME" => "URL_DATA_FILE",
+                        "FORM_ELEMENT_NAME" => "zip_file",
                     ],
                     "arPath" => [
                         "SITE" => SITE_ID,
@@ -272,27 +268,34 @@ $oMenu = new CAdminContextMenu([
                     "operation" => 'O', // O - open, S - save
                     "showUploadTab" => true,
                     "showAddToMenuTab" => false,
-                    //"fileFilter" => 'zip',
+                    "fileFilter" => 'zip',
                     "allowAllFiles" => true,
                     "SaveConfig" => true,
                 ]);
                 ?>
             </td>
         </tr>
+
+        <!-- Настройки импорта -->
+        <tr class="heading fields-selection">
+            <td colspan="2"><?= Loc::getMessage("DDAPP_IMAGES_BLOCK2") ?></td>
+        </tr>
         <tr class="fields-selection">
-            <td class="adm-detail-valign-top"><? echo GetMessage("FOTOART_ADM_IMG_CODE_PROP"); ?>:</td>
             <td>
-                <input type="text" name="IMG_CODE_PROP" size="20" value="<? echo htmlspecialcharsbx($CODE_PROP); ?>">
+                <label for="images_field"><?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_FIELD") ?>:</label>
+            </td>
+            <td>
+                <select id="images_field" name="settings[images_field]" class="adm-input">
+                    <option value=""><?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_FIELD_SELECT") ?></option>
+                </select>
             </td>
         </tr>
         <tr class="fields-selection">
-            <td colspan="2">
-
-                <div id="fields_container"
-                     style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
-                    <!-- Поля будут загружены динамически -->
-                </div>
-
+            <td>
+                <label for="images_code"><?= Loc::getMessage("DDAPP_IMAGES_SETTINGS_CODE") ?>:</label>
+            </td>
+            <td>
+                <input type="text" id="images_code" name="settings[images_code]" size="20" placeholder="CML2_ARTICLE">
             </td>
         </tr>
 

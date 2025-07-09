@@ -226,6 +226,7 @@ class DDAPP_Tools extends CModule
         Loader::includeModule($this->MODULE_ID);
         Loader::includeModule("iblock");
 
+        Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS ddapp_migrations;");
         Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DDAPP\Tools\Entity\MaintenanceTable")->getDBTableName());
         Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DDAPP\Tools\Entity\DataExportTable")->getDBTableName());
         Application::getConnection(self::CONNECTION_NAME)->queryExecute("DROP TABLE IF EXISTS " . Base::getInstance("\DDAPP\Tools\Entity\DataImportTable")->getDBTableName());

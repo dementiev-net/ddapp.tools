@@ -21,7 +21,7 @@ class DataImagesTable extends DataManager
      */
     public static function getTableName()
     {
-        return "ddapp_data_export";
+        return "ddapp_data_images";
     }
 
     /**
@@ -40,6 +40,8 @@ class DataImagesTable extends DataManager
             "IBLOCK_TYPE_ID" => new StringField("IBLOCK_TYPE_ID", [
             ]),
             "IBLOCK_ID" => new IntegerField("IBLOCK_ID", [
+            ]),
+            "ZIP_FILE" => new StringField("ZIP_FILE", [
             ]),
             "SETTINGS" => new TextField("SETTINGS", [
             ]),

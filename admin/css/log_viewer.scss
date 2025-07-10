@@ -62,16 +62,25 @@
         color: #333;
       }
 
-      &.error .value {
-        color: #dc3545;
+      &.debug .value {
+        color: #999;
+      }
+
+      &.info .value {
+        color: #007bff;
       }
 
       &.warning .value {
         color: #ffc107;
       }
 
-      &.info .value {
-        color: #007bff;
+      &.error .value {
+        color: #dc3545;
+      }
+
+      &.critical .value {
+        color: #dc3545;
+        font-weight: bold;
       }
     }
   }
@@ -113,12 +122,17 @@
         padding: 2px 8px;
         border-radius: 3px;
         font-family: monospace;
-        font-size: 12px;
+        font-size: 11px;
         text-align: center;
       }
 
-      .level-ERROR {
-        background: #f4a6ac;
+      .level-DEBUG {
+        background: #ccc;
+        color: black;
+      }
+
+      .level-INFO {
+        background: #a3cfff;
         color: black;
       }
 
@@ -127,9 +141,15 @@
         color: black;
       }
 
-      .level-INFO {
-        background: #a3cfff;
+      .level-ERROR {
+        background: #f4a6ac;
         color: black;
+      }
+
+      .level-CRITICAL {
+        background: #f4a6ac;
+        color: black;
+        font-weight: bold;
       }
 
       .log-message {
@@ -148,8 +168,8 @@
 
       .log-user {
         font-family: monospace;
-        font-size: 12px;
-        //font-weight: bold;
+        font-size: 11px;
+        color: #666;
       }
 
       .log-url {

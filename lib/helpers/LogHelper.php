@@ -219,16 +219,20 @@ class LogHelper
         }
     }
 
+    /**
+     * Берет лог-файлы
+     * @return array
+     */
     public static function getLogFiles(): array
     {
-        $logPath = Option::get(Main::MODULE_ID, "log_path", "/upload/logs");
+        $logPath = Option::get(Main::MODULE_ID, "log_path");
         $fullLogPath = $_SERVER["DOCUMENT_ROOT"] . $logPath;
 
         $files = [];
         if (is_dir($fullLogPath)) {
             $handle = opendir($fullLogPath);
             while (false !== ($entry = readdir($handle))) {
-                if (preg_match('/\.log$/', $entry)) {
+                if (preg_match("/\.log$/", $entry)) {
                     $files[] = $entry;
                 }
             }
@@ -239,16 +243,17 @@ class LogHelper
     }
 
     /**
+     * Парсинг лог-файла
      * @param $filename
      * @param $filters
      * @return array
      */
     public static function parseLogFile($filename, $filters = []): array
     {
-        $logPath = Option::get(Main::MODULE_ID, "log_path", "/upload/logs");
+        $logPath = Option::get(Main::MODULE_ID, "log_path");
         $fullLogPath = $_SERVER["DOCUMENT_ROOT"] . $logPath;
 
-        $filepath = $fullLogPath . '/' . $filename;
+        $filepath = $fullLogPath . "/" . $filename;
         if (!file_exists($filepath)) {
             return [];
         }
@@ -257,17 +262,17 @@ class LogHelper
         $entries = [];
 
         // Разбиваем по записям
-        preg_match_all('/\[(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2})\] \[(\w+)\] \[User: ([^|]+) \| URL: ([^|]+) \| Memory: ([^|]+) \| Peak: ([^\]]+)\] (.+?)(?=\n\[|\n$|$)/s', $content, $matches, PREG_SET_ORDER);
+        preg_match_all("/\[(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2})\] \[(\w+)\] \[User: ([^|]+) \| URL: ([^|]+) \| Memory: ([^|]+) \| Peak: ([^\]]+)\] (.+?)(?=\n\[|\n$|$)/s", $content, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $match) {
             $entry = [
-                'datetime' => $match[1],
-                'level' => $match[2],
-                'user' => trim($match[3]),
-                'url' => trim($match[4]),
-                'memory' => trim($match[5]),
-                'peak' => trim($match[6]),
-                'message' => trim($match[7])
+                "datetime" => $match[1],
+                "level" => $match[2],
+                "user" => trim($match[3]),
+                "url" => trim($match[4]),
+                "memory" => trim($match[5]),
+                "peak" => trim($match[6]),
+                "message" => trim($match[7])
             ];
 
             // Применяем фильтры
@@ -278,13 +283,14 @@ class LogHelper
 
         // Сортируем по дате (новые сначала)
         usort($entries, function ($a, $b) {
-            return strtotime($b['datetime']) - strtotime($a['datetime']);
+            return strtotime($b["datetime"]) - strtotime($a["datetime"]);
         });
 
         return $entries;
     }
 
     /**
+     * Получает пользователя из лог-файла
      * @param $entries
      * @return array
      */
@@ -292,7 +298,7 @@ class LogHelper
     {
         $users = [];
         foreach ($entries as $entry) {
-            $user = $entry['user'];
+            $user = $entry["user"];
             if (!in_array($user, $users)) {
                 $users[] = $user;
             }
@@ -302,28 +308,37 @@ class LogHelper
     }
 
     /**
+     * Получает уровень из лог-файла
      * @param $entries
      * @return array
      */
     public static function getStats($entries): array
     {
         $stats = [
-            'total' => count($entries),
-            'error' => 0,
-            'warning' => 0,
-            'info' => 0
+            "total" => count($entries),
+            "debug" => 0,
+            "info" => 0,
+            "warning" => 0,
+            "error" => 0,
+            "critical" => 0,
         ];
 
         foreach ($entries as $entry) {
-            switch ($entry['level']) {
-                case 'ERROR':
-                    $stats['error']++;
+            switch ($entry["level"]) {
+                case self::LEVEL_DEBUG:
+                    $stats["debug"]++;
                     break;
-                case 'WARNING':
-                    $stats['warning']++;
+                case self::LEVEL_INFO:
+                    $stats["info"]++;
                     break;
-                case 'INFO':
-                    $stats['info']++;
+                case self::LEVEL_WARNING:
+                    $stats["warning"]++;
+                    break;
+                case self::LEVEL_ERROR:
+                    $stats["error"]++;
+                    break;
+                case self::LEVEL_CRITICAL:
+                    $stats["critical"]++;
                     break;
             }
         }
@@ -332,6 +347,7 @@ class LogHelper
     }
 
     /**
+     * Постраничная обработка лог-файла
      * @param $entries
      * @param $page
      * @return array
@@ -342,14 +358,15 @@ class LogHelper
         $pagedEntries = array_slice($entries, $offset, self::ITEMS_PER_PAGE);
 
         return [
-            'entries' => $pagedEntries,
-            'total' => count($entries),
-            'pages' => ceil(count($entries) / self::ITEMS_PER_PAGE),
-            'current_page' => $page
+            "entries" => $pagedEntries,
+            "total" => count($entries),
+            "pages" => ceil(count($entries) / self::ITEMS_PER_PAGE),
+            "current_page" => $page
         ];
     }
 
     /**
+     * Применяет фильтры к лог-файлу
      * @param $entry
      * @param $filters
      * @return bool
@@ -357,27 +374,27 @@ class LogHelper
     private static function applyFilters($entry, $filters): bool
     {
         // Фильтр по уровню
-        if (!empty($filters['level']) && trim($entry['level']) !== trim($filters['level'])) {
+        if (!empty($filters["level"]) && trim($entry["level"]) !== trim($filters["level"])) {
             return false;
         }
 
         // Фильтр по пользователю
-        if (!empty($filters['user']) && trim($entry['user']) !== trim($filters['user'])) {
+        if (!empty($filters["user"]) && trim($entry["user"]) !== trim($filters["user"])) {
             return false;
         }
 
         // Фильтр по дате
-        if (!empty($filters['date'])) {
-            $entryDate = date('Y-m-d', strtotime($entry['datetime']));
-            if ($entryDate !== $filters['date']) {
+        if (!empty($filters["date"])) {
+            $entryDate = date("Y-m-d", strtotime($entry["datetime"]));
+            if ($entryDate !== $filters["date"]) {
                 return false;
             }
         }
 
         // Поиск по тексту
-        if (!empty($filters['search'])) {
-            $searchText = mb_strtolower(trim($filters['search']));
-            $messageText = mb_strtolower($entry['message']);
+        if (!empty($filters["search"])) {
+            $searchText = mb_strtolower(trim($filters["search"]));
+            $messageText = mb_strtolower($entry["message"]);
             if (strpos($messageText, $searchText) === false) {
                 return false;
             }

@@ -22,9 +22,11 @@ BX.DDAPP.Tools.LogViewer = function (params) {
     this.dateFilter = null;
     this.searchFilter = null;
     this.totalCount = null;
-    this.errorCount = null;
-    this.warningCount = null;
+    this.debugCount = null;
     this.infoCount = null;
+    this.warningCount = null;
+    this.errorCount = null;
+    this.criticalCount = null;
     this.logEntries = null;
     this.pagination = null;
     this.paginationInfo = null;
@@ -56,9 +58,11 @@ BX.DDAPP.Tools.LogViewer.prototype = {
         this.dateFilter = BX('date-filter');
         this.searchFilter = BX('search-filter');
         this.totalCount = BX('total-count');
-        this.errorCount = BX('error-count');
-        this.warningCount = BX('warning-count');
+        this.debugCount = BX('debug-count');
         this.infoCount = BX('info-count');
+        this.warningCount = BX('warning-count');
+        this.errorCount = BX('error-count');
+        this.criticalCount = BX('critical-count');
         this.logEntries = BX('log-entries');
         this.pagination = BX('pagination');
         this.paginationInfo = BX('pagination-info');
@@ -140,14 +144,14 @@ BX.DDAPP.Tools.LogViewer.prototype = {
             onfailure: function () {
                 BX.closeWait();
                 console.error('LogViewer: Load Files Error');
-                self.showError('Ошибка загрузки файлов');
+                self.showError(self.params.messageErrorLoadFile);
             }
         });
     },
 
     updateLogFilesSelect: function (files) {
         var select = this.logFileSelect;
-        select.innerHTML = '<option value="">Выберите файл лога</option>';
+        select.innerHTML = '<option value="">' + this.params.messageSelectLogFile + '</option>';
 
         for (var i = 0; i < files.length; i++) {
             var option = BX.create('option', {
@@ -199,7 +203,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
             onfailure: function () {
                 BX.closeWait();
                 console.error('LogViewer: Load Data Error');
-                self.showError('Ошибка загрузки данных');
+                self.showError(self.params.messageErrorLoadData);
             }
         });
     },
@@ -215,16 +219,18 @@ BX.DDAPP.Tools.LogViewer.prototype = {
 
     updateStats: function (stats) {
         this.totalCount.textContent = stats.total;
-        this.errorCount.textContent = stats.error;
-        this.warningCount.textContent = stats.warning;
+        this.debugCount.textContent = stats.debug;
         this.infoCount.textContent = stats.info;
+        this.warningCount.textContent = stats.warning;
+        this.errorCount.textContent = stats.error;
+        this.criticalCount.textContent = stats.critical;
     },
 
     updateUserFilter: function (users) {
         var select = this.userFilter;
         var currentValue = select.value;
 
-        select.innerHTML = '<option value="">Все пользователи</option>';
+        select.innerHTML = '<option value="">' + this.params.messageAllUsers + '</option>';
 
         for (var i = 0; i < users.length; i++) {
             var option = BX.create('option', {
@@ -244,13 +250,18 @@ BX.DDAPP.Tools.LogViewer.prototype = {
         var tbody = this.logEntries;
 
         if (entries.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="no-data">Записи не найдены</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="no-data">' + this.params.messageDataNotFound + '</td></tr>';
             return;
         }
 
         var html = '';
         for (var i = 0; i < entries.length; i++) {
             var entry = entries[i];
+            var message = BX.util.htmlspecialchars(entry.message);
+
+            message = message.replace(/\\\//g, '/');
+            message = message.replace(/ \| /g, '<br>');
+
             html += '<tr class="log-entry" style="border-bottom: none;">' +
                 '<td class="log-datetime" rowspan="2">' + BX.util.htmlspecialchars(entry.datetime) + '</td>' +
                 '<td><span class="log-level level-' + entry.level + '">' + entry.level + '</span></td>' +
@@ -258,7 +269,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
                 '<td class="log-url">' + BX.util.htmlspecialchars(entry.url) + '</td>' +
                 '<td class="log-memory">' + BX.util.htmlspecialchars(entry.memory) + ' / ' + BX.util.htmlspecialchars(entry.peak) + '</td>' +
                 '</tr>' +
-                '<tr><td colspan="4" class="log-message">' + BX.util.htmlspecialchars(entry.message).replace(/\\\//g, '/') + '</td></tr>';
+                '<tr><td colspan="4" class="log-message">' + message + '</td></tr>';
         }
         tbody.innerHTML = html;
     },
@@ -275,7 +286,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
 
         this.paginationInfo.textContent =
             'Показано ' + (((pagination.current_page - 1) * 5) + 1) + '-' +
-            Math.min(pagination.current_page * 5, pagination.total) + ' из ' + pagination.total;
+            Math.min(pagination.current_page * 5, pagination.total) + ' ' + this.params.messagePageFrom + ' ' + pagination.total;
 
         this.prevPage.disabled = pagination.current_page === 1;
         this.nextPage.disabled = pagination.current_page === pagination.pages;
@@ -320,9 +331,9 @@ BX.DDAPP.Tools.LogViewer.prototype = {
     },
 
     clearTable: function () {
-        this.logEntries.innerHTML = '<tr><td colspan="5" class="no-data">Выберите файл лога</td></tr>';
+        this.logEntries.innerHTML = '<tr><td colspan="5" class="no-data">' + this.params.messageDataNotFound + '</td></tr>';
         this.pagination.style.display = 'none';
-        this.updateStats({total: 0, error: 0, warning: 0, info: 0});
+        this.updateStats({total: 0, debug: 0, info: 0, warning: 0, error: 0, critical: 0});
     },
 
     applyFilters: function () {
@@ -344,8 +355,8 @@ BX.DDAPP.Tools.LogViewer.prototype = {
         var self = this;
 
         const messageBox = BX.UI.Dialogs.MessageBox.create({
-                message: 'Вы уверены, что хотите очистить лог?',
-                title: 'Подтверждение',
+                message: self.params.messageBeforeDelete,
+                title: self.params.messageTitle,
                 buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
                 onOk: function (messageBox) {
                     self.performClearLog();
@@ -374,16 +385,16 @@ BX.DDAPP.Tools.LogViewer.prototype = {
                 BX.closeWait();
                 if (response.success) {
                     self.loadLogData();
-                    self.showAlert('Лог очищен');
+                    self.showAlert(self.params.messageDeleteOk);
                 } else {
                     console.error('LogViewer Error:', response.message);
-                    self.showError('Ошибка: ' + response.message);
+                    self.showError(response.message);
                 }
             },
             onfailure: function () {
                 BX.closeWait();
                 console.error('LogViewer: Clear Log Error');
-                self.showError('Ошибка очистки лога');
+                self.showError(self.params.messageErrorLogClear);
             }
         });
     },
@@ -405,12 +416,12 @@ BX.DDAPP.Tools.LogViewer.prototype = {
         this.loadLogData();
     },
 
-    showError: function (message) {
-        tbody.innerHTML = '<tr><td colspan="5" class="no-data">Записи не найдены</td></tr>';
-        BX.UI.Dialogs.MessageBox.alert(message, 'Ошибка');
+    showAlert: function (message) {
+        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageTitle);
     },
 
-    showAlert: function (message) {
-        BX.UI.Dialogs.MessageBox.alert(message, 'Информация');
+    showError: function (message) {
+        tbody.innerHTML = '<tr><td colspan="5" class="no-data">' + this.params.messageDataNotFound + '</td></tr>';
+        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageError);
     }
 };

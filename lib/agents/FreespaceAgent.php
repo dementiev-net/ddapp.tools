@@ -13,7 +13,7 @@ use DDAPP\Tools\Helpers\FileHelper;
 
 class freespaceAgent
 {
-    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DDAPP_GADGET_DISK_FREE_SPACE";
+    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DDAPP_MESSAGE_DISK";
     private const TIME_OUT = 30;
 
     /**

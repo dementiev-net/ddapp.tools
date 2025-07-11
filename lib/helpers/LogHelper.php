@@ -18,7 +18,7 @@ class LogHelper
     public const LEVEL_WARNING = "WARNING";
     public const LEVEL_ERROR = "ERROR";
     public const LEVEL_CRITICAL = "CRITICAL";
-    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DDAPP_TOOLS_CRITICAL_ERROR";
+    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DDAPP_ERROR_CRITICAL";
     private static array $config = [];
     private const ITEMS_PER_PAGE = 100;
 

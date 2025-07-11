@@ -10,8 +10,9 @@ use Bitrix\Main\Mail\Internal\EventMessageTable;
 class EmailTemplateInstaller
 {
     private $moduleId;
-    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DDAPP_TOOLS_CRITICAL_ERROR";
-    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DDAPP_GADGET_DISK_FREE_SPACE";
+    private const CRITICAL_EMAIL_TEMPLATE_CODE = "DDAPP_ERROR_CRITICAL";
+    private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DDAPP_MESSAGE_DISK";
+    private const FORM_EMAIL_TEMPLATE_CODE = "DDAPP_MESSAGE_FORM";
 
     public function __construct($moduleId)
     {
@@ -38,7 +39,14 @@ class EmailTemplateInstaller
             "Мало свободного места",
             "#EMAIL# - Получатели сообщения\n#FREE_SPACE# - Свободное место, Мб\n#TOTAL_SPACE# - Всего места, Мб",
             "#SITE_NAME#: Мало свободного места",
-            $emailHeader . "На сайте #SITE_NAME# осталось мало места.\n\nВсего места: #TOTAL_SPACE# Мб.\nОсталось #FREE_SPACE# Мб.\nЖелаемое количество места: #WANT_SPACE# Мб." . $emailFooter
+            $emailHeader . "На сайте #SITE_NAME# осталось мало места.\n\nВсего места: #TOTAL_SPACE# Мб.\nОсталось: #FREE_SPACE# Мб.\nЖелаемое количество места: #WANT_SPACE# Мб." . $emailFooter
+        );
+        $this->createEmailTemplate(
+            self::FORM_EMAIL_TEMPLATE_CODE,
+            "Задайте Ваш вопрос",
+            "#NAME# - Имя\n#PHONE# - Телефон\n#EMAIL# - E-Mail\n#COMMENT# - Ваш вопрос\n#CATEGORIES# - Категория вопроса",
+            "#SITE_NAME#: Задан вопрос",
+            $emailHeader . "Вам было отправлено сообщение через форму обратной связи.\n\nАвтор: #NAME#\nE-mail: #EMAIL#\nТелефон: #PHONE#\nКатегория вопроса: #CATEGORIES#\n\nТекст сообщения: #COMMENT#" . $emailFooter
         );
 
         return true;
@@ -51,6 +59,7 @@ class EmailTemplateInstaller
     {
         $this->deleteEmailTemplate(self::CRITICAL_EMAIL_TEMPLATE_CODE);
         $this->deleteEmailTemplate(self::FREE_SPACE_EMAIL_TEMPLATE_CODE);
+        $this->deleteEmailTemplate(self::FORM_EMAIL_TEMPLATE_CODE);
 
         return true;
     }

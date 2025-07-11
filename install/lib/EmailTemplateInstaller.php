@@ -13,6 +13,7 @@ class EmailTemplateInstaller
     private const CRITICAL_EMAIL_TEMPLATE_CODE = "DDAPP_ERROR_CRITICAL";
     private const FREE_SPACE_EMAIL_TEMPLATE_CODE = "DDAPP_MESSAGE_DISK";
     private const FORM_EMAIL_TEMPLATE_CODE = "DDAPP_MESSAGE_FORM";
+    private const LOG_FILE = "/upload/ddapp.tools.install.log";
 
     public function __construct($moduleId)
     {
@@ -22,7 +23,7 @@ class EmailTemplateInstaller
     /**
      * @return true
      */
-    public function install()
+    public function install(): bool
     {
         $emailHeader = "Информационное сообщение сайта #SITE_NAME#\n------------------------------------------\n\n";
         $emailFooter = "\n\nСообщение сгенерировано автоматически.\n";
@@ -55,7 +56,7 @@ class EmailTemplateInstaller
     /**
      * @return true
      */
-    public function uninstall()
+    public function uninstall(): bool
     {
         $this->deleteEmailTemplate(self::CRITICAL_EMAIL_TEMPLATE_CODE);
         $this->deleteEmailTemplate(self::FREE_SPACE_EMAIL_TEMPLATE_CODE);
@@ -71,12 +72,12 @@ class EmailTemplateInstaller
      * @param string $typeDesc
      * @param string $tempSubject
      * @param string $tempMessage
-     * @return bool
+     * @return void
      */
-    private function createEmailTemplate(string $eventName, string $typeName, string $typeDesc, string $tempSubject, string $tempMessage): bool
+    private function createEmailTemplate(string $eventName, string $typeName, string $typeDesc, string $tempSubject, string $tempMessage): void
     {
         if (!Loader::includeModule("main")) {
-            return false;
+            return;
         }
 
         // Проверяем, не существует ли уже такой тип события
@@ -103,9 +104,9 @@ class EmailTemplateInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERRORS" => $typeResult->getErrorMessages(),
                     "FIELDS" => $arFields
-                ], "EventTypeTable::add", "/upload/logs/ddapp.tools.install.log");
+                ], "EventTypeTable::add", self::LOG_FILE);
 
-                return false;
+                return;
             }
         }
 
@@ -137,11 +138,10 @@ class EmailTemplateInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $em->LAST_ERROR,
                     "FIELDS" => $arFields
-                ], "CEventMessage::add", "/upload/logs/ddapp.tools.install.log");
+                ], "CEventMessage::add", self::LOG_FILE);
             }
         }
 
-        return true;
     }
 
     /**
@@ -170,7 +170,7 @@ class EmailTemplateInstaller
                     "ERRORS" => $result->getErrorMessages(),
                     "MESSAGE_ID" => $message["ID"],
                     "EVENT_NAME" => $eventName
-                ], "EventMessageTable::delete", "/upload/logs/ddapp.tools.install.log");
+                ], "EventMessageTable::delete", self::LOG_FILE);
             }
         }
 
@@ -189,7 +189,7 @@ class EmailTemplateInstaller
                     "ERRORS" => $result->getErrorMessages(),
                     "TYPE_ID" => $type["ID"],
                     "EVENT_NAME" => $eventName
-                ], "EventTypeTable::delete", "/upload/logs/ddapp.tools.install.log");
+                ], "EventTypeTable::delete", self::LOG_FILE);
             }
         }
     }

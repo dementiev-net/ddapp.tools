@@ -30,6 +30,7 @@ class DDAPP_Tools extends CModule
     private const CACHE_AGENT_INTERVAL = "0";
     private const FREE_SPACE_AGENT_INTERVAL = "3600";
     private const CONNECTION_NAME = "default";
+    private const LOG_FILE = "/upload/ddapp.tools.install.log";
 
     function __construct()
     {
@@ -51,7 +52,7 @@ class DDAPP_Tools extends CModule
      * Метод отрабатывает при установке модуля
      * @return true
      */
-    function DoInstall()
+    function DoInstall(): bool
     {
         // С установкой в один шаг
         ////////////////////////////////////////////////
@@ -86,7 +87,7 @@ class DDAPP_Tools extends CModule
             $this->InstallFiles();
             $this->installAgents();
 
-            $this->manageInfoblock(true);
+            $this->manageIBlock(true);
             $this->manageEmailTemplate(true);
 
             if ($request["addapp_data"] == "Y") {
@@ -103,7 +104,7 @@ class DDAPP_Tools extends CModule
      * Метод отрабатывает при удалении модуля
      * @return true
      */
-    function DoUninstall()
+    function DoUninstall(): bool
     {
         // С удалением в один шаг
         ////////////////////////////////////////////////
@@ -138,7 +139,7 @@ class DDAPP_Tools extends CModule
             $this->UnInstallFiles();
             $this->unInstallAgents();
 
-            $this->manageInfoblock(false);
+            $this->manageIBlock(false);
             $this->manageEmailTemplate(false);
 
             ModuleManager::UnRegisterModule("ddapp.tools");
@@ -153,7 +154,7 @@ class DDAPP_Tools extends CModule
      * Метод для создания таблицы баз данных
      * @return void
      */
-    function InstallDB()
+    function InstallDB(): void
     {
         Loader::includeModule($this->MODULE_ID);
         Loader::includeModule("iblock");
@@ -170,7 +171,7 @@ class DDAPP_Tools extends CModule
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $e->getMessage(),
                     "TABLE" => $maintenanceTableEntity->getDBTableName()
-                ], "MaintenanceTable::createDbTable", "/upload/logs/ddapp.tools.install.log");
+                ], "MaintenanceTable::createDbTable", self::LOG_FILE);
             }
         }
 
@@ -184,7 +185,7 @@ class DDAPP_Tools extends CModule
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $e->getMessage(),
                     "TABLE" => $dataExportTableEntity->getDBTableName()
-                ], "DataExportTable::createDbTable", "/upload/logs/ddapp.tools.install.log");
+                ], "DataExportTable::createDbTable", self::LOG_FILE);
             }
         }
 
@@ -198,7 +199,7 @@ class DDAPP_Tools extends CModule
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $e->getMessage(),
                     "TABLE" => $dataImportTableEntity->getDBTableName()
-                ], "DataImportTable::createDbTable", "/upload/logs/ddapp.tools.install.log");
+                ], "DataImportTable::createDbTable", self::LOG_FILE);
             }
         }
 
@@ -212,7 +213,7 @@ class DDAPP_Tools extends CModule
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $e->getMessage(),
                     "TABLE" => $dataImagesTableEntity->getDBTableName()
-                ], "DataImagesTable::createDbTable", "/upload/logs/ddapp.tools.install.log");
+                ], "DataImagesTable::createDbTable", self::LOG_FILE);
             }
         }
     }
@@ -221,7 +222,7 @@ class DDAPP_Tools extends CModule
      * Метод для удаления таблицы баз данных
      * @return void
      */
-    function UnInstallDB()
+    function UnInstallDB(): void
     {
         Loader::includeModule($this->MODULE_ID);
         Loader::includeModule("iblock");
@@ -239,7 +240,7 @@ class DDAPP_Tools extends CModule
      * Метод для создания обработчика событий
      * @return true
      */
-    function InstallEvents()
+    function InstallEvents(): bool
     {
         $eventManager = EventManager::getInstance();
 
@@ -268,7 +269,7 @@ class DDAPP_Tools extends CModule
      * Метод для удаления обработчика событий
      * @return true
      */
-    function UnInstallEvents()
+    function UnInstallEvents(): bool
     {
         $eventManager = EventManager::getInstance();
 
@@ -297,7 +298,7 @@ class DDAPP_Tools extends CModule
      * Метод для копирования файлов модуля при установке
      * @return true
      */
-    function InstallFiles()
+    function InstallFiles(): bool
     {
         $docRoot = Application::getDocumentRoot();
 
@@ -324,7 +325,7 @@ class DDAPP_Tools extends CModule
                     Debug::writeToFile([
                         "DATE" => date("Y-m-d H:i:s"),
                         "ERROR" => "Ошибка копирования из $src в $dst"
-                    ], "CopyDirFiles", "/upload/logs/ddapp.tools.install.log");
+                    ], "CopyDirFiles", self::LOG_FILE);
                 }
             }
         }
@@ -336,7 +337,7 @@ class DDAPP_Tools extends CModule
      * Метод для удаления файлов модуля при удалении
      * @return true
      */
-    function UnInstallFiles()
+    function UnInstallFiles(): bool
     {
         $docRoot = Application::getDocumentRoot();
 
@@ -379,14 +380,14 @@ class DDAPP_Tools extends CModule
      * Установка агентов
      * @return void
      */
-    function installAgents()
+    function installAgents(): void
     {
         $agent = \CAgent::AddAgent("\\DDAPP\\Tools\\cacheAgent::run();", $this->MODULE_ID, "N", self::CACHE_AGENT_INTERVAL, "", "N", "", 100);
         if (!$agent) {
             Debug::writeToFile([
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => "Не удалось добавить агента cacheAgent"
-            ], "CAgent::AddAgent", "/upload/logs/ddapp.tools.install.log");
+            ], "CAgent::AddAgent", self::LOG_FILE);
         }
 
         $agent = \CAgent::AddAgent("\\DDAPP\\Tools\\freespaceAgent::run();", $this->MODULE_ID, "N", self::FREE_SPACE_AGENT_INTERVAL, "", "Y", "", 100);
@@ -394,7 +395,7 @@ class DDAPP_Tools extends CModule
             Debug::writeToFile([
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => "Не удалось добавить агента freespaceAgent"
-            ], "CAgent::AddAgent", "/upload/logs/ddapp.tools.install.log");
+            ], "CAgent::AddAgent", self::LOG_FILE);
         }
     }
 
@@ -402,7 +403,7 @@ class DDAPP_Tools extends CModule
      * Удаление агентов
      * @return void
      */
-    function unInstallAgents()
+    function unInstallAgents(): void
     {
         \CAgent::RemoveModuleAgents($this->MODULE_ID);
     }
@@ -410,9 +411,9 @@ class DDAPP_Tools extends CModule
     /**
      * Установка/Удаление Инфоблоков
      * @param $install
-     * @return mixed
+     * @return bool
      */
-    function manageInfoblock($install = true)
+    function manageIBlock($install = true): bool
     {
         require_once __DIR__ . "/lib/IblockInstaller.php";
         $installer = new IblockInstaller($this->MODULE_ID);
@@ -423,9 +424,9 @@ class DDAPP_Tools extends CModule
     /**
      * Установка/Удаление Почтовых шаблонов
      * @param $install
-     * @return mixed
+     * @return bool
      */
-    function manageEmailTemplate($install = true)
+    function manageEmailTemplate($install = true): bool
     {
         require_once __DIR__ . "/lib/EmailTemplateInstaller.php";
         $installer = new EmailTemplateInstaller($this->MODULE_ID);
@@ -437,7 +438,7 @@ class DDAPP_Tools extends CModule
      * Заполнение таблиц и инфоблоков тестовыми данными
      * @return true
      */
-    function addData()
+    function addData(): bool
     {
         require_once __DIR__ . "/lib/DataInstaller.php";
         $installer = new DataInstaller($this->MODULE_ID);

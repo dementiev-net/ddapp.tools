@@ -10,6 +10,7 @@ use DDAPP\Tools\Entity\MaintenanceTable;
 class DataInstaller
 {
     private $moduleId;
+    private const LOG_FILE = "/upload/ddapp.tools.install.log";
 
     public function __construct($moduleId)
     {
@@ -19,7 +20,7 @@ class DataInstaller
     /**
      * @return true
      */
-    public function install()
+    public function install(): bool
     {
         Loader::includeModule($this->moduleId);
         Loader::includeModule("iblock");
@@ -33,7 +34,7 @@ class DataInstaller
     /**
      * @return void
      */
-    private function addDefaultMaintenance()
+    private function addDefaultMaintenance(): void
     {
         $defaultElements = [
             ["NAME" => "Оптимизация таблиц", "LINK" => "/bitrix/admin/repair_db.php?optimize_tables=Y", "DESCRIPTION" => "Настройки - Инструменты - Диагностика - Оптимизация БД (кнопка Оптимизировать)", "TYPE" => "SCHEDULED", "ACTIVE" => "Y", "DATE_CREATE" => new DateTime(date("d.m.Y H:i:s")), "DATE_MODIFY" => new DateTime(date("d.m.Y H:i:s"))],
@@ -56,29 +57,26 @@ class DataInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERRORS" => $result->getErrorMessages(),
                     "FIELDS" => $elementData,
-                ], "MaintenanceTable::add", "/upload/logs/ddapp.tools.install.log");
+                ], "MaintenanceTable::add", self::LOG_FILE);
             }
         }
     }
 
     /**
-     * @return false|void
+     * @return void
      */
-    private function addIblockElements()
+    private function addIblockElements(): void
     {
-        $iblockId = $this->getIblockId("ddapp_tools_news");
+        $iblockId = $this->getIblockId("ddapp_forms_city");
 
         if (!$iblockId) {
-            return false;
+            return;
         }
 
         $defaultElements = [
-            ["NAME" => "Первая новость 2Dapp Tools", "CODE" => "first_news_ddapp_tools", "PREVIEW_TEXT" => "Краткое описание первой новости для тестирования модуля 2Dapp Tools", "DETAIL_TEXT" => "Подробное описание первой новости. Здесь может быть много текста с различными подробностями о функционале модуля 2Dapp Tools.",
-                "PROPERTIES" => ["AUTHOR" => "Иван Петров", "SOURCE" => "Официальный сайт", "TAGS" => ["новости", "ddapp.tools", "модуль"], "RATING" => 5, "SHOW_ON_MAIN" => "Да"]],
-            ["NAME" => "Обновление функционала", "CODE" => "functionality_update", "PREVIEW_TEXT" => "Информация о новых возможностях модуля 2Dapp Tools", "DETAIL_TEXT" => "В новой версии модуля 2Dapp Tools добавлены дополнительные функции для работы с контентом и улучшена производительность.",
-                "PROPERTIES" => ["AUTHOR" => "Анна Сидорова", "SOURCE" => "Блог разработчиков", "TAGS" => ["обновление", "функционал", "производительность"], "RATING" => 4, "SHOW_ON_MAIN" => "Да"]],
-            ["NAME" => "Руководство по установке", "CODE" => "installation_guide", "PREVIEW_TEXT" => "Пошаговая инструкция по установке и настройке модуля", "DETAIL_TEXT" => "Данное руководство поможет вам правильно установить и настроить модуль 2Dapp Tools на вашем сайте. Следуйте инструкциям для корректной работы.",
-                "PROPERTIES" => ["AUTHOR" => "Техническая поддержка", "SOURCE" => "Документация", "TAGS" => ["установка", "настройка", "инструкция"], "RATING" => 3, "SHOW_ON_MAIN" => "Нет"]]
+            ["NAME" => "Москва", "CODE" => "moscow", "PREVIEW_TEXT" => "", "DETAIL_TEXT" => ""],
+            ["NAME" => "Санкт Петербург", "CODE" => "piter", "PREVIEW_TEXT" => "", "DETAIL_TEXT" => ""],
+            ["NAME" => "Казань", "CODE" => "kazan", "PREVIEW_TEXT" => "", "DETAIL_TEXT" => ""],
         ];
 
         foreach ($defaultElements as $elementData) {
@@ -88,9 +86,9 @@ class DataInstaller
 
     /**
      * @param $code
-     * @return false
+     * @return mixed
      */
-    private function getIblockId($code)
+    private function getIblockId($code): mixed
     {
         $res = \CIBlock::GetList([], ["CODE" => $code, "CHECK_PERMISSIONS" => "N"]);
 
@@ -102,7 +100,7 @@ class DataInstaller
             "DATE" => date("Y-m-d H:i:s"),
             "MESSAGE" => "Инфоблок с таким CODE не найден",
             "CODE" => $code,
-        ], "CIBlock::GetList", "/upload/logs/ddapp.tools.install.log");
+        ], "CIBlock::GetList", self::LOG_FILE);
 
         return false;
     }
@@ -112,7 +110,7 @@ class DataInstaller
      * @param $elementData
      * @return mixed
      */
-    private function addIblockElement($iblockId, $elementData)
+    private function addIblockElement($iblockId, $elementData): mixed
     {
         $el = new \CIBlockElement;
 
@@ -125,7 +123,7 @@ class DataInstaller
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => $el->LAST_ERROR,
                 "FIELDS" => $arFields,
-            ], "CIBlockElement::add", "/upload/logs/ddapp.tools.install.log");
+            ], "CIBlockElement::add", self::LOG_FILE);
         }
 
         return $elementId;

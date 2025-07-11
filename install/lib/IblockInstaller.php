@@ -9,6 +9,8 @@ class IblockInstaller
 {
     private $moduleId;
 
+    private const LOG_FILE = "/upload/ddapp.tools.install.log";
+
     public function __construct($moduleId)
     {
         $this->moduleId = $moduleId;
@@ -17,10 +19,38 @@ class IblockInstaller
     /**
      * @return true
      */
-    public function install()
+    public function install(): bool
     {
-        $this->createInfoblockType();
-        $this->createInfoblock();
+        $this->createIBlockType();
+
+        $arFields = ["ACTIVE" => "Y", "NAME" => "Города", "CODE" => "ddapp_forms_city", "IBLOCK_TYPE_ID" => "ddapp_forms", "SITE_ID" => ["s1"], "SORT" => 500, "GROUP_ID" => ["2" => "R"], "VERSION" => 2, "WORKFLOW" => "N", "BIZPROC" => "N", "INDEX_ELEMENT" => "Y", "INDEX_SECTION" => "Y"];
+        $linkedIblockId = $this->createIBlock($arFields);
+
+        $arFields = ["ACTIVE" => "Y", "NAME" => "Задайте Ваш вопрос", "CODE" => "ddapp_forms_question", "IBLOCK_TYPE_ID" => "ddapp_forms", "SITE_ID" => ["s1"], "SORT" => 500, "GROUP_ID" => ["2" => "R"], "VERSION" => 2, "WORKFLOW" => "N", "BIZPROC" => "N", "INDEX_ELEMENT" => "Y", "INDEX_SECTION" => "Y"];
+        $iblockId = $this->createIBlock($arFields);
+
+        $arPropFields = [
+            ["NAME" => "Имя", "ACTIVE" => "Y", "SORT" => "100", "CODE" => "NAME", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "Y", "SEARCHABLE" => "N"],
+            ["NAME" => "Телефон", "ACTIVE" => "Y", "SORT" => "200", "CODE" => "PHONE", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "Y", "SEARCHABLE" => "N"],
+            ["NAME" => "E-Mail", "ACTIVE" => "Y", "SORT" => "300", "CODE" => "EMAIL", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N", "SEARCHABLE" => "N"],
+            ["NAME" => "Ваш вопрос", "ACTIVE" => "Y", "SORT" => "400", "CODE" => "COMMENT", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N", "SEARCHABLE" => "N", "ROW_COUNT" => 5, "COL_COUNT" => 30],
+            ["NAME" => "Категория вопроса", "ACTIVE" => "Y", "SORT" => "400", "CODE" => "CATEGORIES", "PROPERTY_TYPE" => "L", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N",
+                "VALUES" => [
+                    ["VALUE" => "Общие вопросы", "SORT" => "10", "DEF" => "Y"],
+                    ["VALUE" => "Технический вопрос", "SORT" => "20", "DEF" => "N"],
+                    ["VALUE" => "Бухгалтерия", "SORT" => "30", "DEF" => "N"],
+                ]
+            ],
+            ["NAME" => "Возраст", "ACTIVE" => "Y", "SORT" => "600", "CODE" => "AGE", "PROPERTY_TYPE" => "N", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N"],
+            ["NAME" => "Дата и время встречи", "ACTIVE" => "Y", "SORT" => "800", "CODE" => "MEETING_DATETIME", "PROPERTY_TYPE" => "S", "USER_TYPE" => "DateTime", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N"],
+            ["NAME" => "Подписка на новости", "ACTIVE" => "Y", "SORT" => "900", "CODE" => "SUBSCRIBE", "PROPERTY_TYPE" => "L", "LIST_TYPE" => "C", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N",
+                "VALUES" => [
+                    ["VALUE" => "Да", "SORT" => "1", "DEF" => "N"],
+                ]
+            ],
+            ["NAME" => "Город", "ACTIVE" => "Y", "SORT" => "1000", "CODE" => "LINK_ELEMENT", "LIST_TYPE" => "L", "PROPERTY_TYPE" => "E", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N", "LINK_IBLOCK_ID" => $linkedIblockId],
+        ];
+        $this->createIblockProperties($arPropFields);
 
         return true;
     }
@@ -28,10 +58,11 @@ class IblockInstaller
     /**
      * @return true
      */
-    public function uninstall()
+    public function uninstall(): bool
     {
-        $this->deleteInfoblock();
-        $this->deleteInfoblockType();
+        $this->deleteIBlock("ddapp_forms_question");
+        $this->deleteIBlock("ddapp_forms_city");
+        $this->deleteIBlockType();
 
         return true;
     }
@@ -39,7 +70,7 @@ class IblockInstaller
     /**
      * @return void
      */
-    private function createInfoblockType()
+    private function createIBlockType(): void
     {
         $arFields = [
             "ID" => "ddapp_forms",
@@ -61,30 +92,16 @@ class IblockInstaller
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => $obBlocktype->LAST_ERROR,
                 "FIELDS" => $arFields
-            ], "CIBlockType::add", "/upload/logs/ddapp.tools.install.log");
+            ], "CIBlockType::add", self::LOG_FILE);
         }
     }
 
     /**
-     * @return void
+     * @param $arFields
+     * @return mixed
      */
-    private function createInfoblock()
+    private function createIBlock($arFields): mixed
     {
-        $arFields = [
-            "ACTIVE" => "Y",
-            "NAME" => "Задайте Ваш вопрос",
-            "CODE" => "question",
-            "IBLOCK_TYPE_ID" => "ddapp_forms",
-            "SITE_ID" => ["s1"],
-            "SORT" => 500,
-            "GROUP_ID" => ["2" => "R"],
-            "VERSION" => 2,
-            "WORKFLOW" => "N",
-            "BIZPROC" => "N",
-            "INDEX_ELEMENT" => "Y",
-            "INDEX_SECTION" => "Y"
-        ];
-
         $ib = new \CIBlock;
         $iblockId = $ib->Add($arFields);
 
@@ -93,31 +110,18 @@ class IblockInstaller
                 "DATE" => date("Y-m-d H:i:s"),
                 "ERROR" => $ib->LAST_ERROR,
                 "FIELDS" => $arFields
-            ], "CIBlock::add", "/upload/logs/ddapp.tools.install.log");
-        } else {
-            $this->createIblockProperties($iblockId);
+            ], "CIBlock::add", self::LOG_FILE);
         }
+
+        return $iblockId;
     }
 
     /**
-     * @param $iblockId
+     * @param $arPropFields
      * @return void
      */
-    private function createIblockProperties($iblockId)
+    private function createIblockProperties($arPropFields)
     {
-        $arPropFields = [
-            ["NAME" => "Имя", "ACTIVE" => "Y", "SORT" => "100", "CODE" => "NAME", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "Y", "SEARCHABLE" => "N"],
-            ["NAME" => "Телефон", "ACTIVE" => "Y", "SORT" => "200", "CODE" => "PHONE", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "Y", "SEARCHABLE" => "N"],
-            ["NAME" => "E-Mail", "ACTIVE" => "Y", "SORT" => "300", "CODE" => "EMAIL", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N", "SEARCHABLE" => "N"],
-            ["NAME" => "Ваш вопрос", "ACTIVE" => "Y", "SORT" => "400", "CODE" => "COMMENT", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N", "SEARCHABLE" => "N", "ROW_COUNT" => 5, "COL_COUNT" => 30],
-            ["NAME" => "Категория вопроса", "ACTIVE" => "Y", "SORT" => "400", "CODE" => "CATEGORIES", "PROPERTY_TYPE" => "L", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N",
-                "VALUES" => [
-                    ["VALUE" => "Общие вопросы", "SORT" => "10", "DEF" => "Y"],
-                    ["VALUE" => "Технический вопрос", "SORT" => "20", "DEF" => "N"],
-                    ["VALUE" => "Бухгалтерия", "SORT" => "30", "DEF" => "N"],
-                ]
-            ]
-        ];
         $ibp = new \CIBlockProperty;
         foreach ($arPropFields as $field) {
 
@@ -128,17 +132,18 @@ class IblockInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $ibp->LAST_ERROR,
                     "FIELDS" => $field,
-                ], "CIBlockProperty::add", "/upload/logs/ddapp.tools.install.log");
+                ], "CIBlockProperty::add", self::LOG_FILE);
             }
         }
     }
 
     /**
+     * @param $name
      * @return void
      */
-    private function deleteInfoblock()
+    private function deleteIBlock($name): void
     {
-        $res = \CIBlock::GetList([], ["CODE" => "question", "CHECK_PERMISSIONS" => "N"]);
+        $res = \CIBlock::GetList([], ["CODE" => $name, "CHECK_PERMISSIONS" => "N"]);
 
         if ($ar_res = $res->Fetch()) {
 
@@ -157,7 +162,7 @@ class IblockInstaller
                         "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении элемента",
                         "ELEMENT_ID" => $arElement["ID"],
                         "IBLOCK_ID" => $iblockId,
-                    ], "CIBlockElement::Delete", "/upload/logs/ddapp.tools.install.log");
+                    ], "CIBlockElement::Delete", self::LOG_FILE);
                 }
             }
 
@@ -174,7 +179,7 @@ class IblockInstaller
                         "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении раздела",
                         "SECTION_ID" => $arSection["ID"],
                         "IBLOCK_ID" => $iblockId,
-                    ], "CIBlockSection::Delete", "/upload/logs/ddapp.tools.install.log");
+                    ], "CIBlockSection::Delete", self::LOG_FILE);
                 }
             }
 
@@ -186,7 +191,7 @@ class IblockInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении инфоблока",
                     "IBLOCK_ID" => $iblockId,
-                ], "CIBlock::Delete", "/upload/logs/ddapp.tools.install.log");
+                ], "CIBlock::Delete", self::LOG_FILE);
             }
         }
     }
@@ -194,7 +199,7 @@ class IblockInstaller
     /**
      * @return void
      */
-    private function deleteInfoblockType()
+    private function deleteIBlockType(): void
     {
         $res = \CIBlock::GetList([], ["TYPE" => "ddapp_forms", "CHECK_PERMISSIONS" => "N"]);
 
@@ -207,7 +212,7 @@ class IblockInstaller
                     "DATE" => date("Y-m-d H:i:s"),
                     "ERROR" => $APPLICATION->GetException() ? $APPLICATION->GetException()->GetString() : "Неизвестная ошибка при удалении типа инфоблока",
                     "IBLOCK_TYPE" => "ddapp_forms"
-                ], "CIBlockType::Delete", "/upload/logs/ddapp.tools.install.log");
+                ], "CIBlockType::Delete", self::LOG_FILE);
             }
         }
     }

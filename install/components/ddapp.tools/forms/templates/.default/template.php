@@ -5,17 +5,14 @@ $formId = $arResult['FORM_ID'];
 $iblockId = $arResult['IBLOCK_ID'];
 ?>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-      integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous"></script>
 
 <div class="ddapp-form-wrapper">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?= $formId ?>Modal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#<?= $formId ?>Modal">
         Открыть форму
     </button>
 
@@ -24,9 +21,7 @@ $iblockId = $arResult['IBLOCK_ID'];
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Форма обратной связи</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="<?= $formId ?>" method="post">
@@ -42,23 +37,27 @@ $iblockId = $arResult['IBLOCK_ID'];
                                 <?php if ($property['PROPERTY_TYPE'] === 'S' && $property['USER_TYPE'] !== 'HTML'): ?>
                                     <input type="text" class="form-control"
                                            id="property_<?= $property['ID'] ?>"
-                                           name="PROPERTY_<?= $property['ID'] ?>">
+                                           name="PROPERTY_<?= $property['ID'] ?>"
+                                        <?= $property['IS_REQUIRED'] === 'Y' ? 'required' : '' ?>>
 
                                 <?php elseif ($property['PROPERTY_TYPE'] === 'S' && $property['USER_TYPE'] === 'HTML'): ?>
                                     <textarea class="form-control"
                                               id="property_<?= $property['ID'] ?>"
                                               name="PROPERTY_<?= $property['ID'] ?>"
-                                              rows="5"></textarea>
+                                              rows="5"
+                                              <?= $property['IS_REQUIRED'] === 'Y' ? 'required' : '' ?>></textarea>
 
                                 <?php elseif ($property['PROPERTY_TYPE'] === 'F'): ?>
                                     <input type="file" class="form-control-file"
                                            id="property_<?= $property['ID'] ?>"
-                                           name="PROPERTY_<?= $property['ID'] ?>">
+                                           name="PROPERTY_<?= $property['ID'] ?>"
+                                        <?= $property['IS_REQUIRED'] === 'Y' ? 'required' : '' ?>>
 
                                 <?php elseif ($property['PROPERTY_TYPE'] === 'L' && $property['LIST_TYPE'] === 'L'): ?>
                                     <select class="form-control"
                                             id="property_<?= $property['ID'] ?>"
-                                            name="PROPERTY_<?= $property['ID'] ?>">
+                                            name="PROPERTY_<?= $property['ID'] ?>"
+                                        <?= $property['IS_REQUIRED'] === 'Y' ? 'required' : '' ?>>
                                         <option value="">Выберите...</option>
                                         <?php foreach ($property['LIST_VALUES'] as $value): ?>
                                             <option value="<?= $value['ID'] ?>"><?= $value['VALUE'] ?></option>
@@ -91,8 +90,8 @@ $iblockId = $arResult['IBLOCK_ID'];
                                 <label>Код с картинки <span class="text-danger">*</span></label>
                                 <img src="/bitrix/tools/captcha.php?captcha_code=<?= $arResult['CAPTCHA_CODE'] ?>"
                                      alt="Captcha" class="captcha-image">
-                                <input type="hidden1" name="captcha_code" value="<?= $arResult['CAPTCHA_CODE'] ?>">
-                                <input type="text" class="form-control" name="captcha_word">
+                                <input type="hidden" name="captcha_code" value="<?= $arResult['CAPTCHA_CODE'] ?>">
+                                <input type="text" class="form-control" name="captcha_word" required>
                             </div>
                         <?php endif; ?>
 
@@ -105,11 +104,10 @@ $iblockId = $arResult['IBLOCK_ID'];
     </div>
 </div>
 
-
 <script>
     /**
      * DDApp Tools Form Manager
-     * @version 1.0.0
+     * @version 1.1.0
      */
 
     BX.namespace('BX.DDAPP.Tools');
@@ -143,7 +141,11 @@ $iblockId = $arResult['IBLOCK_ID'];
             BX.bind(this.form, 'submit', BX.proxy(this.onSubmit, this));
 
             if (this.modal) {
-                BX.bind(this.modal, 'hidden.bs.modal', BX.proxy(this.onModalHidden, this));
+                // Используем Bootstrap 5 API
+                var self = this;
+                this.modal.addEventListener('hidden.bs.modal', function() {
+                    self.onModalHidden();
+                });
             }
         },
 
@@ -182,7 +184,9 @@ $iblockId = $arResult['IBLOCK_ID'];
 
             for (var i = 0; i < requiredFields.length; i++) {
                 var field = requiredFields[i];
-                if (!field.value.trim()) {
+                var value = field.value.trim();
+
+                if (!value) {
                     BX.addClass(field, 'is-invalid');
                     isValid = false;
                 } else {
@@ -245,8 +249,6 @@ $iblockId = $arResult['IBLOCK_ID'];
             this.isSubmitting = false;
             this.setSubmitButtonState(false);
 
-            console.log(response)
-
             try {
                 var result = JSON.parse(response);
                 if (result.success) {
@@ -283,8 +285,16 @@ $iblockId = $arResult['IBLOCK_ID'];
         },
 
         hideModal: function () {
-            if (this.modal && typeof $ !== 'undefined') {
-                $(this.modal).modal('hide');
+            if (this.modal) {
+                // Используем Bootstrap 5 API
+                var modal = bootstrap.Modal.getInstance(this.modal);
+                if (modal) {
+                    modal.hide();
+                } else {
+                    // Если экземпляр не найден, создаем новый
+                    var bsModal = new bootstrap.Modal(this.modal);
+                    bsModal.hide();
+                }
             }
         },
 

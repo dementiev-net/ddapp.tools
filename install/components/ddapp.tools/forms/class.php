@@ -19,7 +19,7 @@ class DDAppFormComponent extends CBitrixComponent
     public function onPrepareComponentParams($params): mixed
     {
         $params["CACHE_TIME"] = isset($params["CACHE_TIME"]) ? $params["CACHE_TIME"] : 3600;
-        $this->iblockId = $params["IBLOCK_ID"];
+        $this->iblockId = (int)$params["IBLOCK_ID"];
 
         return $params;
     }
@@ -48,6 +48,8 @@ class DDAppFormComponent extends CBitrixComponent
             $APPLICATION->RestartBuffer();
 
             $result = $this->processForm();
+
+            header('Content-Type: application/json; charset=utf-8');
 
             // Выводим JSON и завершаем
             echo json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -94,7 +96,10 @@ class DDAppFormComponent extends CBitrixComponent
     private function getPropertyListValues($propertyId): array
     {
         $values = [];
-        $res = CIBlockPropertyEnum::GetList([], ["PROPERTY_ID" => $propertyId]);
+        $res = CIBlockPropertyEnum::GetList(
+            ["SORT" => "ASC"],
+            ["PROPERTY_ID" => $propertyId]
+        );
         while ($value = $res->fetch()) {
             $values[] = $value;
         }
@@ -110,10 +115,10 @@ class DDAppFormComponent extends CBitrixComponent
         $cpt = new CCaptcha();
         $captchaPass = Option::get("main", "captcha_password");
 
-        // Проверка на пустоту, если пусто генерируем новый код капчи
+        // Проверка на пустоту, если пусто генерируем новый код Captcha
         if (strlen($captchaPass) <= 0) {
             $captchaPass = randString(10);
-            COption::SetOptionString("main", "captcha_password", $captchaPass);
+            Option::set("main", "captcha_password", $captchaPass);
         }
 
         $cpt->SetCodeCrypt($captchaPass);
@@ -166,17 +171,22 @@ class DDAppFormComponent extends CBitrixComponent
      */
     private function validateCaptcha($request): bool
     {
-        global $APPLICATION;
-
         if ($this->arParams['USE_BITRIX_CAPTCHA'] === 'Y') {
             $captcha = new CCaptcha();
-            if (!$captcha->CheckCodeCrypt($request->get('captcha_word'), $request->get('captcha_code'))) {
+            $captchaWord = $request->getPost('captcha_word');
+            $captchaCode = $request->getPost('captcha_code');
+
+            if (!$captcha->CheckCodeCrypt($captchaWord, $captchaCode)) {
                 return false;
             }
         }
 
         if ($this->arParams["USE_GOOGLE_RECAPTCHA"] === "Y") {
-            $recaptchaResponse = $request->get("g-recaptcha-response");
+            $recaptchaResponse = $request->getPost("g-recaptcha-response");
+
+            if (empty($recaptchaResponse)) {
+                return false;
+            }
 
             $data = [
                 "secret" => $this->arParams["GOOGLE_RECAPTCHA_SECRET_KEY"],
@@ -196,7 +206,7 @@ class DDAppFormComponent extends CBitrixComponent
             $result = file_get_contents("https://www.google.com/recaptcha/api/siteverify", false, $context);
             $resultJson = json_decode($result);
 
-            if ($resultJson->success && $resultJson->score > 0.5) {
+            if ($resultJson && $resultJson->success && $resultJson->score > 0.5) {
                 return true;
             }
 
@@ -216,10 +226,24 @@ class DDAppFormComponent extends CBitrixComponent
         $errors = [];
 
         foreach ($this->arResult["PROPERTIES"] as $property) {
-            $value = $request->get("PROPERTY_" . $property["ID"]);
+            $value = $request->getPost("PROPERTY_" . $property["ID"]);
 
-            if ($property["IS_REQUIRED"] === "Y" && empty($value)) {
-                $errors[] = "Поле " . $property["NAME"] . " обязательно для заполнения";
+            if ($property["IS_REQUIRED"] === "Y") {
+                if (is_array($value)) {
+                    // Для множественных значений (чекбоксы)
+                    $filteredValues = array_filter($value, function($v) {
+                        return !empty(trim($v));
+                    });
+
+                    if (empty($filteredValues)) {
+                        $errors[] = "Поле \"" . $property["NAME"] . "\" обязательно для заполнения";
+                    }
+                } else {
+                    // Для одиночных значений
+                    if (empty(trim($value))) {
+                        $errors[] = "Поле \"" . $property["NAME"] . "\" обязательно для заполнения";
+                    }
+                }
             }
         }
 
@@ -243,13 +267,38 @@ class DDAppFormComponent extends CBitrixComponent
         ];
 
         foreach ($this->arResult["PROPERTIES"] as $property) {
-            $value = $request->get("PROPERTY_" . $property["ID"]);
+            $value = $request->getPost("PROPERTY_" . $property["ID"]);
+
             if (!empty($value)) {
-                $fields["PROPERTY_VALUES"][$property["ID"]] = $value;
+                if (is_array($value)) {
+                    // Для множественных значений - фильтруем пустые
+                    $filteredValues = array_filter($value, function($v) {
+                        return !empty(trim($v));
+                    });
+
+                    if (!empty($filteredValues)) {
+                        $fields["PROPERTY_VALUES"][$property["ID"]] = $filteredValues;
+                    }
+                } else {
+                    // Для одиночных значений
+                    if (!empty(trim($value))) {
+                        $fields["PROPERTY_VALUES"][$property["ID"]] = $value;
+                    }
+                }
             }
         }
 
-        return $element->Add($fields);
+        $elementId = $element->Add($fields);
+
+        if (!$elementId) {
+            // Логируем ошибку
+            $error = $element->LAST_ERROR;
+            if (!empty($error)) {
+                AddMessage2Log("DDApp Form Component Error: " . $error, "ddapp_form");
+            }
+        }
+
+        return $elementId;
     }
 
     /**
@@ -260,10 +309,25 @@ class DDAppFormComponent extends CBitrixComponent
      */
     private function sendEmail($elementId, $request): void
     {
-        $fields = [];
+        $fields = [
+            "ELEMENT_ID" => $elementId,
+            "IBLOCK_ID" => $this->iblockId,
+            "DATE_CREATE" => date("d.m.Y H:i:s")
+        ];
+
         foreach ($this->arResult["PROPERTIES"] as $property) {
-            $value = $request->get("PROPERTY_" . $property["ID"]);
-            $fields[$property["CODE"]] = $value;
+            $value = $request->getPost("PROPERTY_" . $property["ID"]);
+
+            if (!empty($value)) {
+                if (is_array($value)) {
+                    // Для множественных значений - преобразуем в строку
+                    $fields[$property["CODE"]] = implode(", ", $value);
+                } else {
+                    $fields[$property["CODE"]] = $value;
+                }
+            } else {
+                $fields[$property["CODE"]] = "";
+            }
         }
 
         Event::send([

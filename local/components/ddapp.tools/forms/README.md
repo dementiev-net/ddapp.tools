@@ -33,7 +33,6 @@
 ### 📊 Аналитика и отслеживание
 - ✅ **Google Analytics 4** - события, конверсии, Enhanced Ecommerce
 - ✅ **Яндекс.Метрика** - цели, параметры визита
-- ✅ **Facebook Pixel** - отслеживание лидов
 - ✅ **VK Pixel** - ретаргетинг
 - ✅ **Milestone события** - прогресс заполнения формы
 
@@ -114,7 +113,6 @@ $APPLICATION->IncludeComponent(
         // Аналитика
         "GA_MEASUREMENT_ID" => "G-XXXXXXXXXX",
         "YANDEX_METRIKA_ID" => "12345678",
-        "FACEBOOK_PIXEL_ID" => "123456789012345",
         "VK_PIXEL_ID" => "VK-RTRG-XXXXXX-XXXXX",
 
         // Кеширование
@@ -166,7 +164,6 @@ $APPLICATION->IncludeComponent(
 |----------|-----|----------|--------------|
 | `GA_MEASUREMENT_ID` | string | Google Analytics Measurement ID | - |
 | `YANDEX_METRIKA_ID` | string | ID счетчика Яндекс.Метрики | - |
-| `FACEBOOK_PIXEL_ID` | string | Facebook Pixel ID | - |
 | `VK_PIXEL_ID` | string | VK Pixel ID | - |
 
 ## Структура файлов компонента

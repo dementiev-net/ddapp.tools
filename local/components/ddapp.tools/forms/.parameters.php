@@ -162,12 +162,6 @@ $arComponentParameters = array(
             "TYPE" => "STRING",
             "DEFAULT" => "",
         ),
-        "FACEBOOK_PIXEL_ID" => array(
-            "PARENT" => "ANALYTICS",
-            "NAME" => "Facebook Pixel ID",
-            "TYPE" => "STRING",
-            "DEFAULT" => "",
-        ),
         "VK_PIXEL_ID" => array(
             "PARENT" => "ANALYTICS",
             "NAME" => "VK Pixel ID",

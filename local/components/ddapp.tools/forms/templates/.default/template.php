@@ -375,16 +375,6 @@ if (!empty($arParams["YANDEX_METRIKA_ID"])) {
                     });
                 }
 
-                // Facebook Pixel (если настроен)
-                if (typeof fbq !== 'undefined') {
-                    fbq('track', 'Lead', {
-                        content_name: '<?= addslashes($arResult["NAME"]) ?>',
-                        content_category: 'form',
-                        value: 1,
-                        currency: 'RUB'
-                    });
-                }
-
                 // VK Pixel (если настроен)
                 if (typeof VK !== 'undefined' && VK.Retargeting) {
                     VK.Retargeting.Event('lead');

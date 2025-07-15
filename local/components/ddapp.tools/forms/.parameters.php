@@ -131,12 +131,6 @@ $arComponentParameters = array(
             "TYPE" => "CHECKBOX",
             "DEFAULT" => "Y",
         ),
-        "ANTIVIRUS_CHECK" => array(
-            "PARENT" => "FILES",
-            "NAME" => "Антивирусная проверка файлов",
-            "TYPE" => "CHECKBOX",
-            "DEFAULT" => "N",
-        ),
         "SECURITY_LEVEL" => array(
             "PARENT" => "FILES",
             "NAME" => "Уровень безопасности файлов",

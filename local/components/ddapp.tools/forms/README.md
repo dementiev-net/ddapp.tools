@@ -107,7 +107,6 @@ $APPLICATION->IncludeComponent(
         "ALLOWED_FILE_EXTENSIONS" => "jpg,jpeg,png,pdf,doc,docx,xls,xlsx",
         "FILE_UPLOAD_DIR" => "/upload/forms/",
         "CHECK_FILE_CONTENT" => "Y",
-        "ANTIVIRUS_CHECK" => "N",
         "SECURITY_LEVEL" => "high",
 
         // Аналитика
@@ -155,7 +154,6 @@ $APPLICATION->IncludeComponent(
 | `ALLOWED_FILE_EXTENSIONS` | string | Разрешенные расширения через запятую | jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip |
 | `FILE_UPLOAD_DIR` | string | Папка для загрузки файлов | /upload/ddapp_forms/ |
 | `CHECK_FILE_CONTENT` | Y/N | Проверять содержимое файлов | Y |
-| `ANTIVIRUS_CHECK` | Y/N | Антивирусная проверка | N |
 | `SECURITY_LEVEL` | string | Уровень безопасности (low/medium/high) | medium |
 
 ### Параметры аналитики

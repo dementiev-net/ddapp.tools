@@ -1,5 +1,5 @@
 <?php
-namespace DDAPP\Tools\Forms;
+namespace DDAPP\Tools\Components;
 
 use DDAPP\Tools\Helpers\LogHelper;
 

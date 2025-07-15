@@ -10,8 +10,8 @@ use Bitrix\Main\Mail\Event;
 use Bitrix\Main\IO\File;
 use Bitrix\Main\IO\Directory;
 use DDAPP\Tools\Helpers\LogHelper;
-use DDAPP\Tools\Forms\FileSecurityValidator;
-use DDAPP\Tools\Forms\RateLimiter;
+use DDAPP\Tools\Components\FileSecurityValidator;
+use DDAPP\Tools\Components\RateLimiter;
 
 // Настройка логирования
 LogHelper::configure();

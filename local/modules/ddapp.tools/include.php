@@ -10,15 +10,16 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 Loader::registerAutoLoadClasses(Main::MODULE_ID, [
 
-        // Классы
+        // Основные классы
         "DDAPP\\Tools\\Main" => "lib/Main.php",
         "DDAPP\\Tools\\CustomMail" => "lib/CustomMail.php",
         "DDAPP\\Tools\\Maintenance" => "lib/Maintenance.php",
         "DDAPP\\Tools\\DataExport" => "lib/DataExport.php",
         "DDAPP\\Tools\\DataImages" => "lib/DataImages.php",
-        // TODO: ПОМЕНЯТЬ!!!!!
-        "DDAPP\\Tools\\Forms\\RateLimiter" => "../../components/ddapp.tools/forms/classes/Forms/RateLimiter.php",
-        "DDAPP\\Tools\\Forms\\FileSecurityValidator" => "../../components/ddapp.tools/forms/classes/Forms/FileSecurityValidator.php",
+
+        // Классы компонентов
+        "DDAPP\\Tools\\Components\\RateLimiter" => "lib/components/RateLimiter.php",
+        "DDAPP\\Tools\\Components\\FileSecurityValidator" => "lib/components/FileSecurityValidator.php",
 
         // Классы событий
         "DDAPP\\Tools\\Events" => "lib/Events.php",
@@ -33,17 +34,17 @@ Loader::registerAutoLoadClasses(Main::MODULE_ID, [
         "DDAPP\\Tools\\Entity\\DataImportTable" => "lib/entity/DataImportTable.php",
         "DDAPP\\Tools\\Entity\\DataImagesTable" => "lib/entity/DataImagesTable.php",
 
-        // Агенты
-        "DDAPP\\Tools\\cacheAgent" => "lib/agents/CacheAgent.php",
-        "DDAPP\\Tools\\freespaceAgent" => "lib/agents/FreespaceAgent.php",
-
         // Helper-классы
         "DDAPP\\Tools\\Helpers\\FileHelper" => "lib/helpers/FileHelper.php",
         "DDAPP\\Tools\\Helpers\\UserHelper" => "lib/helpers/UserHelper.php",
         "DDAPP\\Tools\\Helpers\\LogHelper" => "lib/helpers/LogHelper.php",
         "DDAPP\\Tools\\Helpers\\IblockHelper" => "lib/helpers/IblockHelper.php",
         "DDAPP\\Tools\\Helpers\\CacheHelper" => "lib/helpers/CacheHelper.php",
-        "DDAPP\\Tools\\Helpers\\UrlHelper" => "lib/helpers/UrlHelper.php"
+        "DDAPP\\Tools\\Helpers\\UrlHelper" => "lib/helpers/UrlHelper.php",
+
+        // Агенты
+        "DDAPP\\Tools\\cacheAgent" => "lib/agents/CacheAgent.php",
+        "DDAPP\\Tools\\freespaceAgent" => "lib/agents/FreespaceAgent.php"
     ]
 );
 

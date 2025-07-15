@@ -3,9 +3,7 @@ require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php');
 $APPLICATION->SetTitle('Главная');
 ?>
 
-    <section class="container">
-
-        TEST
+    <section class="container my-5">
 
         <?
 //        $APPLICATION->IncludeComponent(

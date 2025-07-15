@@ -1,0 +1,782 @@
+BX.namespace('BX.DDAPP.Tools');
+
+BX.DDAPP.Tools.FormManager = function (params) {
+    this.params = params || {};
+    this.form = null;
+    this.modal = null;
+    this.messagesBlock = null;
+    this.submitButton = null;
+    this.isSubmitting = false;
+    this.recaptchaLoaded = false;
+    this.sessid = BX.bitrix_sessid();
+    this.fileConfig = this.params.fileConfig || {};
+    this.selectedFiles = new Map();
+    this.dragCounter = 0;
+    this.isMobile = this.detectMobile();
+    this.analytics = new BX.DDAPP.Tools.Analytics();
+    this.init();
+};
+
+BX.DDAPP.Tools.FormManager.prototype = {
+
+    init: function () {
+        this.form = BX(this.params.formId);
+        this.modal = BX(this.params.modalId);
+        this.messagesBlock = BX(this.params.messagesId);
+        this.submitButton = this.form.querySelector('button[type="submit"]');
+
+        if (this.params.useGoogleRecaptcha === 'Y') {
+            this.loadRecaptcha();
+        }
+
+        this.bindEvents();
+        this.initFileHandling();
+        this.initMobileOptimizations();
+        this.trackAnalytics('form_loaded', { form_id: this.params.formId });
+    },
+
+    detectMobile: function () {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+            window.innerWidth <= 768;
+    },
+
+    bindEvents: function () {
+        BX.bind(this.form, 'submit', BX.proxy(this.onSubmit, this));
+
+        if (this.modal) {
+            var self = this;
+            this.modal.addEventListener('hidden.bs.modal', function () {
+                self.onModalHidden();
+                self.trackAnalytics('form_closed');
+            });
+
+            this.modal.addEventListener('shown.bs.modal', function () {
+                self.trackAnalytics('form_opened');
+            });
+        }
+
+        // Отслеживание взаимодействий с полями
+        var formFields = this.form.querySelectorAll('input, textarea, select');
+        for (var i = 0; i < formFields.length; i++) {
+            BX.bind(formFields[i], 'focus', BX.proxy(function(e) {
+                this.trackAnalytics('field_focused', {
+                    field_type: e.target.type,
+                    field_name: e.target.name
+                });
+            }, this));
+        }
+    },
+
+    initFileHandling: function () {
+        var fileInputs = this.form.querySelectorAll('input[type="file"]');
+        var self = this;
+
+        for (var i = 0; i < fileInputs.length; i++) {
+            this.setupFileInput(fileInputs[i]);
+        }
+    },
+
+    setupFileInput: function (input) {
+        var self = this;
+        var wrapper = this.createFileWrapper(input);
+
+        // Заменяем стандартный input на wrapper
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+        input.style.display = 'none';
+
+        // Настройка drag & drop
+        this.initDragAndDrop(wrapper, input);
+
+        // Обработка выбора файлов
+        BX.bind(input, 'change', function(e) {
+            self.handleFileSelection(e.target, wrapper);
+        });
+
+        // Кнопка выбора файлов
+        var selectBtn = wrapper.querySelector('.file-select-btn');
+        BX.bind(selectBtn, 'click', function() {
+            input.click();
+        });
+    },
+
+    createFileWrapper: function (input) {
+        var isMultiple = input.hasAttribute('multiple');
+        var fieldName = input.closest('.form-group').querySelector('label').textContent.trim();
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'file-upload-wrapper';
+        wrapper.innerHTML =
+            '<div class="file-drop-zone">' +
+            '<div class="drop-content">' +
+            '<div class="drop-icon">📁</div>' +
+            '<div class="drop-text">Перетащите файл' + (isMultiple ? 'ы' : '') + ' сюда</div>' +
+            '<div class="drop-hint">или</div>' +
+            '<button type="button" class="btn btn-outline-primary file-select-btn">Выберите файл' + (isMultiple ? 'ы' : '') + '</button>' +
+            '</div>' +
+            '</div>' +
+            '<div class="file-info">' +
+            '<small><strong>Ограничения:</strong><br>' +
+            '• Максимальный размер: ' + Math.round(this.fileConfig.max_size / 1024 / 1024 * 10) / 10 + ' MB<br>' +
+            '• Разрешенные типы: ' + (this.fileConfig.allowed_extensions || []).join(', ').toUpperCase() + '</small>' +
+            '</div>' +
+            '<div class="selected-files-preview"></div>';
+
+        return wrapper;
+    },
+
+    initDragAndDrop: function (wrapper, input) {
+        var self = this;
+        var dropZone = wrapper.querySelector('.file-drop-zone');
+
+        // Предотвращение стандартного поведения браузера
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(eventName) {
+            BX.bind(dropZone, eventName, function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+
+        // Визуальная обратная связь
+        BX.bind(dropZone, 'dragenter', function(e) {
+            self.dragCounter++;
+            BX.addClass(dropZone, 'dragover');
+            self.trackAnalytics('file_drag_enter');
+        });
+
+        BX.bind(dropZone, 'dragleave', function(e) {
+            self.dragCounter--;
+            if (self.dragCounter === 0) {
+                BX.removeClass(dropZone, 'dragover');
+            }
+        });
+
+        BX.bind(dropZone, 'drop', function(e) {
+            self.dragCounter = 0;
+            BX.removeClass(dropZone, 'dragover');
+
+            var files = e.dataTransfer.files;
+            if (files.length > 0) {
+                self.handleDroppedFiles(files, input, wrapper);
+                self.trackAnalytics('files_dropped', { count: files.length });
+            }
+        });
+    },
+
+    handleDroppedFiles: function (files, input, wrapper) {
+        // Создаем FileList для input
+        var dataTransfer = new DataTransfer();
+
+        // Добавляем существующие файлы если multiple
+        if (input.hasAttribute('multiple') && input.files) {
+            for (var i = 0; i < input.files.length; i++) {
+                dataTransfer.items.add(input.files[i]);
+            }
+        }
+
+        // Добавляем новые файлы
+        for (var i = 0; i < files.length; i++) {
+            if (!input.hasAttribute('multiple') && i > 0) break;
+            dataTransfer.items.add(files[i]);
+        }
+
+        input.files = dataTransfer.files;
+        this.handleFileSelection(input, wrapper);
+    },
+
+    handleFileSelection: function (input, wrapper) {
+        var files = input.files;
+        var propertyId = input.name.replace('property_', '').replace('[]', '');
+
+        this.clearFileValidationError(wrapper);
+
+        if (files.length === 0) {
+            this.updateFilePreview(wrapper, []);
+            this.selectedFiles.delete(propertyId);
+            return;
+        }
+
+        var validFiles = [];
+        var errors = [];
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var fileErrors = this.validateSingleFile(file);
+
+            if (fileErrors.length === 0) {
+                validFiles.push(file);
+            } else {
+                errors = errors.concat(fileErrors);
+            }
+        }
+
+        if (errors.length > 0) {
+            this.showFileValidationError(wrapper, errors);
+            input.value = '';
+            this.trackAnalytics('file_validation_failed', {
+                errors_count: errors.length,
+                files_count: files.length
+            });
+        } else {
+            this.selectedFiles.set(propertyId, validFiles);
+            this.updateFilePreview(wrapper, validFiles);
+            this.trackAnalytics('files_selected', {
+                count: validFiles.length,
+                total_size: Array.from(validFiles).reduce((sum, f) => sum + f.size, 0)
+            });
+        }
+    },
+
+    validateSingleFile: function (file) {
+        var errors = [];
+        var maxSize = this.fileConfig.max_size || 10485760;
+        var allowedExtensions = this.fileConfig.allowed_extensions || [];
+        var forbiddenExtensions = this.fileConfig.forbidden_extensions || [];
+
+        var fileName = file.name.toLowerCase();
+        var fileExtension = fileName.split('.').pop();
+
+        // Проверка размера
+        if (file.size > maxSize) {
+            var maxSizeMB = Math.round(maxSize / 1024 / 1024 * 10) / 10;
+            errors.push('Файл "' + file.name + '" превышает максимальный размер (' + maxSizeMB + ' MB)');
+        }
+
+        // Проверка запрещенных расширений
+        if (forbiddenExtensions.indexOf(fileExtension) !== -1) {
+            errors.push('Тип файла "' + fileExtension + '" запрещен для загрузки');
+            return errors;
+        }
+
+        // Проверка разрешенных расширений
+        if (allowedExtensions.length > 0 && allowedExtensions.indexOf(fileExtension) === -1) {
+            errors.push('Тип файла "' + fileExtension + '" не разрешен');
+        }
+
+        // Проверка имени файла
+        if (this.isFileNameSuspicious(file.name)) {
+            errors.push('Имя файла "' + file.name + '" содержит недопустимые символы');
+        }
+
+        return errors;
+    },
+
+    updateFilePreview: function (wrapper, files) {
+        var preview = wrapper.querySelector('.selected-files-preview');
+        preview.innerHTML = '';
+
+        if (files.length === 0) {
+            return;
+        }
+
+        var container = document.createElement('div');
+        container.className = 'selected-files';
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var fileItem = this.createFilePreviewItem(file, i, wrapper);
+            container.appendChild(fileItem);
+        }
+
+        preview.appendChild(container);
+    },
+
+    createFilePreviewItem: function (file, index, wrapper) {
+        var self = this;
+        var item = document.createElement('div');
+        item.className = 'file-item';
+
+        var fileSize = this.formatFileSize(file.size);
+        var isImage = this.isImageFile(file);
+
+        item.innerHTML =
+            '<div class="file-info-block">' +
+            (isImage ? '<div class="file-thumbnail"></div>' : '<div class="file-icon">📄</div>') +
+            '<div class="file-details">' +
+            '<div class="file-name">' + file.name + '</div>' +
+            '<div class="file-size">' + fileSize + '</div>' +
+            '</div>' +
+            '</div>' +
+            '<button type="button" class="file-remove" title="Удалить файл">×</button>';
+
+        // Создание миниатюры для изображений
+        if (isImage) {
+            this.createImageThumbnail(file, item.querySelector('.file-thumbnail'));
+        }
+
+        // Обработка удаления файла
+        var removeBtn = item.querySelector('.file-remove');
+        BX.bind(removeBtn, 'click', function() {
+            self.removeFileFromSelection(wrapper, index);
+            self.trackAnalytics('file_removed', { file_name: file.name });
+        });
+
+        return item;
+    },
+
+    createImageThumbnail: function (file, container) {
+        if (!file.type.startsWith('image/')) return;
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'thumbnail-image';
+            img.style.maxWidth = '50px';
+            img.style.maxHeight = '50px';
+            img.style.objectFit = 'cover';
+            container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    },
+
+    removeFileFromSelection: function (wrapper, index) {
+        var input = wrapper.querySelector('input[type="file"]');
+        var propertyId = input.name.replace('property_', '').replace('[]', '');
+        var files = Array.from(this.selectedFiles.get(propertyId) || []);
+
+        files.splice(index, 1);
+
+        if (files.length === 0) {
+            this.selectedFiles.delete(propertyId);
+            input.value = '';
+        } else {
+            this.selectedFiles.set(propertyId, files);
+            // Обновляем FileList в input
+            var dataTransfer = new DataTransfer();
+            files.forEach(function(file) {
+                dataTransfer.items.add(file);
+            });
+            input.files = dataTransfer.files;
+        }
+
+        this.updateFilePreview(wrapper, files);
+    },
+
+    isImageFile: function (file) {
+        return file.type.startsWith('image/');
+    },
+
+    formatFileSize: function (bytes) {
+        if (bytes === 0) return '0 B';
+        var k = 1024;
+        var sizes = ['B', 'KB', 'MB', 'GB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    },
+
+    initMobileOptimizations: function () {
+        if (!this.isMobile) return;
+
+        // Оптимизация для мобильных устройств
+        BX.addClass(this.form, 'mobile-optimized');
+
+        // Увеличиваем размер touch targets
+        var inputs = this.form.querySelectorAll('input, button, select, textarea');
+        for (var i = 0; i < inputs.length; i++) {
+            BX.addClass(inputs[i], 'mobile-input');
+        }
+
+        // Автоскролл к ошибкам валидации
+        this.enableErrorScrolling();
+
+        // Виртуальная клавиатура
+        this.handleVirtualKeyboard();
+    },
+
+    enableErrorScrolling: function () {
+        var self = this;
+        this.originalShowMessage = this.showMessage;
+
+        this.showMessage = function(message, type) {
+            self.originalShowMessage.call(self, message, type);
+
+            if (type === 'error' && self.messagesBlock) {
+                setTimeout(function() {
+                    self.messagesBlock.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 100);
+            }
+        };
+    },
+
+    handleVirtualKeyboard: function () {
+        var initialHeight = window.innerHeight;
+
+        window.addEventListener('resize', function() {
+            var currentHeight = window.innerHeight;
+            var diff = initialHeight - currentHeight;
+
+            if (diff > 150) { // Клавиатура открыта
+                document.body.style.height = currentHeight + 'px';
+            } else {
+                document.body.style.height = '';
+            }
+        });
+    },
+
+    isFileNameSuspicious: function (fileName) {
+        return /[<>:"|?*]/.test(fileName) ||
+            fileName.substring(0, fileName.lastIndexOf('.')).indexOf('.') !== -1;
+    },
+
+    showFileValidationError: function (wrapper, errors) {
+        var errorDiv = document.createElement('div');
+        errorDiv.className = 'file-validation-error text-danger mt-2';
+        errorDiv.innerHTML = errors.join('<br>');
+
+        wrapper.appendChild(errorDiv);
+        BX.addClass(wrapper, 'has-error');
+
+        // Анимация встряхивания для привлечения внимания
+        BX.addClass(wrapper, 'shake');
+        setTimeout(function() {
+            BX.removeClass(wrapper, 'shake');
+        }, 500);
+    },
+
+    clearFileValidationError: function (wrapper) {
+        var errorDiv = wrapper.querySelector('.file-validation-error');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+        BX.removeClass(wrapper, 'has-error');
+    },
+
+    loadRecaptcha: function () {
+        if (!this.recaptchaLoaded && this.params.recaptchaPublicKey) {
+            var script = document.createElement('script');
+            script.src = 'https://www.google.com/recaptcha/api.js?render=' + this.params.recaptchaPublicKey;
+            script.onload = BX.proxy(function () {
+                this.recaptchaLoaded = true;
+            }, this);
+            document.head.appendChild(script);
+        }
+    },
+
+    onSubmit: function (e) {
+        e.preventDefault();
+
+        if (this.isSubmitting) {
+            return false;
+        }
+
+        this.hideMessage();
+        this.trackAnalytics('form_submit_attempt');
+
+        if (!this.validateForm()) {
+            this.trackAnalytics('form_validation_failed');
+            return false;
+        }
+
+        if (!this.validateAllFiles()) {
+            this.showMessage('Пожалуйста, исправьте ошибки в загружаемых файлах', 'error');
+            this.trackAnalytics('file_validation_failed_on_submit');
+            return false;
+        }
+
+        if (this.params.useGoogleRecaptcha === 'Y') {
+            this.submitWithRecaptcha();
+        } else {
+            this.submitForm();
+        }
+    },
+
+    validateForm: function () {
+        var requiredFields = this.form.querySelectorAll('[required]');
+        var isValid = true;
+
+        this.clearValidationErrors();
+
+        for (var i = 0; i < requiredFields.length; i++) {
+            var field = requiredFields[i];
+            var value = this.getFieldValue(field);
+
+            if (!value) {
+                this.addValidationError(field);
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    },
+
+    validateAllFiles: function () {
+        var fileInputs = this.form.querySelectorAll('input[type="file"]');
+        var isValid = true;
+
+        for (var i = 0; i < fileInputs.length; i++) {
+            if (fileInputs[i].files && fileInputs[i].files.length > 0) {
+                for (var j = 0; j < fileInputs[i].files.length; j++) {
+                    var errors = this.validateSingleFile(fileInputs[i].files[j]);
+                    if (errors.length > 0) {
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return isValid;
+    },
+
+    getFieldValue: function (field) {
+        if (field.type === 'checkbox' || field.type === 'radio') {
+            var name = field.name;
+            var checkedFields = this.form.querySelectorAll('input[name="' + name + '"]:checked');
+            return checkedFields.length > 0;
+        } else if (field.type === 'file') {
+            return field.files && field.files.length > 0;
+        } else {
+            return field.value.trim();
+        }
+    },
+
+    addValidationError: function (field) {
+        BX.addClass(field, 'is-invalid');
+
+        var formGroup = field.closest('.form-group');
+        if (formGroup) {
+            BX.addClass(formGroup, 'has-error');
+        }
+    },
+
+    clearValidationErrors: function () {
+        var invalidFields = this.form.querySelectorAll('.is-invalid');
+        for (var i = 0; i < invalidFields.length; i++) {
+            BX.removeClass(invalidFields[i], 'is-invalid');
+        }
+
+        var errorGroups = this.form.querySelectorAll('.has-error');
+        for (var j = 0; j < errorGroups.length; j++) {
+            BX.removeClass(errorGroups[j], 'has-error');
+        }
+
+        var fileErrors = this.form.querySelectorAll('.file-validation-error');
+        for (var k = 0; k < fileErrors.length; k++) {
+            fileErrors[k].remove();
+        }
+    },
+
+    submitWithRecaptcha: function () {
+        var self = this;
+
+        if (!this.recaptchaLoaded || typeof grecaptcha === 'undefined') {
+            this.showMessage('Ошибка загрузки reCAPTCHA', 'error');
+            return;
+        }
+
+        grecaptcha.ready(function () {
+            grecaptcha.execute(self.params.recaptchaPublicKey, {action: 'submit'}).then(function (token) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'g-recaptcha-response';
+                input.value = token;
+                self.form.appendChild(input);
+                self.submitForm();
+            });
+        });
+    },
+
+    submitForm: function () {
+        this.isSubmitting = true;
+        this.setSubmitButtonState(true);
+        this.trackAnalytics('form_submit_started');
+
+        var formData = new FormData(this.form);
+        formData.append('sessid', this.sessid);
+
+        var self = this;
+
+        BX.ajax({
+            method: 'POST',
+            dataType: 'json',
+            url: window.location.href,
+            data: formData,
+            processData: false,
+            start: function() {
+                self.trackAnalytics('ajax_request_started');
+            },
+            onsuccess: function(response) {
+                self.onSuccess(response);
+            },
+            onfailure: function() {
+                self.onFailure();
+            }
+        });
+    },
+
+    onSuccess: function (response) {
+        this.isSubmitting = false;
+        this.setSubmitButtonState(false);
+
+        if (response.success) {
+            this.showMessage(response.message, 'success');
+            this.resetForm();
+            this.trackAnalytics('form_submit_success', {
+                element_id: response.element_id
+            });
+
+            // Закрываем модальное окно через 2 секунды
+            setTimeout(BX.proxy(this.hideModal, this), 2000);
+        } else {
+            this.showMessage(response.message, 'error');
+            this.trackAnalytics('form_submit_error', {
+                error_message: response.message
+            });
+        }
+    },
+
+    onFailure: function () {
+        this.isSubmitting = false;
+        this.setSubmitButtonState(false);
+        this.showMessage('Ошибка отправки формы', 'error');
+        this.trackAnalytics('form_submit_failure');
+    },
+
+    setSubmitButtonState: function (loading) {
+        if (this.submitButton) {
+            this.submitButton.disabled = loading;
+            this.submitButton.innerHTML = loading ?
+                '<span class="spinner-border spinner-border-sm me-2"></span>Отправляется...' :
+                'Отправить';
+        }
+    },
+
+    resetForm: function () {
+        this.form.reset();
+        this.clearValidationErrors();
+        this.selectedFiles.clear();
+
+        // Очищаем превью файлов
+        var previews = this.form.querySelectorAll('.selected-files-preview');
+        for (var i = 0; i < previews.length; i++) {
+            previews[i].innerHTML = '';
+        }
+    },
+
+    hideModal: function () {
+        if (this.modal) {
+            var modal = bootstrap.Modal.getInstance(this.modal);
+            if (modal) {
+                modal.hide();
+            } else {
+                var bsModal = new bootstrap.Modal(this.modal);
+                bsModal.hide();
+            }
+        }
+    },
+
+    onModalHidden: function () {
+        this.resetForm();
+        this.hideMessage();
+    },
+
+    showMessage: function (message, type) {
+        if (this.messagesBlock) {
+            this.messagesBlock.innerHTML = message;
+            this.messagesBlock.className = 'alert alert-' + (type === 'success' ? 'success' : 'danger');
+            this.messagesBlock.style.display = 'block';
+
+            // Автоскрытие success сообщений на мобильных
+            if (type === 'success' && this.isMobile) {
+                setTimeout(BX.proxy(this.hideMessage, this), 3000);
+            }
+        }
+    },
+
+    hideMessage: function () {
+        if (this.messagesBlock) {
+            this.messagesBlock.style.display = 'none';
+            this.messagesBlock.innerHTML = '';
+        }
+    },
+
+    trackAnalytics: function (eventName, parameters) {
+        this.analytics.track(eventName, Object.assign({
+            form_id: this.params.formId,
+            timestamp: Date.now()
+        }, parameters || {}));
+    },
+
+    // Публичные методы для расширения функциональности
+    addCustomValidator: function (validator) {
+        // Возможность добавления кастомных валидаторов
+    },
+
+    getFormData: function () {
+        return new FormData(this.form);
+    },
+
+    destroy: function () {
+        // Очистка event listeners при уничтожении компонента
+        this.selectedFiles.clear();
+        // Дополнительная очистка...
+    }
+};
+
+/**
+ * Класс для аналитики
+ */
+BX.DDAPP.Tools.Analytics = function() {
+    this.queue = [];
+    this.init();
+};
+
+BX.DDAPP.Tools.Analytics.prototype = {
+    init: function() {
+        // Обработка очереди аналитики если GA загружен
+        if (typeof gtag !== 'undefined') {
+            this.processQueue();
+        }
+
+        // Обработка очереди из головы страницы
+        if (window.ddappAnalytics) {
+            this.queue = this.queue.concat(window.ddappAnalytics);
+            this.processQueue();
+        }
+    },
+
+    track: function(eventName, parameters) {
+        var event = {
+            event_name: eventName,
+            parameters: parameters || {}
+        };
+
+        this.queue.push(event);
+        this.processQueue();
+    },
+
+    processQueue: function() {
+        if (typeof gtag === 'undefined') {
+            return;
+        }
+
+        while (this.queue.length > 0) {
+            var event = this.queue.shift();
+
+            // Google Analytics
+            gtag('event', event.event_name, event.parameters);
+
+            // Яндекс.Метрика цели
+            if (typeof ym !== 'undefined' && window.yaCounter) {
+                var goalName = this.mapEventToYandexGoal(event.event_name);
+                if (goalName) {
+                    ym(window.yaCounter, 'reachGoal', goalName, event.parameters);
+                }
+            }
+        }
+    },
+
+    mapEventToYandexGoal: function(eventName) {
+        var mapping = {
+            'form_submit_success': 'form_submit',
+            'form_opened': 'form_view',
+            'files_selected': 'file_upload'
+        };
+
+        return mapping[eventName] || null;
+    }
+};

@@ -1,0 +1,16 @@
+{
+  "name": "local",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "csso-cli": "^4.0.2",
+    "sass": "^1.89.2",
+    "terser": "^5.43.1"
+  }
+}

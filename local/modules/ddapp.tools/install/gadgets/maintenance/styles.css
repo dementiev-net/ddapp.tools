@@ -1,0 +1,70 @@
+.maintenance {
+    border-radius: 5px;
+    padding: 15px;
+    min-height: 150px;
+}
+
+.maintenance.incomplete {
+    border-left: 4px solid red;
+}
+
+.maintenance.completed {
+    border-left: 4px solid green;
+}
+
+.maintenance .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.maintenance .header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.maintenance .items-list {
+    /*max-height: 200px;*/
+    /*overflow-y: auto;*/
+}
+
+.maintenance .items-list .item-row {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.maintenance .items-list .item-row:last-child {
+    border-bottom: none;
+}
+
+.maintenance .items-list .item-row .item-checkbox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    cursor: pointer;
+    min-width: 16px;
+}
+
+.maintenance .items-list .item-row .item-text {
+    flex: 1;
+    font-size: 12px;
+}
+
+.maintenance .items-list .item-row .item-text .item-link {
+    text-decoration: none;
+}
+
+.maintenance .items-list .item-row .item-text .item-link:hover {
+    text-decoration: underline;
+}
+
+.maintenance .items-list .item-row .item-text .item-name {
+    color: #586069;
+}

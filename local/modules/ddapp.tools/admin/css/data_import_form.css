@@ -1,0 +1,80 @@
+.data-import-form .profile-settings,
+.data-import-form .fields-selection {
+  display: none;
+}
+.data-import-form .field-item {
+  padding: 8px;
+  margin: 2px 0;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+.data-import-form .field-item:hover {
+  background: #e9ecef;
+}
+.data-import-form .field-item .field-checkbox {
+  margin-right: 8px;
+}
+.data-import-form .field-item .field-input {
+  margin-right: 8px;
+  width: 50px;
+}
+.data-import-form .field-item .field-label {
+  cursor: pointer;
+}
+.data-import-form .field-group {
+  margin-bottom: 20px;
+}
+.data-import-form .field-group h3 {
+  margin: 15px 0 10px 0 !important;
+  color: #2067b0 !important;
+}
+.data-import-form .sortable-container {
+  min-height: 50px;
+}
+
+.adm-info-message-wrap {
+  display: none;
+}
+
+.adm-file-input-container {
+  position: relative;
+  display: inline-block;
+  margin: 10px 0;
+}
+.adm-file-input-container .adm-file-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #45c9f3;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.adm-file-input-container .adm-file-btn:hover {
+  background: #49ddfd;
+}
+.adm-file-input-container .adm-file-btn .adm-file-btn-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  cursor: pointer;
+}
+.adm-file-input-container .adm-file-btn .adm-file-btn-text {
+  font-size: 12px !important;
+  color: white !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+}
+.adm-file-input-container .adm-file-input-filename {
+  margin-left: 10px;
+  color: #535c69;
+  font-size: 14px;
+}
+
+/*# sourceMappingURL=data_import_form.css.map */

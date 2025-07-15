@@ -1,0 +1,559 @@
+// Переменные
+$primary-color: #0d6efd;
+$secondary-color: #6c757d;
+$success-color: #198754;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #0dcaf0;
+
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+
+$border-radius: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+
+$transition-base: all 0.3s ease;
+$transition-fast: all 0.15s ease;
+$transition-slow: all 0.5s ease;
+
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+$shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+
+// Миксины
+@mixin gradient-primary {
+  background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 10%) 100%);
+}
+
+@mixin gradient-danger {
+  background: linear-gradient(135deg, $danger-color 0%, darken($danger-color, 10%) 100%);
+}
+
+@mixin gradient-light {
+  background: linear-gradient(135deg, $gray-100 0%, $gray-200 100%);
+}
+
+@mixin button-hover-effect {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba($primary-color, 0.3);
+}
+
+@mixin focus-outline {
+  outline: 2px solid $primary-color;
+  outline-offset: 2px;
+}
+
+@mixin mobile-touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+// Основной wrapper компонента
+.ddapp-form-wrapper {
+
+  // Basic form styles
+  .captcha-image {
+    margin-bottom: 10px;
+    border: 1px solid $gray-300;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .text-danger {
+    color: $danger-color;
+  }
+
+  .form-check {
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-header {
+    background-color: $gray-100;
+    border-bottom: 1px solid $gray-300;
+  }
+
+  // Enhanced file upload styles
+  .file-upload-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .file-drop-zone {
+    border: 2px dashed $gray-300;
+    border-radius: $border-radius-lg;
+    padding: 2rem;
+    text-align: center;
+    @include gradient-light;
+    transition: $transition-base;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba($primary-color, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    &:hover {
+      &::before {
+        left: 100%;
+      }
+
+      border-color: $primary-color;
+      background: linear-gradient(135deg, lighten($primary-color, 35%) 0%, lighten($primary-color, 25%) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba($primary-color, 0.15);
+
+      .drop-icon {
+        transform: scale(1.1);
+      }
+    }
+
+    &.dragover {
+      border-style: solid;
+      border-color: $primary-color;
+      background: linear-gradient(135deg, lighten($primary-color, 35%) 0%, lighten($primary-color, 25%) 100%);
+      animation: pulse 1s infinite;
+    }
+  }
+
+  .drop-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .drop-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+    transition: transform 0.3s ease;
+  }
+
+  .drop-text {
+    color: $gray-700;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .drop-hint {
+    color: $gray-600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .file-select-btn {
+    @include gradient-primary;
+    border: none;
+    border-radius: $border-radius;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: $transition-base;
+    box-shadow: 0 4px 15px rgba($primary-color, 0.2);
+
+    &:hover {
+      @include button-hover-effect;
+    }
+
+    &:focus {
+      @include focus-outline;
+    }
+  }
+
+  // File info section
+  .file-info {
+    background-color: $gray-100;
+    border: 1px solid $gray-200;
+    border-radius: $border-radius;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+
+    strong {
+      color: $gray-700;
+    }
+  }
+
+  // Selected files preview
+  .selected-files {
+    background: #ffffff;
+    border: 1px solid $gray-200;
+    border-radius: $border-radius;
+    padding: 1rem;
+    margin-top: 1rem;
+    box-shadow: $shadow-sm;
+  }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: $gray-100;
+    border-radius: $border-radius;
+    transition: $transition-base;
+    border: 1px solid transparent;
+    animation: slideInUp 0.3s ease-out;
+
+    &:hover {
+      background: $gray-200;
+      border-color: $gray-300;
+      transform: translateX(5px);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .file-info-block {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .file-thumbnail,
+  .file-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: $border-radius;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $gray-200;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .file-thumbnail {
+    overflow: hidden;
+    background: $gray-100;
+    border: 1px solid $gray-300;
+  }
+
+  .thumbnail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .file-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-name {
+    font-weight: 600;
+    color: $gray-700;
+    margin-bottom: 0.25rem;
+    word-break: break-word;
+  }
+
+  .file-size {
+    font-size: 0.875rem;
+    color: $gray-600;
+  }
+
+  .file-remove {
+    @include gradient-danger;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-base;
+    flex-shrink: 0;
+
+    &:hover {
+      background: linear-gradient(135deg, darken($danger-color, 10%) 0%, darken($danger-color, 20%) 100%);
+      transform: scale(1.1);
+    }
+
+    &:focus {
+      @include focus-outline;
+    }
+  }
+
+  // File validation errors
+  .file-validation-error {
+    background: lighten($danger-color, 35%);
+    border: 1px solid lighten($danger-color, 25%);
+    border-radius: $border-radius;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: darken($danger-color, 20%);
+  }
+
+  .has-error {
+    .file-drop-zone {
+      border-color: $danger-color;
+      background: linear-gradient(135deg, lighten($danger-color, 35%) 0%, lighten($danger-color, 25%) 100%);
+    }
+
+    .form-control,
+    .form-select {
+      border-color: $danger-color;
+      box-shadow: 0 0 0 0.2rem rgba($danger-color, 0.25);
+    }
+
+    .form-label {
+      color: $danger-color;
+      font-weight: 600;
+    }
+  }
+
+  // Progress indicators
+  .upload-progress {
+    margin-top: 0.5rem;
+    background: $gray-200;
+    border-radius: $border-radius;
+    overflow: hidden;
+    height: 8px;
+
+    .progress-bar {
+      background: linear-gradient(90deg, $primary-color 0%, darken($primary-color, 10%) 100%);
+      height: 100%;
+      transition: width 0.3s ease;
+      border-radius: $border-radius;
+    }
+  }
+
+  // Mobile optimizations
+  &.mobile-optimized {
+    input,
+    textarea,
+    select,
+    button {
+      @include mobile-touch-target;
+      font-size: 16px; // Prevents zoom on iOS
+    }
+  }
+
+  .mobile-input {
+    border-radius: $border-radius-lg;
+    padding: 0.75rem 1rem;
+    border: 2px solid $gray-200;
+    transition: $transition-base;
+
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.15);
+      transform: translateY(-1px);
+    }
+  }
+
+  // Spinner for submit button
+  .spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+  }
+
+  // Enhanced modal styles
+  .modal-content {
+    border: none;
+    border-radius: $border-radius-xl;
+    box-shadow: $shadow-xl;
+  }
+
+  .modal-header {
+    border-radius: $border-radius-xl $border-radius-xl 0 0;
+    padding: 1.5rem;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+  }
+
+  .modal-title {
+    font-weight: 700;
+    color: $gray-900;
+  }
+
+  // Loading overlay
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius;
+    z-index: 10;
+  }
+
+  .loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 0.25em solid #f3f3f3;
+    border-top: 0.25em solid $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ddapp-form-wrapper {
+  .shake {
+    animation: shake 0.6s ease-in-out;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .ddapp-form-wrapper {
+    .modal-dialog {
+      margin: 0.5rem;
+      max-width: calc(100% - 1rem);
+    }
+
+    .file-drop-zone {
+      padding: 1.5rem 1rem;
+    }
+
+    .drop-icon {
+      font-size: 2.5rem;
+    }
+
+    .drop-text {
+      font-size: 1rem;
+    }
+
+    .file-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .file-info-block {
+      width: 100%;
+    }
+
+    .file-remove {
+      align-self: flex-end;
+      margin-top: 0.5rem;
+    }
+
+    .file-thumbnail,
+    .file-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+    }
+
+    // Enhanced touch targets
+    .file-select-btn {
+      @include mobile-touch-target;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+    }
+
+    .file-remove {
+      width: 40px;
+      height: 40px;
+      font-size: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .ddapp-form-wrapper {
+    .modal-dialog {
+      margin: 0.25rem;
+    }
+
+    .file-drop-zone {
+      padding: 1rem 0.75rem;
+    }
+
+    .modal-body {
+      padding: 1rem;
+    }
+
+    .file-item {
+      padding: 0.5rem;
+    }
+
+    .selected-files {
+      padding: 0.75rem;
+    }
+  }
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  .ddapp-form-wrapper * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Focus styles for accessibility
+.ddapp-form-wrapper {
+  .file-drop-zone:focus-within {
+    @include focus-outline;
+  }
+}

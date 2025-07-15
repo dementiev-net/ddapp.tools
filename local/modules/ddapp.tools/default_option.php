@@ -1,0 +1,37 @@
+<?php
+$ddapp_tools_default_option = [
+    "maint_period" => 30,
+    "cache_period" => 0,
+    "export_step" => 100,
+
+    "log_enabled" => "Y",
+    "log_date_format" => "d.m.Y H:i:s",
+    "log_email" => "admin@yoursite.ru",
+    "log_email_enabled" => "Y",
+    "log_max_file_size" => 5242880,
+    "log_max_files" => 20,
+    "log_min_level" => 1,
+    "log_path" => "/upload/logs/",
+
+    "disk_enabled" => "Y",
+    "disk_all_space" => 0,
+    "disk_delete_cache" => "Y",
+    "disk_email" => "admin@yoursite.ru",
+    "disk_email_enabled" => "Y",
+    "disk_free_space" => 3000,
+    "disk_type_filesystem" => 1,
+
+    "smtp_enabled" => "Y",
+    "smtp_host" => "smtp.yandex.ru",
+    "smtp_secure" => "",
+    "smtp_port" => 465,
+    "smtp_login" => "admin@yoursite.ru",
+    "smtp_password" => "",
+    "smtp_email_sender" => "admin@yoursite.ru",
+    "smtp_name_sender" => "yoursite.ru",
+    "smtp_dkim_enabled" => "N",
+    "smtp_dkim_domain" => "yoursite.ru",
+    "smtp_dkim_selector" => "mail",
+    "smtp_dkim_passphrase" => "",
+    "smtp_dkim_private_key" => "-----BEGIN RSA PRIVATE KEY-----",
+];

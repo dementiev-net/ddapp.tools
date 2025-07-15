@@ -1,0 +1,55 @@
+.data-export-form .profile-settings,
+.data-export-form .fields-selection,
+.data-export-form .csv-settings,
+.data-export-form .excel-settings {
+  display: none;
+}
+.data-export-form .field-item {
+  cursor: move;
+  padding: 8px;
+  margin: 2px 0;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+.data-export-form .field-item:hover {
+  background: #e9ecef;
+}
+.data-export-form .field-item.dragging {
+  opacity: 0.5;
+  background: #fff3cd;
+}
+.data-export-form .field-item .drag-handle {
+  margin-right: 8px;
+  color: #6c757d;
+  cursor: grab;
+}
+.data-export-form .field-item .drag-handle:hover {
+  color: #495057;
+}
+.data-export-form .field-item .field-checkbox {
+  margin-right: 8px;
+}
+.data-export-form .field-item .field-label {
+  flex: 1;
+  cursor: pointer;
+}
+.data-export-form .field-group {
+  margin-bottom: 20px;
+}
+.data-export-form .field-group h3 {
+  margin: 15px 0 10px 0 !important;
+  color: #2067b0 !important;
+}
+.data-export-form .sortable-container {
+  min-height: 50px;
+}
+
+.adm-info-message-wrap {
+  display: none;
+}
+
+/*# sourceMappingURL=data_export_form.css.map */

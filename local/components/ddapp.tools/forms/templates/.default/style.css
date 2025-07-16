@@ -414,4 +414,70 @@
   outline-offset: 2px;
 }
 
+.ddapp-form-wrapper .masked-input {
+  transition: all 0.3s ease;
+}
+.ddapp-form-wrapper .masked-input.is-valid {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+.ddapp-form-wrapper .masked-input.is-valid:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+.ddapp-form-wrapper .masked-input.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.ddapp-form-wrapper .masked-input.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.ddapp-form-wrapper .masked-input[data-suggestion] {
+  position: relative;
+}
+.ddapp-form-wrapper .masked-input[data-suggestion]::placeholder {
+  color: rgb(114.1639344262, 170.6147540984, 253.8360655738);
+  font-style: italic;
+}
+.ddapp-form-wrapper .masked-input.input-error {
+  animation: inputShake 0.3s ease-in-out;
+}
+.ddapp-form-wrapper .email-hint {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+.ddapp-form-wrapper .email-hint kbd {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+}
+@media (max-width: 768px) {
+  .ddapp-form-wrapper .masked-input {
+    font-size: 16px;
+  }
+  .ddapp-form-wrapper .masked-input[data-mask-type=phone] {
+    letter-spacing: 0.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .ddapp-form-wrapper .masked-input[data-mask-type=email] {
+    text-transform: lowercase;
+  }
+}
+
+@keyframes inputShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
 /*# sourceMappingURL=style.css.map */

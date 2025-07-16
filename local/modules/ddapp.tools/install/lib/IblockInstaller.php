@@ -31,8 +31,8 @@ class IblockInstaller
 
         $arPropFields = [
             ["NAME" => "Имя", "ACTIVE" => "Y", "SORT" => "100", "CODE" => "NAME", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "Y", "SEARCHABLE" => "N"],
-            ["NAME" => "Телефон", "ACTIVE" => "Y", "SORT" => "200", "CODE" => "PHONE", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "Y", "SEARCHABLE" => "N"],
-            ["NAME" => "E-Mail", "ACTIVE" => "Y", "SORT" => "300", "CODE" => "EMAIL", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N", "SEARCHABLE" => "N"],
+            ["NAME" => "Телефон", "ACTIVE" => "Y", "SORT" => "200", "CODE" => "PHONE", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "Y", "SEARCHABLE" => "N", "HINT" => "PHONE"],
+            ["NAME" => "E-Mail", "ACTIVE" => "Y", "SORT" => "300", "CODE" => "EMAIL", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N", "SEARCHABLE" => "N", "HINT" => "EMAIL"],
             ["NAME" => "Ваш вопрос", "ACTIVE" => "Y", "SORT" => "400", "CODE" => "COMMENT", "PROPERTY_TYPE" => "S", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N", "SEARCHABLE" => "N", "ROW_COUNT" => 5, "COL_COUNT" => 30],
             ["NAME" => "Категория вопроса", "ACTIVE" => "Y", "SORT" => "500", "CODE" => "CATEGORIES", "PROPERTY_TYPE" => "L", "IBLOCK_ID" => $iblockId, "IS_REQUIRED" => "N",
                 "VALUES" => [

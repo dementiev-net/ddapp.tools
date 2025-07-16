@@ -51,6 +51,8 @@ if (!empty($arParams["YANDEX_METRIKA_ID"])) {
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
         crossorigin="anonymous"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/inputmask.min.js"></script>
+
 <div class="ddapp-form-wrapper">
 
     <!-- Кнопка -->
@@ -120,6 +122,12 @@ if (!empty($arParams["YANDEX_METRIKA_ID"])) {
                                                placeholder="Введите <?= strtolower($property["NAME"]) ?>"
                                             <?= $property["IS_REQUIRED"] === "Y" ? " required" : "" ?>
                                                aria-describedby="<?= !empty($property["HINT"]) ? "hint_" . $property["ID"] : "" ?>">
+                                        <?php if (!empty($property["HINT"]) && strtoupper(trim($property["HINT"])) === "EMAIL"): ?>
+                                            <div class="email-hint">
+                                                <i class="fas fa-lightbulb me-1"></i>
+                                                Нажмите <kbd>Tab</kbd> для автодополнения домена
+                                            </div>
+                                        <?php endif; ?>
                                     <?php endif; ?>
 
                                 <?php

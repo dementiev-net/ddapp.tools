@@ -31,6 +31,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
 
         this.bindEvents();
         this.initFileHandling();
+        this.initInputMasks();
         this.initMobileOptimizations();
         this.trackAnalytics('form_loaded', { form_id: this.params.formId });
     },
@@ -500,6 +501,13 @@ BX.DDAPP.Tools.FormManager.prototype = {
             }
         }
 
+        // Проверка масок
+        var maskErrors = this.validateMaskedFields();
+        if (maskErrors.length > 0) {
+            this.showMessage(maskErrors.join('<br>'), 'error');
+            isValid = false;
+        }
+
         return isValid;
     },
 
@@ -580,12 +588,370 @@ BX.DDAPP.Tools.FormManager.prototype = {
         });
     },
 
+    initInputMasks: function() {
+        // Проверяем доступность Inputmask
+        if (typeof Inputmask === 'undefined') {
+            console.warn('Inputmask library not loaded');
+            return;
+        }
+
+        var maskedInputs = this.form.querySelectorAll('.masked-input');
+        var self = this;
+
+        for (var i = 0; i < maskedInputs.length; i++) {
+            this.setupInputMask(maskedInputs[i]);
+        }
+
+        // Логирование если доступно
+        if (typeof console !== 'undefined') {
+            console.log('Input masks initialized:', maskedInputs.length);
+        }
+    },
+
+    setupInputMask: function(input) {
+        var maskType = input.getAttribute('data-mask-type');
+        var self = this;
+
+        if (maskType === 'phone') {
+            this.setupPhoneMask(input);
+        } else if (maskType === 'email') {
+            this.setupEmailMask(input);
+        }
+    },
+
+    setupPhoneMask: function(input) {
+        var self = this;
+
+        // Создаем маску для телефонов
+        var im = new Inputmask({
+            mask: [
+                '+7 (999) 999-99-99',
+                '+9{1,4} 999 999 999',
+                '+9{1,4} 999 999 9999',
+                '+9{1,4} 999 999 99999'
+            ],
+            showMaskOnHover: false,
+            showMaskOnFocus: true,
+            placeholder: '_',
+            clearIncomplete: true,
+            autoUnmask: false,
+            removeMaskOnSubmit: false,
+            onBeforePaste: function(pastedValue, opts) {
+                var cleaned = pastedValue.replace(/\D/g, '');
+
+                if (cleaned.length === 11 && cleaned[0] === '8') {
+                    cleaned = '7' + cleaned.substring(1);
+                }
+
+                if (cleaned.length === 11 && cleaned[0] === '7') {
+                    cleaned = '+' + cleaned;
+                }
+
+                return cleaned;
+            },
+            onincomplete: function() {
+                BX.addClass(input, 'is-invalid');
+                BX.removeClass(input, 'is-valid');
+            },
+            oncomplete: function() {
+                BX.removeClass(input, 'is-invalid');
+                BX.addClass(input, 'is-valid');
+
+                self.trackAnalytics('phone_complete', {
+                    'field_name': input.name,
+                    'phone_length': input.value.length
+                });
+            },
+            onKeyValidation: function(key, result) {
+                if (!result && input) {
+                    input.style.borderColor = '#dc3545';
+                    setTimeout(function() {
+                        input.style.borderColor = '';
+                    }, 300);
+                }
+            }
+        });
+
+        // Применяем маску
+        im.mask(input);
+
+        // Сохраняем ссылку на маску
+        input._inputmask = im;
+
+        // Дополнительные обработчики
+        BX.bind(input, 'focus', function() {
+            if (this.value === '' || this.value === '+7 (___) ___-__-__') {
+                this.value = '+7 ';
+                setTimeout(function() {
+                    if (input.setSelectionRange) {
+                        input.setSelectionRange(3, 3);
+                    }
+                }, 10);
+            }
+        });
+
+        BX.bind(input, 'blur', function() {
+            if (im.unmaskedvalue && im.unmaskedvalue().length === 0) {
+                this.value = '';
+                BX.removeClass(this, 'is-valid');
+                BX.removeClass(this, 'is-invalid');
+            }
+        });
+
+        BX.bind(input, 'input', function() {
+            if (im.unmaskedvalue) {
+                var unmaskedValue = im.unmaskedvalue();
+
+                if (unmaskedValue.length >= 5 && unmaskedValue.length <= 15) {
+                    self.trackAnalytics('phone_progress', {
+                        'field_name': input.name,
+                        'digits_entered': unmaskedValue.length
+                    });
+                }
+            }
+        });
+    },
+
+    setupEmailMask: function(input) {
+        var self = this;
+
+        // Для email не используем inputmask, делаем собственную валидацию
+        BX.bind(input, 'input', function() {
+            var value = this.value.toLowerCase();
+            this.value = value;
+
+            var isValid = self.validateEmail(value);
+
+            if (value.length > 0) {
+                if (isValid) {
+                    BX.removeClass(this, 'is-invalid');
+                    BX.addClass(this, 'is-valid');
+                } else {
+                    BX.removeClass(this, 'is-valid');
+                    BX.addClass(this, 'is-invalid');
+                }
+            } else {
+                BX.removeClass(this, 'is-valid');
+                BX.removeClass(this, 'is-invalid');
+            }
+
+            self.handleEmailAutocomplete(this, value);
+        });
+
+        BX.bind(input, 'keydown', function(e) {
+            // Tab для принятия автодополнения
+            if (e.keyCode === 9 && this.getAttribute('data-suggestion')) {
+                e.preventDefault();
+                this.value = this.getAttribute('data-suggestion');
+                this.removeAttribute('data-suggestion');
+                this.placeholder = 'example@domain.com';
+
+                var event;
+                if (typeof Event === 'function') {
+                    event = new Event('input', { bubbles: true });
+                } else {
+                    event = document.createEvent('Event');
+                    event.initEvent('input', true, true);
+                }
+                this.dispatchEvent(event);
+            }
+        });
+    },
+
+    handleEmailAutocomplete: function(input, value) {
+        if (!value.includes('@') || value.includes('.')) {
+            input.removeAttribute('data-suggestion');
+            input.placeholder = 'example@domain.com';
+            return;
+        }
+
+        var parts = value.split('@');
+        if (parts.length === 2 && parts[1].length > 0) {
+            var domain = parts[1];
+            var suggestions = [
+                'gmail.com',
+                'yandex.ru',
+                'mail.ru',
+                'outlook.com',
+                'hotmail.com',
+                'yahoo.com',
+                'rambler.ru',
+                'inbox.ru'
+            ];
+
+            for (var i = 0; i < suggestions.length; i++) {
+                if (suggestions[i].indexOf(domain) === 0 && suggestions[i] !== domain) {
+                    var suggestion = parts[0] + '@' + suggestions[i];
+                    input.setAttribute('data-suggestion', suggestion);
+                    input.placeholder = suggestion;
+                    return;
+                }
+            }
+        }
+
+        input.removeAttribute('data-suggestion');
+        input.placeholder = 'example@domain.com';
+    },
+
+
+    setupEmailValidation: function(input) {
+        var self = this;
+
+        BX.bind(input, 'input', function(e) {
+            var value = e.target.value.toLowerCase();
+            e.target.value = value;
+
+            // Простая валидация email в реальном времени
+            var isValid = self.validateEmail(value);
+
+            if (value.length > 0) {
+                if (isValid) {
+                    BX.removeClass(e.target, 'is-invalid');
+                    BX.addClass(e.target, 'is-valid');
+                } else {
+                    BX.removeClass(e.target, 'is-valid');
+                    BX.addClass(e.target, 'is-invalid');
+                }
+            } else {
+                BX.removeClass(e.target, 'is-valid');
+                BX.removeClass(e.target, 'is-invalid');
+            }
+
+            // Аналитика
+            if (isValid && value.length > 5) {
+                self.trackAnalytics('email_valid', {
+                    field_name: e.target.name,
+                    domain: value.split('@')[1] || ''
+                });
+            }
+        });
+
+        // Автодополнение популярных доменов
+        BX.bind(input, 'keyup', function(e) {
+            if (e.keyCode === 9 || e.keyCode === 13) return; // Tab или Enter
+
+            var value = e.target.value;
+            if (value.includes('@') && !value.includes('.')) {
+                var parts = value.split('@');
+                if (parts.length === 2 && parts[1].length > 0) {
+                    var domain = parts[1];
+                    var suggestions = ['gmail.com', 'yandex.ru', 'mail.ru', 'outlook.com', 'yahoo.com'];
+
+                    for (var i = 0; i < suggestions.length; i++) {
+                        if (suggestions[i].indexOf(domain) === 0) {
+                            var suggestion = parts[0] + '@' + suggestions[i];
+                            self.showEmailSuggestion(e.target, suggestion, parts[0].length + 1 + domain.length);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+    },
+
+    validateEmail: function(email) {
+        var re = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+        return re.test(email.toLowerCase());
+    },
+
+    showEmailSuggestion: function(input, suggestion, cursorPos) {
+        // Простое автодополнение через placeholder
+        if (input.value.length < suggestion.length) {
+            input.setAttribute('data-suggestion', suggestion);
+
+            // Добавляем подсказку в placeholder, если поле пустое
+            if (input.value === '') {
+                input.placeholder = suggestion;
+            }
+        }
+    },
+
+    validateMaskedFields: function() {
+        var maskedInputs = this.form.querySelectorAll('.masked-input');
+        var errors = [];
+
+        for (var i = 0; i < maskedInputs.length; i++) {
+            var input = maskedInputs[i];
+            var maskType = input.getAttribute('data-mask-type');
+            var value = input.value.trim();
+
+            if (input.hasAttribute('required') && value === '') {
+                continue;
+            }
+
+            if (value !== '') {
+                if (maskType === 'email' && !this.validateEmail(value)) {
+                    errors.push('Поле "' + this.getFieldLabel(input) + '" должно содержать корректный email адрес');
+                } else if (maskType === 'phone' && !this.validatePhone(value)) {
+                    errors.push('Поле "' + this.getFieldLabel(input) + '" должно содержать корректный номер телефона');
+                }
+            }
+        }
+
+        return errors;
+    },
+
+    validatePhone: function(phone) {
+        var cleaned = phone.replace(/\D/g, '');
+
+        if (cleaned.length === 11 && cleaned[0] === '7') {
+            return true;
+        }
+
+        if (cleaned.length >= 7 && cleaned.length <= 15) {
+            return true;
+        }
+
+        return false;
+    },
+
+    getFieldLabel: function(input) {
+        var label = this.form.querySelector('label[for="' + input.id + '"]');
+        return label ? label.textContent.replace('*', '').trim() : input.name;
+    },
+
+    // Метод для получения очищенного значения телефона
+    getPhoneValue: function(input) {
+        if (input._inputmask && input._inputmask.unmaskedvalue) {
+            return input._inputmask.unmaskedvalue();
+        }
+        return input.value.replace(/\D/g, '');
+    },
+
+// Метод для программной установки значения телефона
+    setPhoneValue: function(input, phoneNumber) {
+        if (input._inputmask && input._inputmask.setValue) {
+            input._inputmask.setValue(phoneNumber);
+        } else {
+            input.value = phoneNumber;
+        }
+    },
+
     submitForm: function () {
         this.isSubmitting = true;
         this.setSubmitButtonState(true);
         this.trackAnalytics('form_submit_started');
 
         var formData = new FormData(this.form);
+
+        // Получаем очищенные значения телефонов для отправки
+        var phoneInputs = this.form.querySelectorAll('input[data-mask-type="phone"]');
+        for (var i = 0; i < phoneInputs.length; i++) {
+            var input = phoneInputs[i];
+            var cleanedPhone = this.getPhoneValue(input);
+
+            if (cleanedPhone && cleanedPhone.length > 0) {
+                // Отправляем с + если это не международный номер
+                var phoneToSend = cleanedPhone;
+                if (cleanedPhone.length === 11 && cleanedPhone[0] === '7') {
+                    phoneToSend = '+' + cleanedPhone;
+                } else if (cleanedPhone[0] !== '+') {
+                    phoneToSend = '+' + cleanedPhone;
+                }
+                formData.set(input.name, phoneToSend);
+            }
+        }
+
         formData.append('sessid', this.sessid);
 
         var self = this;

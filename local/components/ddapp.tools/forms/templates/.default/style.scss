@@ -557,3 +557,84 @@ $shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
     @include focus-outline;
   }
 }
+
+
+// Стили для полей с inputmask
+.ddapp-form-wrapper {
+  .masked-input {
+    transition: $transition-base;
+
+    &.is-valid {
+      border-color: $success-color;
+      box-shadow: 0 0 0 0.2rem rgba($success-color, 0.25);
+
+      &:focus {
+        border-color: $success-color;
+        box-shadow: 0 0 0 0.2rem rgba($success-color, 0.25);
+      }
+    }
+
+    &.is-invalid {
+      border-color: $danger-color;
+      box-shadow: 0 0 0 0.2rem rgba($danger-color, 0.25);
+
+      &:focus {
+        border-color: $danger-color;
+        box-shadow: 0 0 0 0.2rem rgba($danger-color, 0.25);
+      }
+    }
+
+    // Стили для placeholder автодополнения
+    &[data-suggestion] {
+      position: relative;
+
+      &::placeholder {
+        color: lighten($primary-color, 20%);
+        font-style: italic;
+      }
+    }
+
+    // Анимация для неверного ввода
+    &.input-error {
+      animation: inputShake 0.3s ease-in-out;
+    }
+  }
+
+  // Подсказка для Tab в email полях
+  .email-hint {
+    font-size: 0.75rem;
+    color: $gray-600;
+    margin-top: 0.25rem;
+
+    kbd {
+      background-color: $gray-200;
+      color: $gray-700;
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+      font-size: 0.7rem;
+    }
+  }
+
+  // Мобильные стили
+  @media (max-width: 768px) {
+    .masked-input {
+      font-size: 16px; // Предотвращает зум на iOS
+
+      &[data-mask-type="phone"] {
+        letter-spacing: 0.5px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      &[data-mask-type="email"] {
+        text-transform: lowercase;
+      }
+    }
+  }
+}
+
+// Анимация для ошибки ввода
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}

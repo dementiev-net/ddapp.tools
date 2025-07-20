@@ -162,5 +162,24 @@ $arComponentParameters = array(
             "TYPE" => "STRING",
             "DEFAULT" => "",
         ),
+        "USE_PRIVACY_POLICY" => array(
+            "PARENT" => "BASE",
+            "NAME" => "Использовать чекбокс согласия на политику персональных данных",
+            "TYPE" => "CHECKBOX",
+            "DEFAULT" => "N",
+        ),
+        "PRIVACY_POLICY_TEXT" => array(
+            "PARENT" => "BASE",
+            "NAME" => "Текст согласия на политику персональных данных",
+            "TYPE" => "STRING",
+            "DEFAULT" => "Я согласен с политикой обработки персональных данных",
+            "COLS" => 80,
+        ),
+        "PRIVACY_POLICY_LINK" => array(
+            "PARENT" => "BASE",
+            "NAME" => "Ссылка на политику персональных данных",
+            "TYPE" => "STRING",
+            "DEFAULT" => "/privacy-policy/",
+        ),
     ),
 );

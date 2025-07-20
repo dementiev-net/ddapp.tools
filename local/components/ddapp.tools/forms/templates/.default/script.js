@@ -33,7 +33,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         this.initFileHandling();
         this.initInputMasks();
         this.initMobileOptimizations();
-        this.trackAnalytics('form_loaded', { form_id: this.params.formId });
+        this.trackAnalytics('form_loaded', {form_id: this.params.formId});
     },
 
     detectMobile: function () {
@@ -59,7 +59,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         // Отслеживание взаимодействий с полями
         var formFields = this.form.querySelectorAll('input, textarea, select');
         for (var i = 0; i < formFields.length; i++) {
-            BX.bind(formFields[i], 'focus', BX.proxy(function(e) {
+            BX.bind(formFields[i], 'focus', BX.proxy(function (e) {
                 this.trackAnalytics('field_focused', {
                     field_type: e.target.type,
                     field_name: e.target.name
@@ -90,13 +90,13 @@ BX.DDAPP.Tools.FormManager.prototype = {
         this.initDragAndDrop(wrapper, input);
 
         // Обработка выбора файлов
-        BX.bind(input, 'change', function(e) {
+        BX.bind(input, 'change', function (e) {
             self.handleFileSelection(e.target, wrapper);
         });
 
         // Кнопка выбора файлов
         var selectBtn = wrapper.querySelector('.file-select-btn');
-        BX.bind(selectBtn, 'click', function() {
+        BX.bind(selectBtn, 'click', function () {
             input.click();
         });
     },
@@ -131,35 +131,35 @@ BX.DDAPP.Tools.FormManager.prototype = {
         var dropZone = wrapper.querySelector('.file-drop-zone');
 
         // Предотвращение стандартного поведения браузера
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(eventName) {
-            BX.bind(dropZone, eventName, function(e) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (eventName) {
+            BX.bind(dropZone, eventName, function (e) {
                 e.preventDefault();
                 e.stopPropagation();
             });
         });
 
         // Визуальная обратная связь
-        BX.bind(dropZone, 'dragenter', function(e) {
+        BX.bind(dropZone, 'dragenter', function (e) {
             self.dragCounter++;
             BX.addClass(dropZone, 'dragover');
             self.trackAnalytics('file_drag_enter');
         });
 
-        BX.bind(dropZone, 'dragleave', function(e) {
+        BX.bind(dropZone, 'dragleave', function (e) {
             self.dragCounter--;
             if (self.dragCounter === 0) {
                 BX.removeClass(dropZone, 'dragover');
             }
         });
 
-        BX.bind(dropZone, 'drop', function(e) {
+        BX.bind(dropZone, 'drop', function (e) {
             self.dragCounter = 0;
             BX.removeClass(dropZone, 'dragover');
 
             var files = e.dataTransfer.files;
             if (files.length > 0) {
                 self.handleDroppedFiles(files, input, wrapper);
-                self.trackAnalytics('files_dropped', { count: files.length });
+                self.trackAnalytics('files_dropped', {count: files.length});
             }
         });
     },
@@ -307,9 +307,9 @@ BX.DDAPP.Tools.FormManager.prototype = {
 
         // Обработка удаления файла
         var removeBtn = item.querySelector('.file-remove');
-        BX.bind(removeBtn, 'click', function() {
+        BX.bind(removeBtn, 'click', function () {
             self.removeFileFromSelection(wrapper, index);
-            self.trackAnalytics('file_removed', { file_name: file.name });
+            self.trackAnalytics('file_removed', {file_name: file.name});
         });
 
         return item;
@@ -319,7 +319,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         if (!file.type.startsWith('image/')) return;
 
         var reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             var img = document.createElement('img');
             img.src = e.target.result;
             img.className = 'thumbnail-image';
@@ -345,7 +345,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
             this.selectedFiles.set(propertyId, files);
             // Обновляем FileList в input
             var dataTransfer = new DataTransfer();
-            files.forEach(function(file) {
+            files.forEach(function (file) {
                 dataTransfer.items.add(file);
             });
             input.files = dataTransfer.files;
@@ -389,11 +389,11 @@ BX.DDAPP.Tools.FormManager.prototype = {
         var self = this;
         this.originalShowMessage = this.showMessage;
 
-        this.showMessage = function(message, type) {
+        this.showMessage = function (message, type) {
             self.originalShowMessage.call(self, message, type);
 
             if (type === 'error' && self.messagesBlock) {
-                setTimeout(function() {
+                setTimeout(function () {
                     self.messagesBlock.scrollIntoView({
                         behavior: 'smooth',
                         block: 'center'
@@ -406,7 +406,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
     handleVirtualKeyboard: function () {
         var initialHeight = window.innerHeight;
 
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             var currentHeight = window.innerHeight;
             var diff = initialHeight - currentHeight;
 
@@ -433,7 +433,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
 
         // Анимация встряхивания для привлечения внимания
         BX.addClass(wrapper, 'shake');
-        setTimeout(function() {
+        setTimeout(function () {
             BX.removeClass(wrapper, 'shake');
         }, 500);
     },
@@ -486,29 +486,78 @@ BX.DDAPP.Tools.FormManager.prototype = {
     },
 
     validateForm: function () {
-        var requiredFields = this.form.querySelectorAll('[required]');
         var isValid = true;
+        var errors = [];
 
         this.clearValidationErrors();
 
+        // Проверка согласия на политику персональных данных
+        var privacyCheckbox = this.form.querySelector('#privacy_policy_agreement');
+        if (privacyCheckbox && !privacyCheckbox.checked) {
+            isValid = false;
+            errors.push('Необходимо дать согласие на обработку персональных данных');
+            this.addValidationError(privacyCheckbox.closest('.form-group'), 'Согласие обязательно');
+
+            // Трекинг аналитики
+            this.trackAnalytics('form_validation_error', {
+                'error_type': 'privacy_policy_missing'
+            });
+        }
+
+        var requiredFields = this.form.querySelectorAll('[required]');
+
         for (var i = 0; i < requiredFields.length; i++) {
             var field = requiredFields[i];
-            var value = this.getFieldValue(field);
+            var value = field.value.trim();
 
-            if (!value) {
-                this.addValidationError(field);
+            if (!value || (field.type === 'checkbox' && !field.checked)) {
                 isValid = false;
+                var fieldGroup = field.closest('.form-group') || field.closest('.form-check');
+                if (fieldGroup) {
+                    this.addValidationError(fieldGroup, 'Это поле обязательно для заполнения');
+                }
             }
         }
 
-        // Проверка масок
-        var maskErrors = this.validateMaskedFields();
-        if (maskErrors.length > 0) {
-            this.showMessage(maskErrors.join('<br>'), 'error');
-            isValid = false;
+        if (!isValid) {
+            this.showMessage(errors.join('. '), 'error');
+            this.trackAnalytics('form_validation_failed', {
+                'errors_count': errors.length
+            });
         }
 
         return isValid;
+    },
+
+    // Добавляем метод для визуального выделения ошибок
+    addValidationError: function (fieldGroup, message) {
+        if (!fieldGroup) return;
+
+        fieldGroup.classList.add('has-error');
+
+        // Удаляем предыдущие сообщения об ошибках
+        var existingError = fieldGroup.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+
+        // Добавляем новое сообщение об ошибке
+        var errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message text-danger small mt-1';
+        errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+        fieldGroup.appendChild(errorDiv);
+    },
+
+    clearValidationErrors: function () {
+        var errorGroups = this.form.querySelectorAll('.has-error');
+        for (var i = 0; i < errorGroups.length; i++) {
+            errorGroups[i].classList.remove('has-error');
+        }
+
+        var errorMessages = this.form.querySelectorAll('.error-message');
+        for (var j = 0; j < errorMessages.length; j++) {
+            errorMessages[j].remove();
+        }
     },
 
     validateAllFiles: function () {
@@ -588,7 +637,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         });
     },
 
-    initInputMasks: function() {
+    initInputMasks: function () {
         // Проверяем доступность Inputmask
         if (typeof Inputmask === 'undefined') {
             console.warn('Inputmask library not loaded');
@@ -608,7 +657,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         }
     },
 
-    setupInputMask: function(input) {
+    setupInputMask: function (input) {
         var maskType = input.getAttribute('data-mask-type');
         var self = this;
 
@@ -619,7 +668,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         }
     },
 
-    setupPhoneMask: function(input) {
+    setupPhoneMask: function (input) {
         var self = this;
 
         // Создаем маску для телефонов
@@ -636,7 +685,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
             clearIncomplete: true,
             autoUnmask: false,
             removeMaskOnSubmit: false,
-            onBeforePaste: function(pastedValue, opts) {
+            onBeforePaste: function (pastedValue, opts) {
                 var cleaned = pastedValue.replace(/\D/g, '');
 
                 if (cleaned.length === 11 && cleaned[0] === '8') {
@@ -649,11 +698,11 @@ BX.DDAPP.Tools.FormManager.prototype = {
 
                 return cleaned;
             },
-            onincomplete: function() {
+            onincomplete: function () {
                 BX.addClass(input, 'is-invalid');
                 BX.removeClass(input, 'is-valid');
             },
-            oncomplete: function() {
+            oncomplete: function () {
                 BX.removeClass(input, 'is-invalid');
                 BX.addClass(input, 'is-valid');
 
@@ -662,10 +711,10 @@ BX.DDAPP.Tools.FormManager.prototype = {
                     'phone_length': input.value.length
                 });
             },
-            onKeyValidation: function(key, result) {
+            onKeyValidation: function (key, result) {
                 if (!result && input) {
                     input.style.borderColor = '#dc3545';
-                    setTimeout(function() {
+                    setTimeout(function () {
                         input.style.borderColor = '';
                     }, 300);
                 }
@@ -679,10 +728,10 @@ BX.DDAPP.Tools.FormManager.prototype = {
         input._inputmask = im;
 
         // Дополнительные обработчики
-        BX.bind(input, 'focus', function() {
+        BX.bind(input, 'focus', function () {
             if (this.value === '' || this.value === '+7 (___) ___-__-__') {
                 this.value = '+7 ';
-                setTimeout(function() {
+                setTimeout(function () {
                     if (input.setSelectionRange) {
                         input.setSelectionRange(3, 3);
                     }
@@ -690,7 +739,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
             }
         });
 
-        BX.bind(input, 'blur', function() {
+        BX.bind(input, 'blur', function () {
             if (im.unmaskedvalue && im.unmaskedvalue().length === 0) {
                 this.value = '';
                 BX.removeClass(this, 'is-valid');
@@ -698,7 +747,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
             }
         });
 
-        BX.bind(input, 'input', function() {
+        BX.bind(input, 'input', function () {
             if (im.unmaskedvalue) {
                 var unmaskedValue = im.unmaskedvalue();
 
@@ -712,11 +761,11 @@ BX.DDAPP.Tools.FormManager.prototype = {
         });
     },
 
-    setupEmailMask: function(input) {
+    setupEmailMask: function (input) {
         var self = this;
 
         // Для email не используем inputmask, делаем собственную валидацию
-        BX.bind(input, 'input', function() {
+        BX.bind(input, 'input', function () {
             var value = this.value.toLowerCase();
             this.value = value;
 
@@ -738,7 +787,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
             self.handleEmailAutocomplete(this, value);
         });
 
-        BX.bind(input, 'keydown', function(e) {
+        BX.bind(input, 'keydown', function (e) {
             // Tab для принятия автодополнения
             if (e.keyCode === 9 && this.getAttribute('data-suggestion')) {
                 e.preventDefault();
@@ -748,7 +797,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
 
                 var event;
                 if (typeof Event === 'function') {
-                    event = new Event('input', { bubbles: true });
+                    event = new Event('input', {bubbles: true});
                 } else {
                     event = document.createEvent('Event');
                     event.initEvent('input', true, true);
@@ -758,7 +807,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         });
     },
 
-    handleEmailAutocomplete: function(input, value) {
+    handleEmailAutocomplete: function (input, value) {
         if (!value.includes('@') || value.includes('.')) {
             input.removeAttribute('data-suggestion');
             input.placeholder = 'example@domain.com';
@@ -794,10 +843,10 @@ BX.DDAPP.Tools.FormManager.prototype = {
     },
 
 
-    setupEmailValidation: function(input) {
+    setupEmailValidation: function (input) {
         var self = this;
 
-        BX.bind(input, 'input', function(e) {
+        BX.bind(input, 'input', function (e) {
             var value = e.target.value.toLowerCase();
             e.target.value = value;
 
@@ -827,7 +876,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         });
 
         // Автодополнение популярных доменов
-        BX.bind(input, 'keyup', function(e) {
+        BX.bind(input, 'keyup', function (e) {
             if (e.keyCode === 9 || e.keyCode === 13) return; // Tab или Enter
 
             var value = e.target.value;
@@ -849,12 +898,12 @@ BX.DDAPP.Tools.FormManager.prototype = {
         });
     },
 
-    validateEmail: function(email) {
+    validateEmail: function (email) {
         var re = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
         return re.test(email.toLowerCase());
     },
 
-    showEmailSuggestion: function(input, suggestion, cursorPos) {
+    showEmailSuggestion: function (input, suggestion, cursorPos) {
         // Простое автодополнение через placeholder
         if (input.value.length < suggestion.length) {
             input.setAttribute('data-suggestion', suggestion);
@@ -866,7 +915,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         }
     },
 
-    validateMaskedFields: function() {
+    validateMaskedFields: function () {
         var maskedInputs = this.form.querySelectorAll('.masked-input');
         var errors = [];
 
@@ -891,7 +940,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
         return errors;
     },
 
-    validatePhone: function(phone) {
+    validatePhone: function (phone) {
         var cleaned = phone.replace(/\D/g, '');
 
         if (cleaned.length === 11 && cleaned[0] === '7') {
@@ -905,13 +954,13 @@ BX.DDAPP.Tools.FormManager.prototype = {
         return false;
     },
 
-    getFieldLabel: function(input) {
+    getFieldLabel: function (input) {
         var label = this.form.querySelector('label[for="' + input.id + '"]');
         return label ? label.textContent.replace('*', '').trim() : input.name;
     },
 
     // Метод для получения очищенного значения телефона
-    getPhoneValue: function(input) {
+    getPhoneValue: function (input) {
         if (input._inputmask && input._inputmask.unmaskedvalue) {
             return input._inputmask.unmaskedvalue();
         }
@@ -919,7 +968,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
     },
 
 // Метод для программной установки значения телефона
-    setPhoneValue: function(input, phoneNumber) {
+    setPhoneValue: function (input, phoneNumber) {
         if (input._inputmask && input._inputmask.setValue) {
             input._inputmask.setValue(phoneNumber);
         } else {
@@ -962,13 +1011,13 @@ BX.DDAPP.Tools.FormManager.prototype = {
             url: window.location.href,
             data: formData,
             processData: false,
-            start: function() {
+            start: function () {
                 self.trackAnalytics('ajax_request_started');
             },
-            onsuccess: function(response) {
+            onsuccess: function (response) {
                 self.onSuccess(response);
             },
-            onfailure: function() {
+            onfailure: function () {
                 self.onFailure();
             }
         });
@@ -1086,13 +1135,13 @@ BX.DDAPP.Tools.FormManager.prototype = {
 /**
  * Класс для аналитики
  */
-BX.DDAPP.Tools.Analytics = function() {
+BX.DDAPP.Tools.Analytics = function () {
     this.queue = [];
     this.init();
 };
 
 BX.DDAPP.Tools.Analytics.prototype = {
-    init: function() {
+    init: function () {
         // Обработка очереди аналитики если GA загружен
         if (typeof gtag !== 'undefined') {
             this.processQueue();
@@ -1105,7 +1154,7 @@ BX.DDAPP.Tools.Analytics.prototype = {
         }
     },
 
-    track: function(eventName, parameters) {
+    track: function (eventName, parameters) {
         var event = {
             event_name: eventName,
             parameters: parameters || {}
@@ -1115,7 +1164,7 @@ BX.DDAPP.Tools.Analytics.prototype = {
         this.processQueue();
     },
 
-    processQueue: function() {
+    processQueue: function () {
         if (typeof gtag === 'undefined') {
             return;
         }
@@ -1136,7 +1185,7 @@ BX.DDAPP.Tools.Analytics.prototype = {
         }
     },
 
-    mapEventToYandexGoal: function(eventName) {
+    mapEventToYandexGoal: function (eventName) {
         var mapping = {
             'form_submit_success': 'form_submit',
             'form_opened': 'form_view',

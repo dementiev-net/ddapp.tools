@@ -25,20 +25,37 @@ $APPLICATION->SetTitle('Главная');
 
         <?php
         $APPLICATION->IncludeComponent(
-            "ddapp.tools:forms",
-            ".default",
-            array(
-                "IBLOCK_ID" => 97, // ID инфоблока
-                "EMAIL_TEMPLATE" => "DDAPP_MESSAGE_FORM", // ID шаблона письма
-                "USE_BITRIX_CAPTCHA" => "N", // Использовать Bitrix Captcha
-                "USE_GOOGLE_RECAPTCHA" => "N", // Использовать Google reCAPTCHA v3
-                "GOOGLE_RECAPTCHA_PUBLIC_KEY" => "", // Публичный ключ Google reCAPTCHA v3
-                "GOOGLE_RECAPTCHA_SECRET_KEY" => "", // Секретный ключ Google reCAPTCHA v3
-                "CACHE_TYPE" => "A",
-                "CACHE_TIME" => "3600"
-            ),
-            false
-        );
+	"ddapp.tools:forms", 
+	".default", 
+	[
+		"IBLOCK_ID" => "97",
+		"EMAIL_TEMPLATE" => "DDAPP_MESSAGE_FORM",
+		"USE_BITRIX_CAPTCHA" => "N",
+		"USE_GOOGLE_RECAPTCHA" => "N",
+		"GOOGLE_RECAPTCHA_PUBLIC_KEY" => "",
+		"GOOGLE_RECAPTCHA_SECRET_KEY" => "",
+		"CACHE_TYPE" => "A",
+		"CACHE_TIME" => "3600",
+		"COMPONENT_TEMPLATE" => ".default",
+		"BUTTON_TEXT" => "Открыть форму",
+		"ENABLE_ANALYTICS" => "Y",
+		"USE_PRIVACY_POLICY" => "Y",
+		"PRIVACY_POLICY_TEXT" => "Я согласен с политикой обработки персональных данных",
+		"PRIVACY_POLICY_LINK" => "/privacy-policy/",
+		"RATE_LIMIT_ENABLED" => "Y",
+		"RATE_LIMIT_PER_MINUTE" => "5",
+		"RATE_LIMIT_PER_HOUR" => "30",
+		"MAX_FILE_SIZE" => "10",
+		"ALLOWED_FILE_EXTENSIONS" => "jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip",
+		"FILE_UPLOAD_DIR" => "/upload/ddapp_forms/",
+		"CHECK_FILE_CONTENT" => "Y",
+		"SECURITY_LEVEL" => "medium",
+		"GA_MEASUREMENT_ID" => "",
+		"YANDEX_METRIKA_ID" => "",
+		"VK_PIXEL_ID" => ""
+	],
+	false
+);
         ?>
     </section>
 

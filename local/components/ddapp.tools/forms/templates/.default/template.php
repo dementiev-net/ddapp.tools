@@ -264,6 +264,36 @@ if (!empty($arParams["YANDEX_METRIKA_ID"])) {
                             </div>
                         <?php endif; ?>
 
+                        <?php if ($arParams["USE_PRIVACY_POLICY"] === "Y"): ?>
+                            <div class="form-group mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="privacy_policy_agreement"
+                                           name="privacy_policy_agreement"
+                                           value="Y"
+                                           required
+                                           aria-describedby="privacy_policy_help">
+                                    <label class="form-check-label" for="privacy_policy_agreement">
+                                        <?php if (!empty($arParams["PRIVACY_POLICY_LINK"])): ?>
+                                            <?= str_replace(
+                                                "политикой обработки персональных данных",
+                                                "<a href=\"" . htmlspecialchars($arParams["PRIVACY_POLICY_LINK"]) . "\" target=\"_blank\" rel=\"noopener\">политикой обработки персональных данных</a>",
+                                                htmlspecialchars($arParams["PRIVACY_POLICY_TEXT"])
+                                            ) ?>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($arParams["PRIVACY_POLICY_TEXT"]) ?>
+                                        <?php endif; ?>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div id="privacy_policy_help" class="form-text">
+                                        <i class="fas fa-shield-alt me-1"></i>
+                                        Обязательное поле для отправки формы
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
                         <input type="hidden" name="ajax_<?= $iblockId ?>" value="Y">
                         <input type="hidden" name="sessid" value="<?= bitrix_sessid() ?>">
 

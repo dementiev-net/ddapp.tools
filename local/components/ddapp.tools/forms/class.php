@@ -337,6 +337,21 @@ class DDAppFormComponent extends CBitrixComponent
     {
         $errors = [];
 
+        // Логируем начало валидации
+        LogHelper::info("Form validation started", ["iblock_id" => $this->iblockId, "user_ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
+
+        // Проверка согласия на политику персональных данных
+        if ($this->arParams["USE_PRIVACY_POLICY"] === "Y") {
+            if (empty($formData["privacy_policy_agreement"]) || $formData["privacy_policy_agreement"] !== "Y") {
+                $errors[] = "Необходимо дать согласие на обработку персональных данных";
+
+                LogHelper::warning("Privacy policy agreement missing", [
+                    "iblock_id" => $this->iblockId,
+                    "user_ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"
+                ]);
+            }
+        }
+
         foreach ($this->arResult["PROPERTIES"] as $property) {
             $value = $request->getPost("property_" . $property["ID"]);
 
@@ -383,6 +398,10 @@ class DDAppFormComponent extends CBitrixComponent
                         }
                         break;
                 }
+            }
+
+            if (!empty($errors)) {
+                LogHelper::error("Form validation failed", ["iblock_id" => $this->iblockId, "errors" => $errors, "user_ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
             }
 
             // Улучшенная валидация файлов

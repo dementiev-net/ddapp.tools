@@ -638,3 +638,77 @@ $shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
   25% { transform: translateX(-5px); }
   75% { transform: translateX(5px); }
 }
+
+/* Стили для чекбокса согласия на политику персональных данных */
+.ddapp-form-wrapper .form-check {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  border: 1px solid #e9ecef;
+}
+
+.ddapp-form-wrapper .form-check-input {
+  transform: scale(1.2);
+  margin-top: 0.1rem;
+}
+
+.ddapp-form-wrapper .form-check-label {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-left: 0.5rem;
+}
+
+.ddapp-form-wrapper .form-check-label a {
+  color: var(--bs-primary);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.ddapp-form-wrapper .form-check-label a:hover {
+  color: var(--bs-primary);
+  text-decoration: none;
+}
+
+/* Стили для ошибок валидации */
+.ddapp-form-wrapper .has-error .form-control,
+.ddapp-form-wrapper .has-error .form-select {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.ddapp-form-wrapper .has-error .form-check-input {
+  border-color: #dc3545;
+}
+
+.ddapp-form-wrapper .has-error .form-check {
+  border-color: #dc3545;
+  background-color: #f8d7da;
+}
+
+.ddapp-form-wrapper .error-message {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .ddapp-form-wrapper .form-check {
+    padding: 0.75rem;
+  }
+
+  .ddapp-form-wrapper .form-check-label {
+    font-size: 0.9rem;
+  }
+}

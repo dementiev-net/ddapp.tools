@@ -1,4 +1,5 @@
 <?php
+// Сообщения
 $MESS["DDAPP_TOOLS_SMTP_MESSAGE_SEND_OK"] = "Письмо успешно отправлено";
 $MESS["DDAPP_TOOLS_SMTP_MESSAGE_CONNECT_OK"] = "Соединение с SMTP сервером успешно установлено";
 $MESS["DDAPP_TOOLS_SMTP_MESSAGE_SMTP_CONNECT_ERROR"] = "Не удалось подключиться к SMTP серверу";

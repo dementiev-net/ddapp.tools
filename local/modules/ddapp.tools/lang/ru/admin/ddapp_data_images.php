@@ -1,14 +1,13 @@
 <?php
 $MESS["DDAPP_PAGE_TITLE"] = "Загрузка картинок";
 
+// Страница
 $MESS["DDAPP_IMAGES_TAB1"] = "Настройки";
 $MESS["DDAPP_IMAGES_TAB1_TITLE"] = "Настройки загрузки картинок в инфоблок";
-
 $MESS["DDAPP_IMAGES_BLOCK1"] = "Настройки профиля";
 $MESS["DDAPP_IMAGES_BLOCK2"] = "Настройки импорта";
 $MESS["DDAPP_IMAGES_BLOCK3"] = "Настройки CSV";
 $MESS["DDAPP_IMAGES_BLOCK4"] = "Настройки Excel";
-
 $MESS["DDAPP_IMAGES_SETTINGS_PROFILE"] = "Профиль";
 $MESS["DDAPP_IMAGES_SETTINGS_PROFILE_SELECT"] = "-- Выберите --";
 $MESS["DDAPP_IMAGES_SETTINGS_PROFILE_NAME"] = "Название профиля";
@@ -24,13 +23,19 @@ $MESS["DDAPP_IMAGES_SETTINGS_CODE"] = "Код свойства для привя
 $MESS["DDAPP_IMAGES_SETTINGS_FIELD"] = "Свойство для загрузки картинок";
 $MESS["DDAPP_IMAGES_SETTINGS_FIELD_SELECT"] = "-- Выберите свойство --";
 $MESS["DDAPP_IMAGES_SETTINGS_FROM"] = "из";
-
 $MESS["DDAPP_IMAGES_PROCESS_TITLE"] = "Загрузка";
 $MESS["DDAPP_IMAGES_PROCESS_ITEMS_OK"] = "Успешно загружено картинок: ";
 $MESS["DDAPP_IMAGES_PROCESS_ITEMS_ERROR"] = "С ошибками: ";
-
 $MESS["DDAPP_IMAGES_PROPERTY_TYPE_M"] = " (Множественное)";
 
+// Кнопки
+$MESS["DDAPP_IMAGES_BTN_FILE"] = "Выбрать файл";
+$MESS["DDAPP_IMAGES_BTN_IMPORT"] = "Загрузить";
+$MESS["DDAPP_IMAGES_BTN_IMPORT_TITLE"] = "Загрузить выбранный профиль";
+$MESS["DDAPP_IMAGES_BTN_SAVE"] = "Сохранить";
+$MESS["DDAPP_IMAGES_BTN_CANCEL"] = "Отмена";
+
+// Сообщения
 $MESS["DDAPP_IMAGES_MESSAGE_TITLE"] = "Сообщение";
 $MESS["DDAPP_IMAGES_MESSAGE_ERROR"] = "Ошибка";
 $MESS["DDAPP_IMAGES_MESSAGE_PROFILE_ERROR"] = "Ошибка загрузки профилей";
@@ -52,9 +57,3 @@ $MESS["DDAPP_IMAGES_MESSAGE_WRONG_SERVER_RESPONSE"] = "Некорректный 
 $MESS["DDAPP_IMAGES_MESSAGE_UNKNOWN_ERROR"] = "Неизвестная ошибка";
 $MESS["DDAPP_IMAGES_MESSAGE_UNKNOWN_STATUS"] = "Неизвестный статус";
 $MESS["DDAPP_IMAGES_MESSAGE_ERROR_SERVER_CONNECT"] = "Ошибка запроса к серверу";
-
-$MESS["DDAPP_IMAGES_BTN_FILE"] = "Выбрать файл";
-$MESS["DDAPP_IMAGES_BTN_IMPORT"] = "Загрузить";
-$MESS["DDAPP_IMAGES_BTN_IMPORT_TITLE"] = "Загрузить выбранный профиль";
-$MESS["DDAPP_IMAGES_BTN_SAVE"] = "Сохранить";
-$MESS["DDAPP_IMAGES_BTN_CANCEL"] = "Отмена";

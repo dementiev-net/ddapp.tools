@@ -1,6 +1,7 @@
 <?php
 $MESS["DDAPP_PAGE_TITLE"] = "Импорт Excel в форму";
 
+// Страница
 $MESS["DDAPP_IMPORT_TAB1"] = "Настройки";
 $MESS["DDAPP_IMPORT_TAB1_TITLE"] = "Настройки импорта данных в инфоблок";
 
@@ -17,7 +18,6 @@ $MESS["DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT"] = "-- Выберите инфобл
 $MESS["DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT_FIRST"] = "-- Сначала выберите тип --";
 $MESS["DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE"] = "Тип инфоблока";
 $MESS["DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT"] = "-- Выберите тип инфоблока --";
-
 $MESS["DDAPP_IMPORT_PROPERTY_TYPE_S"] = " (Строка)";
 $MESS["DDAPP_IMPORT_PROPERTY_TYPE_N"] = " (Число)";
 $MESS["DDAPP_IMPORT_PROPERTY_TYPE_L"] = " (Список)";
@@ -26,6 +26,13 @@ $MESS["DDAPP_IMPORT_PROPERTY_TYPE_G"] = " (Привязка к разделам)
 $MESS["DDAPP_IMPORT_PROPERTY_TYPE_E"] = " (Привязка к элементам)";
 $MESS["DDAPP_IMPORT_PROPERTY_TYPE_M"] = " [множественное]";
 
+// Кнопки
+$MESS["DDAPP_IMPORT_BTN_SAVE"] = "Сохранить";
+$MESS["DDAPP_IMPORT_BTN_CANCEL"] = "Отмена";
+$MESS["DDAPP_IMPORT_BTN_SELECT_ALL"] = "Выбрать все";
+$MESS["DDAPP_IMPORT_BTN_DESELECT_ALL"] = "Снять все";
+
+// Сообщения
 $MESS["DDAPP_IMPORT_MESSAGE_TITLE"] = "Сообщение";
 $MESS["DDAPP_IMPORT_MESSAGE_ERROR"] = "Ошибка";
 $MESS["DDAPP_IMPORT_MESSAGE_PROFILE_ERROR"] = "Ошибка загрузки профилей";
@@ -44,8 +51,3 @@ $MESS["DDAPP_IMPORT_MESSAGE_WRONG_SERVER_RESPONSE"] = "Некорректный 
 $MESS["DDAPP_IMPORT_MESSAGE_UNKNOWN_ERROR"] = "Неизвестная ошибка";
 $MESS["DDAPP_IMPORT_MESSAGE_UNKNOWN_STATUS"] = "Неизвестный статус";
 $MESS["DDAPP_IMPORT_MESSAGE_ERROR_SERVER_CONNECT"] = "Ошибка запроса к серверу";
-
-$MESS["DDAPP_IMPORT_BTN_SAVE"] = "Сохранить";
-$MESS["DDAPP_IMPORT_BTN_CANCEL"] = "Отмена";
-$MESS["DDAPP_IMPORT_BTN_SELECT_ALL"] = "Выбрать все";
-$MESS["DDAPP_IMPORT_BTN_DESELECT_ALL"] = "Снять все";

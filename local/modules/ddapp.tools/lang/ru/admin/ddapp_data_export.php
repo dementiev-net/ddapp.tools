@@ -1,14 +1,13 @@
 <?php
 $MESS["DDAPP_PAGE_TITLE"] = "Экспорт данных инфоблока в Excel, CSV";
 
+// Страница
 $MESS["DDAPP_EXPORT_TAB1"] = "Настройки";
 $MESS["DDAPP_EXPORT_TAB1_TITLE"] = "Настройки экспорта данных инфоблока";
-
 $MESS["DDAPP_EXPORT_BLOCK1"] = "Настройки профиля";
 $MESS["DDAPP_EXPORT_BLOCK2"] = "Поля для экспорта";
 $MESS["DDAPP_EXPORT_BLOCK3"] = "Настройки CSV";
 $MESS["DDAPP_EXPORT_BLOCK4"] = "Настройки Excel";
-
 $MESS["DDAPP_EXPORT_SETTINGS_PROFILE"] = "Профиль";
 $MESS["DDAPP_EXPORT_SETTINGS_PROFILE_SELECT"] = "-- Выберите --";
 $MESS["DDAPP_EXPORT_SETTINGS_PROFILE_NAME"] = "Название профиля";
@@ -34,11 +33,9 @@ $MESS["DDAPP_EXPORT_SETTINGS_NEED_CSV_HEADER"] = "Первая строка со
 $MESS["DDAPP_EXPORT_SETTINGS_NEED_EXEL_HEADER"] = "Включить заголовки";
 $MESS["DDAPP_EXPORT_SETTINGS_FROM"] = "из";
 $MESS["DDAPP_EXPORT_SETTINGS_FILE"] = "Файл";
-
 $MESS["DDAPP_EXPORT_PROCESS_TITLE"] = "Экспорт";
 $MESS["DDAPP_EXPORT_PROCESS_ITEMS_OK"] = "Успешно экспортировано записей: ";
 $MESS["DDAPP_EXPORT_PROCESS_ITEMS_ERROR"] = "С ошибками: ";
-
 $MESS["DDAPP_EXPORT_PROPERTY_TYPE_S"] = " (Строка)";
 $MESS["DDAPP_EXPORT_PROPERTY_TYPE_N"] = " (Число)";
 $MESS["DDAPP_EXPORT_PROPERTY_TYPE_L"] = " (Список)";
@@ -47,6 +44,15 @@ $MESS["DDAPP_EXPORT_PROPERTY_TYPE_G"] = " (Привязка к разделам)
 $MESS["DDAPP_EXPORT_PROPERTY_TYPE_E"] = " (Привязка к элементам)";
 $MESS["DDAPP_EXPORT_PROPERTY_TYPE_M"] = " [множественное]";
 
+// Кнопки
+$MESS["DDAPP_EXPORT_BTN_EXPORT"] = "Экспортировать";
+$MESS["DDAPP_EXPORT_BTN_EXPORT_TITLE"] = "Экспортировать выбранный профиль";
+$MESS["DDAPP_EXPORT_BTN_SAVE"] = "Сохранить";
+$MESS["DDAPP_EXPORT_BTN_CANCEL"] = "Отмена";
+$MESS["DDAPP_EXPORT_BTN_SELECT_ALL"] = "Выбрать все";
+$MESS["DDAPP_EXPORT_BTN_DESELECT_ALL"] = "Снять все";
+
+// Сообщения
 $MESS["DDAPP_EXPORT_MESSAGE_TITLE"] = "Сообщение";
 $MESS["DDAPP_EXPORT_MESSAGE_ERROR"] = "Ошибка";
 $MESS["DDAPP_EXPORT_MESSAGE_PROFILE_ERROR"] = "Ошибка загрузки профилей";
@@ -66,10 +72,3 @@ $MESS["DDAPP_EXPORT_MESSAGE_WRONG_SERVER_RESPONSE"] = "Некорректный 
 $MESS["DDAPP_EXPORT_MESSAGE_UNKNOWN_ERROR"] = "Неизвестная ошибка";
 $MESS["DDAPP_EXPORT_MESSAGE_UNKNOWN_STATUS"] = "Неизвестный статус";
 $MESS["DDAPP_EXPORT_MESSAGE_ERROR_SERVER_CONNECT"] = "Ошибка запроса к серверу";
-
-$MESS["DDAPP_EXPORT_BTN_EXPORT"] = "Экспортировать";
-$MESS["DDAPP_EXPORT_BTN_EXPORT_TITLE"] = "Экспортировать выбранный профиль";
-$MESS["DDAPP_EXPORT_BTN_SAVE"] = "Сохранить";
-$MESS["DDAPP_EXPORT_BTN_CANCEL"] = "Отмена";
-$MESS["DDAPP_EXPORT_BTN_SELECT_ALL"] = "Выбрать все";
-$MESS["DDAPP_EXPORT_BTN_DESELECT_ALL"] = "Снять все";

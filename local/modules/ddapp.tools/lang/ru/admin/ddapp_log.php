@@ -1,9 +1,9 @@
 <?php
 $MESS["DDAPP_PAGE_TITLE"] = "Просмотр логов";
 
+// Страница
 $MESS["DDAPP_LOGFILE_CONTROL_FILE"] = "Файл лога";
 $MESS["DDAPP_LOGFILE_CONTROL_FILE_SELECT"] = "-- Выберите --";
-
 $MESS["DDAPP_LOGFILE_FILTER_LEVEL"] = "Уровень";
 $MESS["DDAPP_LOGFILE_FILTER_LEVEL_ALL"] = "-- Все уровни --";
 $MESS["DDAPP_LOGFILE_FILTER_USER"] = "Пользователь";
@@ -11,25 +11,28 @@ $MESS["DDAPP_LOGFILE_FILTER_USER_ALL"] = "-- Все пользователи --"
 $MESS["DDAPP_LOGFILE_FILTER_DATE"] = "Дата";
 $MESS["DDAPP_LOGFILE_FILTER_SEARCH"] = "Поиск";
 $MESS["DDAPP_LOGFILE_FILTER_SEARCH_PLACEHOLDER"] = "Поиск по тексту";
-
 $MESS["DDAPP_LOGFILE_LEVEL_ALL"] = "Всего записей";
 $MESS["DDAPP_LOGFILE_LEVEL_DEBUG"] = "Отладка";
 $MESS["DDAPP_LOGFILE_LEVEL_INFO"] = "Информация";
 $MESS["DDAPP_LOGFILE_LEVEL_WARNING"] = "Внимание";
 $MESS["DDAPP_LOGFILE_LEVEL_ERROR"] = "Ошибка";
 $MESS["DDAPP_LOGFILE_LEVEL_CRITICAL"] = "Критическое";
-
 $MESS["DDAPP_LOGFILE_TABLE_DATE"] = "Дата/Время";
 $MESS["DDAPP_LOGFILE_TABLE_LEVEL"] = "Уровень";
 $MESS["DDAPP_LOGFILE_TABLE_USER"] = "Пользователь";
 $MESS["DDAPP_LOGFILE_TABLE_URL"] = "URL";
 $MESS["DDAPP_LOGFILE_TABLE_MEMORY"] = "Память";
-
 $MESS["DDAPP_LOGFILE_TABLE_PAGES"] = "Страницы";
 $MESS["DDAPP_LOGFILE_TABLE_PAGES_PREV"] = "Предыдущая";
 $MESS["DDAPP_LOGFILE_TABLE_PAGES_NEXT"] = "Следующая";
 $MESS["DDAPP_LOGFILE_TABLE_PAGES_FROM"] = "из";
 
+// Кнопки
+$MESS["DDAPP_LOGFILE_BTN_REFRESH"] = "Обновить список";
+$MESS["DDAPP_LOGFILE_BTN_CLEAR"] = "Очистить лог";
+$MESS["DDAPP_LOGFILE_BTN_FILTER_CLEAR"] = "Очистить фильтры";
+
+// Сообщения
 $MESS["DDAPP_LOGFILE_MESSAGE_TITLE"] = "Сообщение";
 $MESS["DDAPP_LOGFILE_MESSAGE_ERROR"] = "Ошибка";
 $MESS["DDAPP_LOGFILE_MESSAGE_BEFORE_DELETE"] = "Вы уверены, что хотите очистить лог?";
@@ -39,7 +42,3 @@ $MESS["DDAPP_LOGFILE_MESSAGE_ERROR_FILE_NOT_FOUND"] = "Файл не найде�
 $MESS["DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_FILE"] = "Ошибка загрузки файлов";
 $MESS["DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_DATA"] = "Ошибка загрузки данных";
 $MESS["DDAPP_LOGFILE_MESSAGE_ERROR_LOG_CLEAR"] = "Ошибка очистки лога";
-
-$MESS["DDAPP_LOGFILE_BTN_REFRESH"] = "Обновить список";
-$MESS["DDAPP_LOGFILE_BTN_CLEAR"] = "Очистить лог";
-$MESS["DDAPP_LOGFILE_BTN_FILTER_CLEAR"] = "Очистить фильтры";

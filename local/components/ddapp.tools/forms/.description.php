@@ -1,18 +1,14 @@
 <?php
-// .description.php
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 $arComponentDescription = array(
-    "NAME" => "Форма обратной связи",
-    "DESCRIPTION" => "Компонент для создания формы из свойств инфоблока",
-    "ICON" => "/images/form.gif",
-    "CACHE_PATH" => "Y",
+    "NAME" => "Форма с модальным окном",
+    "DESCRIPTION" => "Компонент для вывода кнопки с модальным окном и AJAX проверкой",
+    "ICON" => "/images/icon.gif",
+    "SORT" => 10,
     "PATH" => array(
-        "ID" => "ddapp",
-        "NAME" => "DDApp Tools",
-        "CHILD" => array(
-            "ID" => "forms",
-            "NAME" => "Формы"
-        )
+        "ID" => "ddapp.tools",
+        "NAME" => "DDApp Tools"
     ),
 );
+?>

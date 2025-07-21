@@ -5,12 +5,11 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Application;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Web\Json;
-use Bitrix\Main\Config\Option;
-use Bitrix\Iblock\IblockTable;
-use Bitrix\Iblock\PropertyTable;
 use DDAPP\Tools\Helpers\LogHelper;
-use DDAPP\Tools\Components\FileSecurityValidator;
-use DDAPP\Tools\Components\RateLimiter;
+use DDAPP\Tools\Helpers\FormHelper;
+
+//use DDAPP\Tools\Components\FileSecurityValidator;
+//use DDAPP\Tools\Components\RateLimiter;
 
 Loc::loadMessages(__FILE__);
 Loader::includeModule("iblock");
@@ -45,6 +44,19 @@ if (!$action || !$componentId || !$params["IBLOCK_ID"]) {
     exit;
 }
 
+// Загрузка конфигурации безопасности файлов
+$configPath = __DIR__ . "/config/file_security.php";
+$fileConfig = file_exists($configPath) ? include($configPath) : [];
+
+// Переопределяем настройки из параметров компонента
+if (isset($params["MAX_FILE_SIZE"]) && (int)$params["MAX_FILE_SIZE"] > 0) {
+    $fileConfig["max_file_size"] = (int)$params["MAX_FILE_SIZE"] * 1024 * 1024;
+}
+
+if (!empty($params["ALLOWED_FILE_EXTENSIONS"])) {
+    $fileConfig["allowed_extensions"] = array_map("trim", explode(",", strtolower($params["ALLOWED_FILE_EXTENSIONS"])));
+}
+
 /**
  * Загрузка формы
  */
@@ -52,13 +64,6 @@ if ($action === "load") {
 
     $params["CACHE_TIME"] = isset($params["CACHE_TIME"]) ? $params["CACHE_TIME"] : 3600;
     $iblockId = (int)$params["IBLOCK_ID"];
-
-    // Загрузка конфигурации безопасности файлов
-    $fileConfig = loadFileConfig($params);
-
-    // Инициализация компонентов
-    $rateLimiter = new RateLimiter($iblockId, $params["RATE_LIMITS"] ?? []);
-    $fileValidator = new FileSecurityValidator($fileConfig, $iblockId);
 
     $res = CIBlock::GetByID($iblockId);
     $arIblock = $res->GetNext();
@@ -69,7 +74,7 @@ if ($action === "load") {
 
     $arResult["NAME"] = $arIblock["NAME"];
     $arResult["DESCRIPTION"] = $arIblock["DESCRIPTION"];
-    $arResult["PROPERTIES"] = getIblockProperties($iblockId);
+    $arResult["PROPERTIES"] = FormHelper::getIblockProperties($iblockId);
     $arResult["COMPONENT_ID"] = $componentId;
     $arResult["IBLOCK_ID"] = $iblockId;
     $arResult["CAPTCHA_CODE"] = "";
@@ -77,7 +82,7 @@ if ($action === "load") {
 
     // Генерирование Bitrix Captcha
     if ($params["USE_BITRIX_CAPTCHA"] === "Y") {
-        $arResult["CAPTCHA_CODE"] = generateCaptcha();
+        $arResult["CAPTCHA_CODE"] = FormHelper::generateCaptcha();
     }
 
     // Определяем путь к шаблону модального окна
@@ -112,6 +117,14 @@ if ($action === "load") {
  * Сохранение формы
  */
 if ($action === "save") {
+
+    // Загрузка конфигурации безопасности файлов
+    //$fileConfig = loadFileConfig($params);
+
+    // Инициализация компонентов
+    //$rateLimiter = new RateLimiter($iblockId, $params["RATE_LIMITS"] ?? []);
+    //$fileValidator = new FileSecurityValidator($fileConfig, $iblockId);
+
 //    $value = trim($request->getPost("value"));
 //
 //    $response = array(
@@ -178,115 +191,3 @@ if ($action === "save") {
 http_response_code(400);
 echo json_encode(["error" => "Unknown action: " . $action]);
 die();
-
-
-/**
- * Загрузка конфигурации файлов
- * @param $params
- * @return array
- */
-function loadFileConfig($params): array
-{
-    $configPath = __DIR__ . "/config/file_security.php";
-    $defaultConfig = file_exists($configPath) ? include($configPath) : [];
-
-    // Переопределяем настройки из параметров компонента
-    if (isset($params["MAX_FILE_SIZE"]) && (int)$params["MAX_FILE_SIZE"] > 0) {
-        $defaultConfig["max_file_size"] = (int)$params["MAX_FILE_SIZE"] * 1024 * 1024;
-    }
-
-    if (!empty($params["ALLOWED_FILE_EXTENSIONS"])) {
-        $defaultConfig["allowed_extensions"] = array_map("trim", explode(",", strtolower($params["ALLOWED_FILE_EXTENSIONS"])));
-    }
-
-    return $defaultConfig;
-}
-
-/**
- * Получает свойства инфоблока
- * @param $iblockId
- * @return array
- */
-function getIblockProperties($iblockId): array
-{
-    $properties = [];
-    $res = PropertyTable::getList([
-        "filter" => ["IBLOCK_ID" => $iblockId, "ACTIVE" => "Y"],
-        "select" => ["ID", "CODE", "NAME", "PROPERTY_TYPE", "LIST_TYPE", "MULTIPLE", "IS_REQUIRED", "HINT", "USER_TYPE", "ROW_COUNT", "COL_COUNT", "LINK_IBLOCK_ID"],
-        "order" => ["SORT" => "ASC"]
-    ]);
-
-    while ($property = $res->fetch()) {
-        $property["LIST_VALUES"] = [];
-
-        if ($property["PROPERTY_TYPE"] === "L") {
-            $property["LIST_VALUES"] = getPropertyListValues($property["ID"]);
-        }
-
-        if ($property["PROPERTY_TYPE"] === "E" && !empty($property["LINK_IBLOCK_ID"])) {
-            $property["ELEMENT_VALUES"] = getElementValues($property["LINK_IBLOCK_ID"]);
-        }
-
-        $properties[] = $property;
-    }
-
-    return $properties;
-}
-
-/**
- * Получает список свойства инфоблока
- * @param $propertyId
- * @return array
- */
-function getPropertyListValues($propertyId): array
-{
-    $values = [];
-    $res = CIBlockPropertyEnum::GetList(
-        ["SORT" => "ASC"],
-        ["PROPERTY_ID" => $propertyId]
-    );
-    while ($value = $res->fetch()) {
-        $values[] = $value;
-    }
-    return $values;
-}
-
-/**
- * Получает элементы связанного инфоблока
- * @param $iblockId
- * @return array
- */
-function getElementValues($iblockId): array
-{
-    $elements = [];
-    $res = CIBlockElement::GetList(
-        ["SORT" => "ASC", "NAME" => "ASC"],
-        ["IBLOCK_ID" => $iblockId, "ACTIVE" => "Y"],
-        false,
-        false,
-        ["ID", "NAME"]
-    );
-    while ($element = $res->fetch()) {
-        $elements[] = $element;
-    }
-    return $elements;
-}
-
-/**
- * Генерирование Captcha
- * @return mixed
- */
-function generateCaptcha(): mixed
-{
-    $cpt = new CCaptcha();
-    $captchaPass = Option::get("main", "captcha_password");
-
-    // Проверка на пустоту, если пусто генерируем новый код капчи
-    if (strlen($captchaPass) <= 0) {
-        $captchaPass = randString(10);
-        Option::set("main", "captcha_password", $captchaPass);
-    }
-
-    $cpt->SetCodeCrypt($captchaPass);
-    return $cpt->GetCodeCrypt();
-}

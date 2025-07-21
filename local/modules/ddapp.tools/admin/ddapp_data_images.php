@@ -124,7 +124,7 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                     $fields[] = ["CODE" => $code, "NAME" => $name, "TYPE" => "FIELD", "PROPERTY_TYPE" => "", "MULTIPLE" => "N"];
                 }
 
-                $properties = IblockHelper::getProperties([
+                $properties = IblockHelper::getAllProperties([
                     "select" => ["ID", "CODE", "NAME", "PROPERTY_TYPE", "MULTIPLE", "LIST_TYPE", "USER_TYPE"],
                     "filter" => ["IBLOCK_ID" => $iblockId, "ACTIVE" => "Y", "PROPERTY_TYPE" => "F"],
                     "order" => ["SORT" => "ASC", "NAME" => "ASC"]

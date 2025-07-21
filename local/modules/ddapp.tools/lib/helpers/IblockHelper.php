@@ -47,7 +47,7 @@ class IblockHelper
      * @param $request
      * @return mixed
      */
-    public static function getProperties($request): mixed
+    public static function getAllProperties($request): mixed
     {
         return PropertyTable::getList($request)->fetchAll();
     }

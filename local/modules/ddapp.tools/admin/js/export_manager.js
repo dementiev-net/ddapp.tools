@@ -203,7 +203,7 @@ BX.DDAPP.Tools.ExportManager.prototype = {
 
     handleFailure: function (xhr) {
 
-        console.error('ExportManager AJAX Error:', xhr);
+        console.error('ExportManager: AJAX Error', xhr);
 
         this.finishExport(this.params.messageErrorServerConnect + ' (HTTP ' + (xhr.status || 'unknown') + ')');
     },
@@ -299,7 +299,7 @@ BX.DDAPP.Tools.ExportManager.prototype = {
     },
 
     onExportComplete: function () {
-        console.log('ExportManager: Export completed. Exported:', this.exported, 'Total:', this.total, 'Errors:', this.errorsCount);
+        console.log('ExportManager: Export completed - Exported:', this.exported, 'Total:', this.total, 'Errors:', this.errorsCount);
     },
 
     // Публичные методы для управления экспортом

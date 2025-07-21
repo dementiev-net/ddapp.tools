@@ -138,7 +138,7 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
                 }
 
                 self.showError(self.params.messageFileImportError);
-                console.error('ImportExcelManager File Import Error:', error.message);
+                console.error('ImportExcelManager: File Import Error', error.message);
 
             } finally {
                 BX.closeWait();
@@ -148,7 +148,7 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
         reader.onerror = function () {
             BX.closeWait();
             self.showError(self.params.messageFileReadtError);
-            console.error('ImportExcelManager File Import Error: File Read Error');
+            console.error('ImportExcelManager: File Read Error');
         };
 
         reader.readAsArrayBuffer(file);

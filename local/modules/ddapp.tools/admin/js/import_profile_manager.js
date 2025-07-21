@@ -155,7 +155,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }, function (error) {
             BX.closeWait();
             self.showError(self.params.messageProfileLoadError);
-            console.error('ImportProfileManager Load Profile Error:', error);
+            console.error('ImportProfileManager: Load Profile Error', error);
         });
     },
 
@@ -197,7 +197,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }, function (error) {
             BX.closeWait();
             self.showError(self.params.messageProfileLoadError);
-            console.error('ImportProfileManager Load Profile Error:', error);
+            console.error('ImportProfileManager: Load Profile Error', error);
         });
     },
 
@@ -240,7 +240,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }, function (error) {
             BX.closeWait();
             self.showError(self.params.messageProfileDeleteError);
-            console.error('ImportProfileManager Delete Profile Error:', error);
+            console.error('ImportProfileManager: Delete Profile Error', error);
         });
     },
 
@@ -263,7 +263,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
             }
         }, function (error) {
             self.showError(self.params.messageIblockSelectError);
-            console.error('ImportProfileManager Load Profile Type Error:', error);
+            console.error('ImportProfileManager: Load Profile Type Error', error);
         });
     },
 
@@ -297,7 +297,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
                 callback();
             }
         }, function (error) {
-            console.error('ImportProfileManager Load Profile Error:', error);
+            console.error('ImportProfileManager: Load Profile Error', error);
         });
     },
 
@@ -318,7 +318,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
                 callback();
             }
         }, function (error) {
-            console.error('ImportProfileManager Load Iblock Fields Error:', error);
+            console.error('ImportProfileManager: Load Iblock Fields Error', error);
         });
     },
 
@@ -421,7 +421,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }, function (error) {
             BX.closeWait();
             self.showError(self.params.messageProfileSaveError);
-            console.error('ImportProfileManager Save Profile Error:', error);
+            console.error('ImportProfileManager: Save Profile Error', error);
         });
     },
 
@@ -442,14 +442,14 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
                     }
                 } else {
                     if (errorCallback) {
-                        console.error('ImportProfileManager Connect Error', result);
+                        console.error('ImportProfileManager: Connect Error', result);
                         errorCallback(result && result.message ? result.message : this.params.messageErrorServerConnect);
                     }
                 }
             },
             onfailure: function (error) {
                 if (errorCallback) {
-                    console.error('ImportProfileManager Connect Error:', error);
+                    console.error('ImportProfileManager: Connect Error', error);
                     errorCallback(this.params.messageErrorServerConnect);
                 }
             }
@@ -566,7 +566,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         try {
             var settings = JSON.parse(settingsJson);
 
-            console.log("ImportProfileManager: Profile settings:", settings);
+            console.log("ImportProfileManager: Profile settings", settings);
 
             // Если результат парсинга - строка, парсим еще раз
             if (typeof settings === 'string') {
@@ -596,7 +596,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
                 });
             }
         } catch (error) {
-            console.error('ImportProfileManager Settings Parser Error:', error);
+            console.error('ImportProfileManager: Settings Parser Error', error);
         }
     },
 

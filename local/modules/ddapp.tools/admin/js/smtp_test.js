@@ -92,13 +92,13 @@ BX.DDAPP.Tools.SmtpTest.prototype = {
 
         // Выводим отладочную информацию
         if (result && result.debug) {
-            console.log('SMTP Test Debug:', result.debug);
+            console.log('SmtpTest: Debug', result.debug);
         }
     },
 
     onTestFailure: function (xhr) {
         this.showMessage('ajax_error');
-        console.error('SMTP Test AJAX Error:', xhr);
+        console.error('SmtpTest: AJAX Error', xhr);
     },
 
     onLoadStart: function () {

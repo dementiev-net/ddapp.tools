@@ -139,7 +139,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
         }, function (error) {
             BX.closeWait();
             self.showError(self.params.messageProfileLoadError);
-            console.error('ImagesProfileManager Load Profile Error:', error);
+            console.error('ImagesProfileManager: Load Profile Error', error);
         });
     },
 
@@ -181,7 +181,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
         }, function (error) {
             BX.closeWait();
             self.showError(self.params.messageProfileLoadError);
-            console.error('ImagesProfileManager Load Profile Error:', error);
+            console.error('ImagesProfileManager: Load Profile Error', error);
         });
     },
 
@@ -224,7 +224,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
         }, function (error) {
             BX.closeWait();
             self.showError(self.params.messageProfileDeleteError);
-            console.error('ImagesProfileManager Delete Profile Error:', error);
+            console.error('ImagesProfileManager: Delete Profile Error', error);
         });
     },
 
@@ -247,7 +247,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
             }
         }, function (error) {
             self.showError(self.params.messageIblockSelectError);
-            console.error('ImagesProfileManager Load Profile Type Error:', error);
+            console.error('ImagesProfileManager: Load Profile Type Error', error);
         });
     },
 
@@ -281,7 +281,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
                 callback();
             }
         }, function (error) {
-            console.error('ImagesProfileManager Load Profile Error:', error);
+            console.error('ImagesProfileManager: Load Profile Error', error);
         });
     },
 
@@ -302,7 +302,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
                 callback();
             }
         }, function (error) {
-            console.error('ImagesProfileManager Load Iblock Fields Error:', error);
+            console.error('ImagesProfileManager: Load Iblock Fields Error', error);
         });
     },
 
@@ -360,7 +360,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
         }, function (error) {
             BX.closeWait();
             self.showError(self.params.messageProfileSaveError);
-            console.error('ImagesProfileManager Save Profile Error:', error);
+            console.error('ImagesProfileManager: Save Profile Error', error);
         });
     },
 
@@ -381,14 +381,14 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
                     }
                 } else {
                     if (errorCallback) {
-                        console.error('ImagesProfileManager Connect Error', result);
+                        console.error('ImagesProfileManager: Connect Error', result);
                         errorCallback(result && result.message ? result.message : this.params.messageErrorServerConnect);
                     }
                 }
             },
             onfailure: function (error) {
                 if (errorCallback) {
-                    console.error('ImagesProfileManager Connect Error:', error);
+                    console.error('ImagesProfileManager: Connect Error', error);
                     errorCallback(this.params.messageErrorServerConnect);
                 }
             }
@@ -450,7 +450,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
         try {
             var settings = JSON.parse(settingsJson);
 
-            console.log("ImagesProfileManager: Profile settings:", settings);
+            console.log("ImagesProfileManager: Profile settings", settings);
 
             // Если результат парсинга - строка, парсим еще раз
             if (typeof settings === 'string') {
@@ -469,7 +469,7 @@ BX.DDAPP.Tools.ImagesProfileManager.prototype = {
                 });
             }
         } catch (error) {
-            console.error('ImagesProfileManager Settings Parser Error:', error);
+            console.error('ImagesProfileManager: Settings Parser Error', error);
         }
     },
 

@@ -387,7 +387,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
                     self.loadLogData();
                     self.showAlert(self.params.messageDeleteOk);
                 } else {
-                    console.error('LogViewer Error:', response.message);
+                    console.error('LogViewer: Error', response.message);
                     self.showError(response.message);
                 }
             },

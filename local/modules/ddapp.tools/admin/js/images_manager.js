@@ -203,7 +203,7 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
 
     handleFailure: function (xhr) {
 
-        console.error('ImagesManager AJAX Error:', xhr);
+        console.error('ImagesManager: AJAX Error', xhr);
 
         this.finishUpload(this.params.messageErrorServerConnect + ' (HTTP ' + (xhr.status || 'unknown') + ')');
     },
@@ -299,7 +299,7 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
     },
 
     onUploadComplete: function () {
-        console.log('ImagesManager: Upload completed. Uploaded:', this.uploaded, 'Total:', this.total, 'Errors:', this.errorsCount);
+        console.log('ImagesManager: Upload completed - Uploaded:', this.uploaded, 'Total:', this.total, 'Errors:', this.errorsCount);
     },
 
     // Публичные методы для управления экспортом

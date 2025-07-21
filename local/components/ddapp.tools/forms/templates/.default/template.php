@@ -5,38 +5,33 @@ use Bitrix\Main\Page\Asset;
 
 Asset::getInstance()->addJs($templateFolder . '/form_manager.js');
 
-
-//if ($arParams['USE_SCRIPT_1'] === 'Y') {
-//Asset::getInstance()->addJs($templateFolder . '/_script.js');
-//}
-
 $componentId = $arResult['COMPONENT_ID'];
 ?>
 
 <!-- Кнопка для загрузки и открытия модального окна -->
 <button type="button"
-        class="btn btn-primary forms-load-modal-btn"
-        data-component-id="<?= $componentId ?>"
-        data-modal-title="<?= htmlspecialchars($arResult['MODAL_TITLE']) ?>"
-        data-input-placeholder="<?= htmlspecialchars($arResult['INPUT_PLACEHOLDER']) ?>"
+        class="<?= htmlspecialcharsEx($arResult["BUTTON_CLASS"]) ?>"
+        data-id="<?= $componentId ?>"
         data-ajax-url="<?= $arResult['AJAX_URL'] ?>"
-        data-template="<?= htmlspecialchars($arResult['TEMPLATE_NAME']) ?>">
+        data-template="<?= htmlspecialchars($templateFolder) ?>"
+        data-form-params="<?= htmlspecialchars(json_encode($arResult["FORM_PARAMS"], JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>">
+    <?php if (!empty($arResult["BUTTON_ICON"])): ?>
+        <i class="<?= htmlspecialcharsEx($arResult["BUTTON_ICON"]) ?> me-2"></i>
+    <?php endif; ?>
     <?= htmlspecialchars($arResult['BUTTON_TEXT']) ?>
 </button>
 
 <script>
     BX.ready(function () {
         // Инициализация конкретного экземпляра
-        var componentId = '<?=$componentId?>';
-        var button = document.querySelector('[data-component-id="' + componentId + '"]');
+        var componentId = '<?= $componentId ?>';
+        var button = document.querySelector('[data-id="' + componentId + '"]');
 
         if (button) {
             var modalForm = new BX.DDAPP.Tools.FormManager({
                 componentId: componentId,
                 button: button,
-                ajaxUrl: button.getAttribute('data-ajax-url'),
-                modalTitle: button.getAttribute('data-modal-title'),
-                inputPlaceholder: button.getAttribute('data-input-placeholder')
+                ajaxUrl: button.getAttribute('data-ajax-url')
             });
 
             // Сохраняем ссылку на экземпляр для возможного использования

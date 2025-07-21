@@ -4,28 +4,9 @@ $APPLICATION->SetTitle('Главная');
 ?>
 
     <section class="container my-5">
-
-        <?
-//        $APPLICATION->IncludeComponent(
-//            "dd.tools:form.iblock",
-//            ".default",
-//            array(
-//                "IBLOCK_ID" => "48",
-//                "FORM_ID" => "contact_form",
-//                "EMAIL_TEMPLATE" => "NEW_FEEDBACK",
-//                "USE_CAPTCHA" => "N",
-//                "USE_RECAPTCHA" => "N",
-//                "RECAPTCHA_PUBLIC_KEY" => "your_public_key",
-//                "RECAPTCHA_SECRET_KEY" => "your_secret_key",
-//                "CACHE_TYPE" => "A",
-//                "CACHE_TIME" => "3600"
-//            )
-//        );
-        ?>
-
         <?php
         $APPLICATION->IncludeComponent(
-	"ddapp.tools:forms", 
+	"ddapp.tools:forms.core",
 	".default", 
 	[
 		"IBLOCK_ID" => "97",

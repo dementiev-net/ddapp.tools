@@ -15,22 +15,14 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 
 $request = Application::getInstance()->getContext()->getRequest();
 
-// Логируем входящие данные для отладки
-error_log('AJAX Request received');
-error_log('POST data: ' . print_r($_POST, true));
-error_log('Is AJAX: ' . ($request->isAjaxRequest() ? 'yes' : 'no'));
-
 if (!$request->isAjaxRequest()) {
     http_response_code(400);
     echo json_encode(['error' => 'Only AJAX requests allowed']);
     die();
 }
 
-$action = $request->getPost('component_action');
-$componentId = $request->getPost('component_id');
-
-error_log('Action: ' . $action);
-error_log('Component ID: ' . $componentId);
+$action = $request->getPost('action');
+$componentId = $request->getPost('id');
 
 if (!$action || !$componentId) {
     http_response_code(400);
@@ -38,7 +30,7 @@ if (!$action || !$componentId) {
     die();
 }
 
-if ($action === 'check_value') {
+if ($action === 'save') {
     $value = trim($request->getPost('value'));
 
     $response = array(
@@ -58,14 +50,10 @@ if ($action === 'check_value') {
     die();
 }
 
-if ($action === 'load_modal') {
+if ($action === 'load') {
     $modalTitle = $request->getPost('modal_title') ?: 'Проверка данных';
     $inputPlaceholder = $request->getPost('input_placeholder') ?: 'Введите значение';
     $templateName = $request->getPost('template') ?: '.default';
-
-    error_log('Modal title: ' . $modalTitle);
-    error_log('Input placeholder: ' . $inputPlaceholder);
-    error_log('Template: ' . $templateName);
 
     // Устанавливаем переменные для шаблона
     $arResult = array(
@@ -81,7 +69,7 @@ if ($action === 'load_modal') {
     if (!file_exists($modalTemplatePath)) {
         // Fallback на дефолтный шаблон
         $modalTemplatePath = __DIR__ . '/templates/.default/modal.php';
-        error_log('Template not found, using default: ' . $modalTemplatePath);
+        //error_log('Template not found, using default: ' . $modalTemplatePath);
     }
 
     if (!file_exists($modalTemplatePath)) {
@@ -105,8 +93,6 @@ if ($action === 'load_modal') {
         'status' => 'success',
         'html' => $modalHtml
     );
-
-    error_log('Sending response: ' . json_encode($response));
 
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($response);

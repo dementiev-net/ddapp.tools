@@ -73,12 +73,6 @@ $componentId = $arResult['COMPONENT_ID'];
                                                    placeholder="Введите <?= strtolower($property["NAME"]) ?>"
                                                 <?= $property["IS_REQUIRED"] === "Y" ? " required" : "" ?>
                                                    aria-describedby="<?= !empty($property["HINT"]) ? "hint_" . $property["ID"] : "" ?>">
-                                            <?php if (!empty($property["HINT"]) && strtoupper(trim($property["HINT"])) === "EMAIL"): ?>
-                                                <div class="email-hint">
-                                                    <i class="fas fa-lightbulb me-1"></i>
-                                                    Нажмите <kbd>Tab</kbd> для автодополнения домена
-                                                </div>
-                                            <?php endif; ?>
                                         <?php endif; ?>
 
                                     <?php

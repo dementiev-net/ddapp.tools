@@ -282,28 +282,70 @@ BX.DDAPP.Tools.FormManager.prototype = {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     },
 
-    initEmailAutocomplete: function () {
-        var emailInputs = document.querySelectorAll('input[type="text"]');
-        var commonDomains = ['gmail.com', 'yandex.ru', 'mail.ru', 'outlook.com', 'yahoo.com'];
+    initInputMasks: function () {
+        // Проверяем доступность библиотеки
+        if (typeof Inputmask === 'undefined') {
+            console.warn('FormManager: Inputmask library not loaded');
+            return;
+        }
 
-        emailInputs.forEach(function (input) {
-            var hint = input.parentElement.querySelector('.email-hint');
+        var inputs = document.querySelectorAll('input[type="text"]');
+
+        inputs.forEach(function (input) {
+            var hint = input.getAttribute('aria-describedby');
             if (!hint) return;
 
-            input.addEventListener('keydown', function (e) {
-                if (e.key === 'Tab' && input.value.includes('@') && !input.value.includes('.')) {
-                    e.preventDefault();
-                    var atIndex = input.value.indexOf('@');
-                    var domain = input.value.substring(atIndex + 1);
+            var hintElement = document.getElementById(hint);
+            if (!hintElement) return;
 
-                    var match = commonDomains.find(d => d.startsWith(domain));
-                    if (match) {
-                        input.value = input.value.substring(0, atIndex + 1) + match;
-                        input.setSelectionRange(atIndex + 1 + domain.length, input.value.length);
-                    }
+            var hintText = hintElement.textContent.toUpperCase();
+
+            if (hintText.includes('PHONE')) {
+                this.applyPhoneMask(input);
+            } else if (hintText.includes('EMAIL')) {
+                this.applyEmailMask(input);
+            }
+        }.bind(this));
+    },
+
+    applyPhoneMask: function (input) {
+        var phoneMask = new Inputmask({
+            mask: '+7 (999) 999-99-99',
+            placeholder: '_',
+            showMaskOnHover: false,
+            showMaskOnFocus: true,
+            clearIncomplete: true,
+            definitions: {
+                '9': {
+                    validator: "[0-9]",
+                    cardinality: 1
                 }
-            });
+            }
         });
+
+        phoneMask.mask(input);
+        input.setAttribute('inputmode', 'tel');
+        input.setAttribute('autocomplete', 'tel');
+    },
+
+    applyEmailMask: function (input) {
+        var emailMask = new Inputmask({
+            mask: "*{1,64}@*{1,64}.*{2,}",
+            greedy: false,
+            clearIncomplete: true,
+            definitions: {
+                '*': {
+                    validator: "[0-9A-Za-z!#$%&'*+/=?^_`{|}~-]",
+                    cardinality: 1,
+                    casing: "lower"
+                }
+            }
+        });
+
+        emailMask.mask(input);
+
+        input.setAttribute('inputmode', 'email');
+        input.setAttribute('autocomplete', 'email');
     },
 
     initFormHandlers: function () {
@@ -312,7 +354,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
 
         if (form) {
             this.initFileUpload();
-            this.initEmailAutocomplete();
+            this.initInputMasks();
 
             form.addEventListener('submit', function (e) {
                 e.preventDefault();

@@ -8,9 +8,6 @@ use Bitrix\Main\Web\Json;
 use DDAPP\Tools\Helpers\LogHelper;
 use DDAPP\Tools\Helpers\FormHelper;
 
-//use DDAPP\Tools\Components\FileSecurityValidator;
-//use DDAPP\Tools\Components\RateLimiter;
-
 Loc::loadMessages(__FILE__);
 Loader::includeModule("iblock");
 
@@ -30,10 +27,6 @@ header("Content-Type: application/json; charset=utf-8");
 //    echo Json::encode(["success" => false, "message" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_REQUEST")]);
 //    exit;
 //}
-
-//LogHelper::error($componentId . $this->iblockId, "Form save failed", [
-//    "ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"
-//]);
 
 $action = $request->getPost("action");
 $componentId = $request->getPost("id");
@@ -57,13 +50,13 @@ if (!empty($params["ALLOWED_FILE_EXTENSIONS"])) {
     $fileConfig["allowed_extensions"] = array_map("trim", explode(",", strtolower($params["ALLOWED_FILE_EXTENSIONS"])));
 }
 
+$params["CACHE_TIME"] = isset($params["CACHE_TIME"]) ? $params["CACHE_TIME"] : 3600;
+$iblockId = (int)$params["IBLOCK_ID"];
+
 /**
  * Загрузка формы
  */
 if ($action === "load") {
-
-    $params["CACHE_TIME"] = isset($params["CACHE_TIME"]) ? $params["CACHE_TIME"] : 3600;
-    $iblockId = (int)$params["IBLOCK_ID"];
 
     $res = CIBlock::GetByID($iblockId);
     $arIblock = $res->GetNext();
@@ -74,6 +67,7 @@ if ($action === "load") {
 
     $arResult["NAME"] = $arIblock["NAME"];
     $arResult["DESCRIPTION"] = $arIblock["DESCRIPTION"];
+    $arResult["BUTTON_TEXT"] = $params["BUTTON_TEXT"];
     $arResult["PROPERTIES"] = FormHelper::getIblockProperties($iblockId);
     $arResult["COMPONENT_ID"] = $componentId;
     $arResult["IBLOCK_ID"] = $iblockId;
@@ -108,7 +102,6 @@ if ($action === "load") {
         exit;
     }
 
-    header("Content-Type: application/json; charset=utf-8");
     echo Json::encode(["success" => true, "html" => $modalHtml]);
     exit;
 }
@@ -118,76 +111,53 @@ if ($action === "load") {
  */
 if ($action === "save") {
 
-    // Загрузка конфигурации безопасности файлов
-    //$fileConfig = loadFileConfig($params);
-
-    // Инициализация компонентов
-    //$rateLimiter = new RateLimiter($iblockId, $params["RATE_LIMITS"] ?? []);
-    //$fileValidator = new FileSecurityValidator($fileConfig, $iblockId);
-
-//    $value = trim($request->getPost("value"));
-//
-//    $response = array(
-//        "status" => "error",
-//        "message" => ""
-//    );
-//
-//    if (empty($value)) {
-//        $response["message"] = "Поле не может быть пустым!";
-//    } else {
-//        $response["status"] = "success";
-//        $response["message"] = "Проверка прошла успешно!";
-//    }
-//
-//    header("Content-Type: application/json; charset=utf-8");
-//    echo json_encode($response);
-//    die();
-    /*
-    // Проверяем AJAX-запрос в самом начале
-    if ($request->isPost() && $request->getPost("ajax_" . $this->iblockId) === "Y") {
-        global $APPLICATION;
-
-        // CSRF защита
-        if (!check_bitrix_sessid()) {
-            $APPLICATION->RestartBuffer();
-            header("Content-Type: application/json; charset=utf-8");
-            echo json_encode([
-                "success" => false,
-                "message" => "Ошибка безопасности. Обновите страницу и попробуйте снова."
-            ], JSON_UNESCAPED_UNICODE);
-            die();
-        }
-
-        // Проверка rate limiting
-        $rateLimitResult = $this->rateLimiter->checkLimits();
-        if (!$rateLimitResult["allowed"]) {
-            $APPLICATION->RestartBuffer();
-            header("Content-Type: application/json; charset=utf-8");
-            echo json_encode([
-                "success" => false,
-                "message" => $rateLimitResult["message"],
-                "retry_after" => $rateLimitResult["retry_after"]
-            ], JSON_UNESCAPED_UNICODE);
-            die();
-        }
-
-        // Очищаем буфер
-        $APPLICATION->RestartBuffer();
-
-        $result = $this->processForm();
-
-        // Устанавливаем правильный заголовок
-        header("Content-Type: application/json; charset=utf-8");
-
-        // Выводим JSON и завершаем
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
-        die();
+    // CSRF защита
+    if (!check_bitrix_sessid()) {
+        echo Json::encode(["success" => false, "message" => "Ошибка безопасности. Обновите страницу и попробуйте снова"]);
+        exit;
     }
 
-     */
+    // Проверка Rate Limiting
+    $rateLimitResult = FormHelper::validateLimits($iblockId, $params["RATE_LIMITS"] ?? []);
+    if (!$rateLimitResult["allowed"]) {
+        echo Json::encode(["success" => false, "message" => $rateLimitResult["message"], "retry_after" => $rateLimitResult["retry_after"]]);
+        exit;
+    }
+
+    // Валидация капчи
+    if (!FormHelper::validateCaptcha($request, $params)) {
+        echo Json::encode(["success" => false, "message" => "Неверный код капчи"]);
+        exit;
+    }
+
+    // Валидация полей формы
+    $errors = FormHelper::validateForm($request, $params, $fileConfig, $iblockId);
+    if (!empty($errors)) {
+        LogHelper::warning("form_" . $iblockId, "Form validation failed", ["errors" => $errors, "ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
+        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
+        exit;
+    }
+
+    // Сохранение элемента инфоблока
+    $elementId = FormHelper::saveElement($request, $params, $iblockId);
+
+    if ($elementId) {
+        // Отправка письма
+        if (!empty($params["EMAIL_TEMPLATE"])) {
+            $emailResult = FormHelper::sendEmail($elementId, $request, $iblockId, $params);
+        }
+
+        LogHelper::info("form_" . $iblockId, "Form submitted successfully", ["element_id" => $elementId, "ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
+        echo Json::encode(["success" => true, "message" => "Форма успешно отправлена", "element_id" => $elementId]);
+        exit;
+
+    } else {
+        LogHelper::error("form_" . $iblockId, "Form save failed", ["ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
+        echo Json::encode(["success" => false, "message" => "Ошибка сохранения данных"]);
+        exit;
+    }
 }
 
 // Если действие не распознано
-http_response_code(400);
-echo json_encode(["error" => "Unknown action: " . $action]);
-die();
+echo Json::encode(["success" => false, "message" => "Ошибка запроса: " . $action]);
+exit;

@@ -66,6 +66,7 @@ class DDAppFormButtonComponent extends CBitrixComponent
     {
         return [
             "IBLOCK_ID" => $this->iblockId,
+            "BUTTON_TEXT" => $this->arResult["BUTTON_TEXT"],
             "ALLOWED_FILE_EXTENSIONS" => $this->arParams["ALLOWED_FILE_EXTENSIONS"] ?? "jpg,jpeg,png,gif,pdf,doc,docx",
             "CHECK_FILE_CONTENT" => $this->arParams["CHECK_FILE_CONTENT"] ?? "Y",
             "EMAIL_TEMPLATE" => $this->arParams["EMAIL_TEMPLATE"] ?? "DDAPP_MESSAGE_FORM",

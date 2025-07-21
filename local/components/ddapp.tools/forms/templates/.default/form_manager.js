@@ -210,13 +210,14 @@ BX.DDAPP.Tools.FormManager.prototype = {
 
     initFormHandlers: function () {
         var form = document.getElementById(this.componentId + '_form');
-        var input = document.getElementById(this.componentId + '_input');
+        //var input = document.getElementById(this.componentId + '_input');
         var messageDiv = document.getElementById(this.componentId + '_message');
 
         if (form) {
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                this.handleFormSubmit(input.value, messageDiv);
+                //this.handleFormSubmit(input.value, messageDiv);
+                this.handleFormSubmit("", messageDiv);
             }.bind(this));
         }
     },
@@ -249,24 +250,21 @@ BX.DDAPP.Tools.FormManager.prototype = {
     onFormResponse: function (response, messageDiv) {
         console.log('FormManager: Form response', response);
 
-        if (response && response.status) {
+        if (response && response.success) {
             // Показываем сообщение в модальном окне
-            this.showMessage(messageDiv, response.message, response.status);
+            //this.showMessage(messageDiv, response.message, response.status);
 
             // Дополнительно показываем toast для успешных операций
-            if (response.status === 'success') {
-                this.showToast(response.message, 'success');
-            }
+            //if (response.status === 'success') {
+            //    this.showToast(response.message, 'success');
+            //}
         } else {
-            console.error('FormManager: Invalid response format', response);
-            this.showMessage(messageDiv, 'Ошибка формата ответа', 'error');
-            this.showToast('Ошибка формата ответа', 'error');
+            this.showMessage(messageDiv, response.message, 'error');
         }
     },
 
     onFormError: function (error, messageDiv) {
         console.error('FormManager: Form submission error', error);
-        this.showMessage(messageDiv, 'Ошибка отправки запроса', 'error');
         this.showToast('Ошибка отправки запроса', 'error');
     },
 

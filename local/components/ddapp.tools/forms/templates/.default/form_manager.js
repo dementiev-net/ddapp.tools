@@ -149,7 +149,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
             this.setupModalCleanup();
         } else {
             console.error('FormManager: Unexpected response', result);
-            this.showToast( result && result.message ? result.message : 'Ошибка загрузки формы', 'error');
+            this.showToast(result && result.message ? result.message : 'Ошибка загрузки формы', 'error');
         }
     },
 
@@ -208,15 +208,114 @@ BX.DDAPP.Tools.FormManager.prototype = {
         }
     },
 
+    initFileUpload: function () {
+        var fileAreas = document.querySelectorAll('.file-upload-area');
+
+        fileAreas.forEach(function (area) {
+            var input = area.querySelector('input[type="file"]');
+            var dropZone = area.querySelector('.file-drop-zone');
+            var previewList = area.querySelector('.file-preview-list');
+            var selectButton = dropZone.querySelector('button');
+
+            // Клик по кнопке выбора
+            selectButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                input.click();
+            });
+
+            // Drag & Drop
+            dropZone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                dropZone.classList.add('border-primary', 'bg-light');
+            });
+
+            dropZone.addEventListener('dragleave', function (e) {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary', 'bg-light');
+            });
+
+            dropZone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary', 'bg-light');
+
+                var files = e.dataTransfer.files;
+                input.files = files;
+                this.showFilePreview(files, previewList);
+            }.bind(this));
+
+            // Изменение через input
+            input.addEventListener('change', function (e) {
+                this.showFilePreview(e.target.files, previewList);
+            }.bind(this));
+        }.bind(this));
+    },
+
+    showFilePreview: function (files, container) {
+        container.innerHTML = '';
+
+        Array.from(files).forEach(function (file, index) {
+            var fileItem = document.createElement('div');
+            fileItem.className = 'file-preview-item d-flex align-items-center justify-content-between p-2 border rounded mb-2';
+
+            var fileInfo = document.createElement('div');
+            fileInfo.innerHTML = '<i class="fas fa-file me-2"></i>' + file.name + ' <small class="text-muted">(' + this.formatFileSize(file.size) + ')</small>';
+
+            var removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-sm btn-outline-danger';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeBtn.addEventListener('click', function () {
+                // Логика удаления файла
+            });
+
+            fileItem.appendChild(fileInfo);
+            fileItem.appendChild(removeBtn);
+            container.appendChild(fileItem);
+        }.bind(this));
+    },
+
+    formatFileSize: function (bytes) {
+        if (bytes === 0) return '0 Bytes';
+        var k = 1024;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    },
+
+    initEmailAutocomplete: function () {
+        var emailInputs = document.querySelectorAll('input[type="text"]');
+        var commonDomains = ['gmail.com', 'yandex.ru', 'mail.ru', 'outlook.com', 'yahoo.com'];
+
+        emailInputs.forEach(function (input) {
+            var hint = input.parentElement.querySelector('.email-hint');
+            if (!hint) return;
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Tab' && input.value.includes('@') && !input.value.includes('.')) {
+                    e.preventDefault();
+                    var atIndex = input.value.indexOf('@');
+                    var domain = input.value.substring(atIndex + 1);
+
+                    var match = commonDomains.find(d => d.startsWith(domain));
+                    if (match) {
+                        input.value = input.value.substring(0, atIndex + 1) + match;
+                        input.setSelectionRange(atIndex + 1 + domain.length, input.value.length);
+                    }
+                }
+            });
+        });
+    },
+
     initFormHandlers: function () {
         var form = document.getElementById(this.componentId + '_form');
-        //var input = document.getElementById(this.componentId + '_input');
         var messageDiv = document.getElementById(this.componentId + '_message');
 
         if (form) {
+            this.initFileUpload();
+            this.initEmailAutocomplete();
+
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                //this.handleFormSubmit(input.value, messageDiv);
                 this.handleFormSubmit("", messageDiv);
             }.bind(this));
         }
@@ -251,13 +350,27 @@ BX.DDAPP.Tools.FormManager.prototype = {
         console.log('FormManager: Form response', response);
 
         if (response && response.success) {
-            // Показываем сообщение в модальном окне
-            //this.showMessage(messageDiv, response.message, response.status);
+            // Показываем success toast
+            this.showToast(response.message || 'Форма успешно отправлена!', 'success');
 
-            // Дополнительно показываем toast для успешных операций
-            //if (response.status === 'success') {
-            //    this.showToast(response.message, 'success');
-            //}
+            // Закрываем модальное окно через 2 секунды
+            setTimeout(function () {
+                var modal = bootstrap.Modal.getInstance(document.getElementById(this.componentId + '_modal'));
+                if (modal) {
+                    modal.hide();
+                }
+            }.bind(this), 2000);
+
+            // Очищаем форму
+            var form = document.getElementById(this.componentId + '_form');
+            if (form) {
+                form.reset();
+                // Очищаем превью файлов
+                var previews = form.querySelectorAll('.file-preview-list');
+                previews.forEach(function (preview) {
+                    preview.innerHTML = '';
+                });
+            }
         } else {
             this.showMessage(messageDiv, response.message, 'error');
         }

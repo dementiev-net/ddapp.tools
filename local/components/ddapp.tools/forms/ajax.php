@@ -65,6 +65,7 @@ if ($action === "load") {
         exit;
     }
 
+    $arParams = $params;
     $arResult["NAME"] = $arIblock["NAME"];
     $arResult["DESCRIPTION"] = $arIblock["DESCRIPTION"];
     $arResult["BUTTON_TEXT"] = $params["BUTTON_TEXT"];

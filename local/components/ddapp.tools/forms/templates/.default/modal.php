@@ -134,16 +134,35 @@ $componentId = $arResult['COMPONENT_ID'];
                                                aria-describedby="<?= !empty($property["HINT"]) ? "hint_" . $property["ID"] : "" ?>">
 
                                     <?php
-                                    // Файловые поля "F" - будут обработаны JavaScript
+                                    // Файловые поля "F"
                                     elseif ($property["PROPERTY_TYPE"] === "F"): ?>
-                                        <input type="file"
-                                               class="form-control d-none"
-                                               id="property_<?= $property["ID"] ?>"
-                                               name="property_<?= $property["ID"] ?><?= $property["MULTIPLE"] === "Y" ? "[]" : "" ?>"
-                                               accept=".<?= implode(',.', $fileConfig['allowed_extensions']) ?>"
-                                            <?= $property["MULTIPLE"] === "Y" ? " multiple" : "" ?>
-                                            <?= $property["IS_REQUIRED"] === "Y" ? " required" : "" ?>
-                                               aria-describedby="<?= !empty($property["HINT"]) ? "hint_" . $property["ID"] : "" ?>">
+                                        <div class="file-upload-area"
+                                             data-property-id="<?= $property["ID"] ?>"
+                                             data-multiple="<?= $property["MULTIPLE"] === "Y" ? "true" : "false" ?>">
+
+                                            <input type="file"
+                                                   class="form-control d-none"
+                                                   id="property_<?= $property["ID"] ?>"
+                                                   name="property_<?= $property["ID"] ?><?= $property["MULTIPLE"] === "Y" ? "[]" : "" ?>"
+                                                   accept=".<?= implode(',.', $arResult['FILE_CONFIG']['allowed_extensions']) ?>"
+                                                <?= $property["MULTIPLE"] === "Y" ? " multiple" : "" ?>
+                                                <?= $property["IS_REQUIRED"] === "Y" ? " required" : "" ?>
+                                                   aria-describedby="<?= !empty($property["HINT"]) ? "hint_" . $property["ID"] : "" ?>">
+
+                                            <div class="file-drop-zone border-2 border-dashed rounded p-4 text-center">
+                                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                                <p class="mb-2">Перетащите файлы сюда или <button type="button" class="btn btn-link p-0">выберите файлы</button></p>
+                                                <small class="text-muted">
+                                                    Максимальный размер: <?= round($arResult['FILE_CONFIG']['max_file_size'] / 1024 / 1024) ?> МБ<br>
+                                                    Форматы: <?= implode(', ', array_slice($arResult['FILE_CONFIG']['allowed_extensions'], 0, 5)) ?>
+                                                    <?php if (count($arResult['FILE_CONFIG']['allowed_extensions']) > 5): ?>
+                                                        и др.
+                                                    <?php endif; ?>
+                                                </small>
+                                            </div>
+
+                                            <div class="file-preview-list mt-3"></div>
+                                        </div>
 
                                     <?php
                                     // Привязка к элементам "E"
@@ -197,6 +216,23 @@ $componentId = $arResult['COMPONENT_ID'];
                                 </div>
                             <?php endif; ?>
 
+                            <?php if ($arParams["USE_PRIVACY_POLICY"] === "Y"): ?>
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               id="privacy_policy_agreement"
+                                               name="privacy_policy_agreement"
+                                               value="Y"
+                                               required
+                                               aria-describedby="privacy_policy_help">
+                                        <label class="form-check-label" for="privacy_policy_agreement">
+                                            <?= htmlspecialchars_decode($arParams["PRIVACY_POLICY_TEXT"]) ?>
+                                        </label>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
                             <!-- Обязательные поля -->
                             <?php
                             $hasRequiredFields = false;
@@ -210,30 +246,8 @@ $componentId = $arResult['COMPONENT_ID'];
                                 <div class="alert alert-light">
                                     <small class="text-muted">
                                         <i class="fas fa-asterisk text-danger me-1"></i>
-                                        Поля, отмеченные звездочкой (*), обязательны для заполнения
+                                        Поля, отмеченные звездочкой, обязательны для заполнения
                                     </small>
-                                </div>
-                            <?php endif; ?>
-
-                            <?php if ($arParams["USE_PRIVACY_POLICY"] === "Y"): ?>
-                                <div class="form-group mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               id="privacy_policy_agreement"
-                                               name="privacy_policy_agreement"
-                                               value="Y"
-                                               required
-                                               aria-describedby="privacy_policy_help">
-                                        <label class="form-check-label" for="privacy_policy_agreement">
-                                            <?= htmlspecialchars($arParams["PRIVACY_POLICY_TEXT"]) ?>
-                                            <span class="text-danger">*</span>
-                                        </label>
-                                        <div id="privacy_policy_help" class="form-text">
-                                            <i class="fas fa-shield-alt me-1"></i>
-                                            Обязательное поле для отправки формы
-                                        </div>
-                                    </div>
                                 </div>
                             <?php endif; ?>
                         </div>

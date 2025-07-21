@@ -236,6 +236,9 @@ class FormHelper
                                 $errors[] = "Поле '" . $property["NAME"] . "' должно содержать корректную дату";
                             }
                         }
+
+                        $emailErrors = self::validateEmailField($value, $property);
+                        $errors = array_merge($errors, $emailErrors);
                         break;
                 }
             }
@@ -254,6 +257,22 @@ class FormHelper
         }
 
         return $errors;
+    }
+
+    /**
+     * Валидация E-Mail
+     * @param $value
+     * @param $property
+     * @return array|string[]
+     */
+    private static function validateEmailField($value, $property)
+    {
+        if ($property["HINT"] && strtoupper(trim($property["HINT"])) === "EMAIL") {
+            if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                return ["Поле '{$property["NAME"]}' должно содержать корректный email адрес"];
+            }
+        }
+        return [];
     }
 
     /**

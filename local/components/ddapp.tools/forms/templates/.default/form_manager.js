@@ -1,3 +1,8 @@
+/**
+ * 2Dapp Form Manager
+ * @version 1.0.0
+ */
+
 BX.namespace('BX.DDAPP.Tools');
 
 BX.DDAPP.Tools.FormManager = function (params) {
@@ -356,8 +361,14 @@ BX.DDAPP.Tools.FormManager.prototype = {
             this.initFileUpload();
             this.initInputMasks();
 
+            // Инициализируем валидатор только для очистки ошибок и отображения
+            this.validator = new BX.DDAPP.Tools.FormValidator(this.componentId + '_form', this.formParams);
+
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
+
+                // Отправляем форму без фронтенд валидации
+                // Вся валидация будет на сервере
                 this.handleFormSubmit("", messageDiv);
             }.bind(this));
         }
@@ -391,6 +402,11 @@ BX.DDAPP.Tools.FormManager.prototype = {
     onFormResponse: function (response, messageDiv) {
         console.log('FormManager: Form response', response);
 
+        // Очищаем предыдущие ошибки валидации
+        if (this.validator) {
+            this.validator.clearAllValidation();
+        }
+
         if (response && response.success) {
             // Показываем success toast
             this.showToast(response.message || 'Форма успешно отправлена!', 'success');
@@ -407,6 +423,10 @@ BX.DDAPP.Tools.FormManager.prototype = {
             var form = document.getElementById(this.componentId + '_form');
             if (form) {
                 form.reset();
+                form.classList.remove('was-validated');
+                if (this.validator) {
+                    this.validator.clearAllValidation();
+                }
                 // Очищаем превью файлов
                 var previews = form.querySelectorAll('.file-preview-list');
                 previews.forEach(function (preview) {
@@ -414,6 +434,13 @@ BX.DDAPP.Tools.FormManager.prototype = {
                 });
             }
         } else {
+            // Обрабатываем ошибки валидации полей
+            if (response.fieldErrors && this.validator) {
+                this.validator.showFieldErrors(response.fieldErrors);
+                this.validator.scrollToFirstError();
+            }
+
+            // Показываем общее сообщение об ошибке (скрываем при успехе)
             this.showMessage(messageDiv, response.message, 'error');
         }
     },
@@ -435,7 +462,7 @@ BX.DDAPP.Tools.FormManager.prototype = {
             messageDiv.classList.add('alert-danger');
         }
 
-        messageDiv.textContent = message;
+        messageDiv.innerHTML = message;
     },
 
     destroy: function () {

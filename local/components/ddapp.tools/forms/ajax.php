@@ -118,26 +118,35 @@ if ($action === "save") {
         exit;
     }
 
-    // Проверка Rate Limiting
-    $rateLimitResult = FormHelper::validateLimits($iblockId, $params["RATE_LIMITS"] ?? []);
-    if (!$rateLimitResult["allowed"]) {
-        echo Json::encode(["success" => false, "message" => $rateLimitResult["message"], "retry_after" => $rateLimitResult["retry_after"]]);
+//    // Проверка Rate Limiting
+//    $rateLimitResult = FormHelper::validateLimits($iblockId, $params["RATE_LIMITS"] ?? []);
+//    if (!$rateLimitResult["allowed"]) {
+//        echo Json::encode(["success" => false, "message" => $rateLimitResult["message"], "retry_after" => $rateLimitResult["retry_after"]]);
+//        exit;
+//    }
+
+    // Детальная валидация формы
+    $validationResult = validateFormDetailed($request, $params, $fileConfig, $iblockId);
+
+    if (!$validationResult["isValid"]) {
+        LogHelper::warning("form_" . $iblockId, "Form validation failed", ["errors" => $validationResult["errors"], "fieldErrors" => $validationResult["fieldErrors"], "ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
+        echo Json::encode(["success" => false, "message" => implode("<br>", $validationResult["errors"]), "fieldErrors" => $validationResult["fieldErrors"]]);
         exit;
     }
 
-    // Валидация капчи
-    if (!FormHelper::validateCaptcha($request, $params)) {
-        echo Json::encode(["success" => false, "message" => "Неверный код капчи"]);
-        exit;
-    }
-
-    // Валидация полей формы
-    $errors = FormHelper::validateForm($request, $params, $fileConfig, $iblockId);
-    if (!empty($errors)) {
-        LogHelper::warning("form_" . $iblockId, "Form validation failed", ["errors" => $errors, "ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
-        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
-        exit;
-    }
+//    // Валидация капчи
+//    if (!FormHelper::validateCaptcha($request, $params)) {
+//        echo Json::encode(["success" => false, "message" => "Неверный код капчи"]);
+//        exit;
+//    }
+//
+//    // Валидация полей формы
+//    $errors = FormHelper::validateForm($request, $params, $fileConfig, $iblockId);
+//    if (!empty($errors)) {
+//        LogHelper::warning("form_" . $iblockId, "Form validation failed", ["errors" => $errors, "ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
+//        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
+//        exit;
+//    }
 
     // Сохранение элемента инфоблока
     $elementId = FormHelper::saveElement($request, $params, $iblockId);
@@ -162,3 +171,122 @@ if ($action === "save") {
 // Если действие не распознано
 echo Json::encode(["success" => false, "message" => "Ошибка запроса: " . $action]);
 exit;
+
+
+/**
+ * Детальная валидация с возвратом ошибок по полям
+ */
+function validateFormDetailed($request, $params, $fileConfig, $iblockId)
+{
+    $errors = [];
+    $fieldErrors = [];
+
+    // Получаем свойства инфоблока
+    $properties = FormHelper::getIblockProperties($iblockId);
+
+    foreach ($properties as $property) {
+        $fieldName = "property_" . $property["ID"];
+        $value = $request->getPost($fieldName);
+
+        // Проверка обязательных полей
+        if ($property["IS_REQUIRED"] === "Y") {
+            if ($property["PROPERTY_TYPE"] === "F") {
+                // Для файлов проверяем $_FILES
+                if (empty($_FILES[$fieldName]["name"]) ||
+                    (is_array($_FILES[$fieldName]["name"]) && empty(array_filter($_FILES[$fieldName]["name"])))) {
+                    $fieldErrors[$fieldName] = "Обязательно для заполнения";
+                    $errors[] = "Поле \"{$property["NAME"]}\" обязательно для заполнения";
+                }
+            } elseif ($property["PROPERTY_TYPE"] === "L" && $property["LIST_TYPE"] === "C") {
+                // Для чекбоксов проверяем массив
+                if (empty($value) || !is_array($value)) {
+                    $fieldErrors[$fieldName] = "Выберите хотя бы один вариант";
+                    $errors[] = "Поле \"{$property["NAME"]}\" обязательно для заполнения";
+                }
+            } else {
+                // Для остальных полей
+                if (empty($value) || (is_array($value) && empty(array_filter($value)))) {
+                    $fieldErrors[$fieldName] = "Обязательно для заполнения";
+                    $errors[] = "Поле \"{$property["NAME"]}\" обязательно для заполнения";
+                }
+            }
+        }
+
+        // Валидация по типам полей (только если поле заполнено)
+        if (!empty($value)) {
+            switch ($property["PROPERTY_TYPE"]) {
+                case "N": // Числовое поле
+                    if (!is_numeric($value)) {
+                        $fieldErrors[$fieldName] = "Введите корректное число";
+                        $errors[] = "Поле \"{$property["NAME"]}\" должно содержать число";
+                    }
+                    break;
+
+                case "S": // Строковое поле
+                    // Проверка email по названию или коду свойства
+                    if (stripos($property["CODE"], "email") !== false ||
+                        stripos($property["NAME"], "email") !== false ||
+                        stripos($property["NAME"], "почт") !== false) {
+                        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                            $fieldErrors[$fieldName] = "Введите корректный email адрес";
+                            $errors[] = "Поле \"{$property["NAME"]}\" должно содержать корректный email";
+                        }
+                    }
+
+                    // Проверка телефона
+                    if (stripos($property["CODE"], "phone") !== false ||
+                        stripos($property["NAME"], "телефон") !== false ||
+                        stripos($property["NAME"], "phone") !== false) {
+                        $cleanPhone = preg_replace('/\D/', '', $value);
+                        if (strlen($cleanPhone) < 10 || strlen($cleanPhone) > 15) {
+                            $fieldErrors[$fieldName] = "Введите корректный номер телефона";
+                            $errors[] = "Поле \"{$property["NAME"]}\" должно содержать корректный номер телефона";
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+    // Проверка капчи
+    if ($params["USE_BITRIX_CAPTCHA"] === "Y") {
+        $captchaWord = $request->getPost("captcha_word");
+        $captchaCode = $request->getPost("captcha_code");
+
+        if (empty($captchaWord)) {
+            $fieldErrors["captcha_word"] = "Введите код с картинки";
+            $errors[] = "Код капчи обязателен для заполнения";
+        } elseif (!$GLOBALS["APPLICATION"]->CaptchaCheckCode($captchaWord, $captchaCode)) {
+            $fieldErrors["captcha_word"] = "Неверный код капчи";
+            $errors[] = "Неверный код капчи";
+        }
+    }
+
+    // Проверка согласия с политикой
+    if ($params["USE_PRIVACY_POLICY"] === "Y") {
+        $privacyAgreement = $request->getPost("privacy_policy_agreement");
+        if ($privacyAgreement !== "Y") {
+            $fieldErrors["privacy_policy_agreement"] = "Необходимо согласие с политикой";
+            $errors[] = "Необходимо согласиться с политикой обработки персональных данных";
+        }
+    }
+
+    // Валидация файлов
+    if (!empty($_FILES)) {
+        foreach ($_FILES as $fieldName => $fileData) {
+            if (!empty($fileData["name"]) && !empty(array_filter((array)$fileData["name"]))) {
+                $fileErrors = FormHelper::validateFiles($fieldName, $fileConfig);
+                if (!empty($fileErrors)) {
+                    $fieldErrors[$fieldName] = implode(", ", $fileErrors);
+                    $errors = array_merge($errors, $fileErrors);
+                }
+            }
+        }
+    }
+
+    return [
+        "errors" => $errors,
+        "fieldErrors" => $fieldErrors,
+        "isValid" => empty($errors)
+    ];
+}

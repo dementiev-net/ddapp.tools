@@ -4,6 +4,7 @@ require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_ad
 use Bitrix\Main\Application;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Web\Json;
 use Bitrix\Main\UI\Extension;
 use DDAPP\Tools\Helpers\LogHelper;
 use DDAPP\Tools\Helpers\UserHelper;
@@ -36,9 +37,11 @@ $fullLogPath = $_SERVER["DOCUMENT_ROOT"] . $logPath;
 if ($request->isPost() && check_bitrix_sessid()) {
     $action = $request->getPost("action");
 
+    header("Content-Type: application/json; charset=utf-8");
+
     switch ($action) {
         case "get_log_files":
-            echo json_encode(LogHelper::getLogFiles());
+            echo Json::encode(LogHelper::getLogFiles());
             exit;
 
         case "get_log_data":
@@ -57,7 +60,7 @@ if ($request->isPost() && check_bitrix_sessid()) {
                 $stats = LogHelper::getStats($filteredEntries);
                 $paginatedData = LogHelper::paginate($filteredEntries, $page);
 
-                echo json_encode([
+                echo Json::encode([
                     "entries" => $paginatedData["entries"],
                     "stats" => $stats,
                     "users" => $users,
@@ -76,9 +79,9 @@ if ($request->isPost() && check_bitrix_sessid()) {
                 $filepath = $fullLogPath . "/" . $filename;
                 if (file_exists($filepath)) {
                     //file_put_contents($filepath, "");
-                    echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_LOGFILE_MESSAGE_LOG_CLEAR")]);
+                    echo Json::encode(["success" => true, "message" => Loc::getMessage("DDAPP_LOGFILE_MESSAGE_LOG_CLEAR")]);
                 } else {
-                    echo json_encode(["success" => false, "message" => Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR_FILE_NOT_FOUND")]);
+                    echo Json::encode(["success" => false, "message" => Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR_FILE_NOT_FOUND")]);
                 }
             }
             exit;

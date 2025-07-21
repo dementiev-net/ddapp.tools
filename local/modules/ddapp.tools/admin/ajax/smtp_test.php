@@ -6,6 +6,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.
 
 use Bitrix\Main\Localization\Loc;
 use DDAPP\Tools\CustomMail;
+use Bitrix\Main\Web\Json;
 use DDAPP\Tools\Helpers\LogHelper;
 use DDAPP\Tools\Helpers\UserHelper;
 
@@ -14,15 +15,17 @@ Loc::loadMessages(__FILE__);
 // Настройка логирования
 LogHelper::configure();
 
+header("Content-Type: application/json; charset=utf-8");
+
 // Проверка сессии Bitrix
 if (!check_bitrix_sessid()) {
-    echo json_encode(["success" => false, "message" => Loc::getMessage("ACCESS_DENIED")]);
+    echo Json::encode(["success" => false, "message" => Loc::getMessage("ACCESS_DENIED")]);
     exit;
 }
 
 // Проверка доступа
 if (UserHelper::hasModuleAccess("") != "W") {
-    echo json_encode(["success" => false, "message" => Loc::getMessage("ACCESS_DENIED")]);
+    echo Json::encode(["success" => false, "message" => Loc::getMessage("ACCESS_DENIED")]);
     exit;
 }
 
@@ -36,8 +39,8 @@ try {
         LogHelper::error("smtp", "SMTP Test Error", $result["debug"]);
     }
 
-    echo json_encode($result);
+    echo Json::encode($result);
 } catch (Exception $e) {
     LogHelper::error("smtp", "SMTP Test Error", $e->getMessage());
-    echo json_encode(["success" => false, "message" => $e->getMessage()]);
+    echo Json::encode(["success" => false, "message" => $e->getMessage()]);
 }

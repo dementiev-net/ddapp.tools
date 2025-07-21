@@ -4,6 +4,7 @@ require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_ad
 use Bitrix\Main\Loader;
 use Bitrix\Main\Application;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Web\Json;
 use Bitrix\Main\UI\Extension;
 use DDAPP\Tools\Main;
 use DDAPP\Tools\DataExport;
@@ -36,19 +37,21 @@ $request = Application::getInstance()->getContext()->getRequest();
 // Обработка AJAX запросов
 if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("") >= "W" && !empty($request->getPost("action"))) {
 
+    header("Content-Type: application/json; charset=utf-8");
+
     switch ($request->getPost("action")) {
 
         case "get_profiles":
             $profiles = DataExport::getItems([
                 "select" => ["ID", "NAME", "IBLOCK_TYPE_ID", "IBLOCK_ID", "EXPORT_TYPE", "SETTINGS"]
             ]);
-            echo json_encode(["success" => true, "data" => $profiles]);
+            echo Json::encode(["success" => true, "data" => $profiles]);
             exit;
 
         case "get_profile":
             if (!empty($request->getPost("profile_id"))) {
                 $profile = DataExport::getById($request->getPost("profile_id"));
-                echo json_encode(["success" => true, "data" => $profile]);
+                echo Json::encode(["success" => true, "data" => $profile]);
             }
             exit;
 
@@ -58,40 +61,40 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                 "IBLOCK_TYPE_ID" => $request->getPost("iblock_type_id"),
                 "IBLOCK_ID" => $request->getPost("iblock_id"),
                 "EXPORT_TYPE" => $request->getPost("export_type"),
-                "SETTINGS" => json_encode($request->getPost("settings"))
+                "SETTINGS" => Json::encode($request->getPost("settings"))
             ];
 
             if (empty($request->getPost("name"))) {
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_NAME_ERROR")]);
+                echo Json::encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_NAME_ERROR")]);
                 exit;
             }
             if (empty($request->getPost("iblock_id"))) {
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_IBLOCK_ERROR")]);
+                echo Json::encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_IBLOCK_ERROR")]);
                 exit;
             }
             if (empty($request->getPost("export_type"))) {
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_FORMAT_ERROR")]);
+                echo Json::encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_FORMAT_ERROR")]);
                 exit;
             }
             if (!empty($request->getPost("profile_id"))) {
                 DataExport::update($request->getPost("profile_id"), $fields);
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_ADD")]);
+                echo Json::encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_ADD")]);
             } else {
                 $result = DataExport::add($fields);
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_EDIT"), "id" => $result->getId()]);
+                echo Json::encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_EDIT"), "id" => $result->getId()]);
             }
             exit;
 
         case "delete_profile":
             if (!empty($request->getPost("profile_id"))) {
                 DataExport::delete($request->getPost("profile_id"));
-                echo json_encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_DELETE")]);
+                echo Json::encode(["success" => true, "message" => Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_DELETE")]);
             }
             exit;
 
         case "get_iblock_types":
             $types = IblockHelper::getAllBlockType();
-            echo json_encode(["success" => true, "data" => $types]);
+            echo Json::encode(["success" => true, "data" => $types]);
             exit;
 
         case "get_iblocks":
@@ -100,7 +103,7 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                     "select" => ["ID", "NAME"],
                     "filter" => ["IBLOCK_TYPE_ID" => $request->getPost("type_id"), "ACTIVE" => "Y"]
                 ]);
-                echo json_encode(["success" => true, "data" => $iblocks]);
+                echo Json::encode(["success" => true, "data" => $iblocks]);
             }
             exit;
 
@@ -140,7 +143,7 @@ if ($request->isPost() && check_bitrix_sessid() && UserHelper::hasModuleAccess("
                         "MULTIPLE" => $property["MULTIPLE"]
                     ];
                 }
-                echo json_encode(["success" => true, "data" => $fields]);
+                echo Json::encode(["success" => true, "data" => $fields]);
             }
             exit;
     }

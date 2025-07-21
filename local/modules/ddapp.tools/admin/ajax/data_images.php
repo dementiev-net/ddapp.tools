@@ -18,15 +18,17 @@ use DDAPP\Tools\Helpers\UserHelper;
 Loc::loadMessages(__FILE__);
 Loader::includeModule("iblock");
 
+header("Content-Type: application/json; charset=utf-8");
+
 // Проверка сессии Bitrix
 if (!check_bitrix_sessid()) {
-    echo json_encode(["status" => "error", "message" => Loc::getMessage("ACCESS_DENIED")]);
+    echo Json::encode(["status" => "error", "message" => Loc::getMessage("ACCESS_DENIED")]);
     exit;
 }
 
 // Проверка доступа
 if (UserHelper::hasModuleAccess("") != "W") {
-    echo json_encode(["status" => "error", "message" => Loc::getMessage("ACCESS_DENIED")]);
+    echo Json::encode(["status" => "error", "message" => Loc::getMessage("ACCESS_DENIED")]);
     exit;
 }
 

@@ -47,7 +47,6 @@ class DDAppFormButtonComponent extends CBitrixComponent
         $this->arResult["BUTTON_TEXT"] = $this->arParams["BUTTON_TEXT"] ?? "Связаться с нами";
         $this->arResult["BUTTON_CLASS"] = $this->arParams["BUTTON_CLASS"] ?? "btn btn-primary btn-lg";
         $this->arResult["BUTTON_ICON"] = $this->arParams["BUTTON_ICON"] ?? "fa-solid fa-envelope";
-        $this->arResult["MODAL_SIZE"] = $this->arParams["MODAL_SIZE"] ?? "modal-lg";
 
         // Подготавливаем параметры для передачи в основной компонент формы
         $this->arResult["FORM_PARAMS"] = $this->prepareFormParams();
@@ -67,6 +66,7 @@ class DDAppFormButtonComponent extends CBitrixComponent
         return [
             "IBLOCK_ID" => $this->iblockId,
             "BUTTON_TEXT" => $this->arResult["BUTTON_TEXT"],
+            "MODAL_SIZE" => $this->arParams["MODAL_SIZE"] ?? "modal-lg",
             "ALLOWED_FILE_EXTENSIONS" => $this->arParams["ALLOWED_FILE_EXTENSIONS"] ?? "jpg,jpeg,png,gif,pdf,doc,docx",
             "CHECK_FILE_CONTENT" => $this->arParams["CHECK_FILE_CONTENT"] ?? "Y",
             "EMAIL_TEMPLATE" => $this->arParams["EMAIL_TEMPLATE"] ?? "DDAPP_MESSAGE_FORM",

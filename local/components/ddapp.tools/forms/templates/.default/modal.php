@@ -11,7 +11,7 @@ $componentId = $arResult['COMPONENT_ID'];
          id="<?= $componentId ?>_modal"
          tabindex="-1"
          aria-labelledby="<?= $componentId ?>_modalLabel">
-        <div class="modal-dialog">
+        <div class="modal-dialog <?= $arParams["MODAL_SIZE"] ?>">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="<?= $componentId ?>_modalLabel">
@@ -145,9 +145,14 @@ $componentId = $arResult['COMPONENT_ID'];
 
                                             <div class="file-drop-zone border-2 border-dashed rounded p-4 text-center">
                                                 <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                                <p class="mb-2">Перетащите файлы сюда или <button type="button" class="btn btn-link p-0">выберите файлы</button></p>
+                                                <p class="mb-2">Перетащите файлы сюда или
+                                                    <button type="button" class="btn btn-link p-0">выберите файлы
+                                                    </button>
+                                                </p>
                                                 <small class="text-muted">
-                                                    Максимальный размер: <?= round($arResult['FILE_CONFIG']['max_file_size'] / 1024 / 1024) ?> МБ<br>
+                                                    Максимальный
+                                                    размер: <?= round($arResult['FILE_CONFIG']['max_file_size'] / 1024 / 1024) ?>
+                                                    МБ<br>
                                                     Форматы: <?= implode(', ', array_slice($arResult['FILE_CONFIG']['allowed_extensions'], 0, 5)) ?>
                                                     <?php if (count($arResult['FILE_CONFIG']['allowed_extensions']) > 5): ?>
                                                         и др.

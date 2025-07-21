@@ -4,6 +4,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.
 use Bitrix\Main\Loader;
 use Bitrix\Main\Application;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Web\Json;
 use Bitrix\Main\Config\Option;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\PropertyTable;
@@ -27,9 +28,8 @@ header("Content-Type: application/json; charset=utf-8");
 
 // Проверяем, что это AJAX запрос
 //if (!$request->isAjaxRequest()) {
-//    http_response_code(400);
-//    echo json_encode(["error" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_REQUEST")]);
-//    die();
+//    echo Json::encode(["success" => false, "message" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_REQUEST")]);
+//    exit;
 //}
 
 //LogHelper::error($componentId . $this->iblockId, "Form save failed", [
@@ -41,9 +41,8 @@ $componentId = $request->getPost("id");
 $params = $request->getPost("form-params");
 
 if (!$action || !$componentId || !$params["IBLOCK_ID"]) {
-    http_response_code(400);
-    echo json_encode(["error" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_PARAMS")]);
-    die();
+    echo Json::encode(["success" => false, "message" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_PARAMS")]);
+    exit;
 }
 
 /**
@@ -64,9 +63,8 @@ if ($action === "load") {
     $res = CIBlock::GetByID($iblockId);
     $arIblock = $res->GetNext();
     if (!$arIblock["ID"]) {
-        http_response_code(400);
-        echo json_encode(["error" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_IBLOCK")]);
-        die();
+        echo Json::encode(["success" => false, "message" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_IBLOCK")]);
+        exit;
     }
 
     $arResult["NAME"] = $arIblock["NAME"];
@@ -91,9 +89,8 @@ if ($action === "load") {
     }
 
     if (!file_exists($modalTemplatePath)) {
-        http_response_code(500);
-        echo json_encode(["error" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_TEMPLATE")]);
-        die();
+        echo Json::encode(["success" => false, "message" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_TEMPLATE")]);
+        exit;
     }
 
     // Получаем HTML из шаблона
@@ -102,14 +99,13 @@ if ($action === "load") {
     $modalHtml = ob_get_clean();
 
     if (empty($modalHtml)) {
-        http_response_code(500);
-        echo json_encode(["error" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_TEMPLATE_HTML")]);
-        die();
+        echo Json::encode(["success" => false, "message" => Loc::getMessage("DDAPP_FORM_AJAX_MESSAGE_ERROR_TEMPLATE_HTML")]);
+        exit;
     }
 
     header("Content-Type: application/json; charset=utf-8");
-    echo json_encode(["status" => "success", "html" => $modalHtml]);
-    die();
+    echo Json::encode(["success" => true, "html" => $modalHtml]);
+    exit;
 }
 
 /**

@@ -133,10 +133,10 @@ BX.DDAPP.Tools.FormManager.prototype = {
         });
     },
 
-    onModalLoaded: function (response) {
-        if (response && response.status === 'success') {
+    onModalLoaded: function (result) {
+        if (result && result.success) {
             // Добавляем модальное окно в DOM
-            document.body.insertAdjacentHTML('beforeend', response.html);
+            document.body.insertAdjacentHTML('beforeend', result.html);
             this.modalLoaded = true;
 
             // Инициализируем обработчики для формы
@@ -148,8 +148,8 @@ BX.DDAPP.Tools.FormManager.prototype = {
             // Настраиваем удаление при закрытии
             this.setupModalCleanup();
         } else {
-            console.error('FormManager: Unexpected response', response);
-            this.showToast('Ошибка загрузки формы', 'error');
+            console.error('FormManager: Unexpected response', result);
+            this.showToast( result && result.message ? result.message : 'Ошибка загрузки формы', 'error');
         }
     },
 

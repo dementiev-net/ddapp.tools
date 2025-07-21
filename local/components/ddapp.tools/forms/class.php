@@ -43,7 +43,7 @@ class DDAppFormButtonComponent extends CBitrixComponent
         }
 
         // Передаем данные в результат
-        $this->arResult['COMPONENT_ID'] = "form_modal_" . $this->iblockId;
+        $this->arResult["COMPONENT_ID"] = "form_modal_" . $this->iblockId;
         $this->arResult["BUTTON_TEXT"] = $this->arParams["BUTTON_TEXT"] ?? "Связаться с нами";
         $this->arResult["BUTTON_CLASS"] = $this->arParams["BUTTON_CLASS"] ?? "btn btn-primary btn-lg";
         $this->arResult["BUTTON_ICON"] = $this->arParams["BUTTON_ICON"] ?? "fa-solid fa-envelope";

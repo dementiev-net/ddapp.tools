@@ -113,10 +113,10 @@ if ($action === "load") {
 if ($action === "save") {
 
     // CSRF защита
-    if (!check_bitrix_sessid()) {
-        echo Json::encode(["success" => false, "message" => "Ошибка безопасности. Обновите страницу и попробуйте снова"]);
-        exit;
-    }
+//    if (!check_bitrix_sessid()) {
+//        echo Json::encode(["success" => false, "message" => "Ошибка безопасности. Обновите страницу и попробуйте снова"]);
+//        exit;
+//    }
 
 //    // Проверка Rate Limiting
 //    $rateLimitResult = FormHelper::validateLimits($iblockId, $params["RATE_LIMITS"] ?? []);

@@ -53,6 +53,8 @@ BX.DDAPP.Tools.FormValidator.prototype = {
 
             field.addEventListener('input', function() {
                 this.clearFieldValidation(field);
+                // Добавить очистку общего сообщения
+                this.clearGeneralMessage();
             }.bind(this));
         }
 
@@ -67,7 +69,18 @@ BX.DDAPP.Tools.FormValidator.prototype = {
                 } else {
                     this.clearFieldValidation(field);
                 }
+                // Добавить очистку общего сообщения
+                this.clearGeneralMessage();
             }.bind(this));
+        }
+    },
+
+    // Добавить новый метод для очистки общего сообщения
+    clearGeneralMessage: function() {
+        var messageDiv = this.form.querySelector('.alert[role="alert"]');
+        if (messageDiv && !messageDiv.classList.contains('d-none')) {
+            messageDiv.classList.add('d-none');
+            messageDiv.textContent = '';
         }
     },
 

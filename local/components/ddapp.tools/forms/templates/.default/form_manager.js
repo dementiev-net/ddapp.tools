@@ -364,17 +364,21 @@ BX.DDAPP.Tools.FormManager.prototype = {
             // Инициализируем валидатор только для очистки ошибок и отображения
             this.validator = new BX.DDAPP.Tools.FormValidator(this.componentId + '_form', this.formParams);
 
+            // Добавляем обработчики для очистки ошибок при вводе
+            this.bindClearErrorsEvents(form, messageDiv);
+
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
                 // Отправляем форму без фронтенд валидации
                 // Вся валидация будет на сервере
-                this.handleFormSubmit("", messageDiv);
+                this.handleFormSubmit("", form, messageDiv);
             }.bind(this));
         }
     },
 
-    handleFormSubmit: function (value, messageDiv) {
+    handleFormSubmit: function (value, form, messageDiv) {
+        var formData = new FormData(form);
         var postData = {
             'action': 'save',
             'id': this.componentId,
@@ -382,6 +386,11 @@ BX.DDAPP.Tools.FormManager.prototype = {
             'template': this.button.getAttribute('data-template'),
             'sessid': BX.bitrix_sessid()
         };
+
+        // Добавляем данные формы
+        for (var pair of formData.entries()) {
+            postData[pair[0]] = pair[1];
+        }
 
         console.log('FormManager: Submitting form', postData);
 
@@ -397,6 +406,51 @@ BX.DDAPP.Tools.FormManager.prototype = {
                 this.onFormError(error, messageDiv);
             }.bind(this)
         });
+    },
+
+    bindClearErrorsEvents: function (form, messageDiv) {
+        var self = this;
+
+        // Получаем все поля ввода
+        var inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="tel"], textarea, select');
+
+        inputs.forEach(function(input) {
+            // Для текстовых полей - событие input
+            if (input.type === 'text' || input.type === 'email' || input.type === 'password' ||
+                input.type === 'tel' || input.tagName === 'TEXTAREA') {
+
+                input.addEventListener('input', function() {
+                    self.clearFieldError(this, messageDiv);
+                });
+            }
+
+            // Для селектов, чекбоксов, радио - событие change
+            if (input.tagName === 'SELECT' || input.type === 'checkbox' || input.type === 'radio') {
+                input.addEventListener('change', function() {
+                    self.clearFieldError(this, messageDiv);
+                });
+            }
+
+            // Для полей файлов
+            if (input.type === 'file') {
+                input.addEventListener('change', function() {
+                    self.clearFieldError(this, messageDiv);
+                });
+            }
+        });
+    },
+
+    clearFieldError: function (field, messageDiv) {
+        // Очищаем ошибку конкретного поля через валидатор
+        if (this.validator) {
+            this.validator.clearFieldValidation(field);
+        }
+
+        // Скрываем общее сообщение об ошибке при первом вводе в любое поле
+        if (messageDiv && !messageDiv.classList.contains('d-none')) {
+            messageDiv.classList.add('d-none');
+            messageDiv.textContent = '';
+        }
     },
 
     onFormResponse: function (response, messageDiv) {

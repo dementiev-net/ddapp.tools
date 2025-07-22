@@ -42,6 +42,7 @@ Loader::registerAutoLoadClasses(Main::MODULE_ID, [
         "DDAPP\\Tools\\Helpers\\CacheHelper" => "lib/helpers/CacheHelper.php",
         "DDAPP\\Tools\\Helpers\\UrlHelper" => "lib/helpers/UrlHelper.php",
         "DDAPP\\Tools\\Helpers\\FormHelper" => "lib/helpers/FormHelper.php",
+        "DDAPP\\Tools\\Helpers\\AuthHelper" => "lib/helpers/AuthHelper.php",
 
         // Агенты
         "DDAPP\\Tools\\cacheAgent" => "lib/agents/CacheAgent.php",

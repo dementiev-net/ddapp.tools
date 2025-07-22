@@ -155,13 +155,26 @@ if ($action === "auth") {
         exit;
     }
 
-    // Валидация формы
-    $errors = AuthHelper::validateLoginForm($request, $params);
-    if (!empty($errors)) {
-        AuthHelper::logUserAction("login_failed", null, ["errors" => $errors, "ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
-        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
+    // Валидация формы с детальными ошибками
+    $validationResult = validateFormDetailed($request, $params, "auth");
+
+    if (!$validationResult["isValid"]) {
+        AuthHelper::logUserAction($type . "_failed", null, ["errors" => $validationResult["errors"], "fieldErrors" => $validationResult["fieldErrors"]]);
+        echo Json::encode([
+            "success" => false,
+            "message" => implode("<br>", $validationResult["errors"]),
+            "fieldErrors" => $validationResult["fieldErrors"]
+        ]);
         exit;
     }
+
+//    // Валидация формы
+//    $errors = AuthHelper::validateLoginForm($request, $params);
+//    if (!empty($errors)) {
+//        AuthHelper::logUserAction("login_failed", null, ["errors" => $errors, "ip" => $_SERVER["REMOTE_ADDR"] ?? "unknown"]);
+//        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
+//        exit;
+//    }
 
     // Авторизация
     $login = trim($request->getPost("USER_LOGIN"));
@@ -202,13 +215,26 @@ if ($action === "register") {
         exit;
     }
 
-    // Валидация формы
-    $errors = AuthHelper::validateRegistrationForm($request, $params);
-    if (!empty($errors)) {
-        AuthHelper::logUserAction("register_failed", null, ["errors" => $errors]);
-        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
+    // Валидация формы с детальными ошибками
+    $validationResult = validateFormDetailed($request, $params, "register");
+
+    if (!$validationResult["isValid"]) {
+        AuthHelper::logUserAction($type . "_failed", null, ["errors" => $validationResult["errors"], "fieldErrors" => $validationResult["fieldErrors"]]);
+        echo Json::encode([
+            "success" => false,
+            "message" => implode("<br>", $validationResult["errors"]),
+            "fieldErrors" => $validationResult["fieldErrors"]
+        ]);
         exit;
     }
+
+//    // Валидация формы
+//    $errors = AuthHelper::validateRegistrationForm($request, $params);
+//    if (!empty($errors)) {
+//        AuthHelper::logUserAction("register_failed", null, ["errors" => $errors]);
+//        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
+//        exit;
+//    }
 
     // Подготавливаем данные пользователя
     $userData = [];
@@ -253,13 +279,26 @@ if ($action === "forgot") {
         exit;
     }
 
-    // Валидация формы
-    $errors = AuthHelper::validateForgotForm($request, $params);
-    if (!empty($errors)) {
-        AuthHelper::logUserAction("forgot_failed", null, ["errors" => $errors]);
-        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
+    // Валидация формы с детальными ошибками
+    $validationResult = validateFormDetailed($request, $params, "forgot");
+
+    if (!$validationResult["isValid"]) {
+        AuthHelper::logUserAction($type . "_failed", null, ["errors" => $validationResult["errors"], "fieldErrors" => $validationResult["fieldErrors"]]);
+        echo Json::encode([
+            "success" => false,
+            "message" => implode("<br>", $validationResult["errors"]),
+            "fieldErrors" => $validationResult["fieldErrors"]
+        ]);
         exit;
     }
+
+    // Валидация формы
+//    $errors = AuthHelper::validateForgotForm($request, $params);
+//    if (!empty($errors)) {
+//        AuthHelper::logUserAction("forgot_failed", null, ["errors" => $errors]);
+//        echo Json::encode(["success" => false, "message" => implode("<br>", $errors)]);
+//        exit;
+//    }
 
     $login = trim($request->getPost("USER_LOGIN"));
     $forgotResult = AuthHelper::forgotPassword($login);
@@ -299,3 +338,57 @@ if ($action === "logout") {
 // Если действие не распознано
 echo Json::encode(["success" => false, "message" => "Неизвестное действие: " . $action]);
 exit;
+
+/**
+ * Детальная валидация с возвратом ошибок по полям
+ */
+function validateFormDetailed($request, $params, $type)
+{
+    $errors = [];
+    $fieldErrors = [];
+
+    // Валидация в зависимости от типа формы
+    switch ($type) {
+        case 'auth':
+            $login = $request->getPost("USER_LOGIN");
+            $password = $request->getPost("USER_PASSWORD");
+
+            if (empty($login)) {
+                $fieldErrors["USER_LOGIN"] = "Обязательно для заполнения";
+                $errors[] = "Логин обязателен для заполнения";
+            }
+
+            if (empty($password)) {
+                $fieldErrors["USER_PASSWORD"] = "Обязательно для заполнения";
+                $errors[] = "Пароль обязателен для заполнения";
+            }
+            break;
+
+        case 'register':
+            // Добавить валидацию полей регистрации
+            break;
+
+        case 'forgot':
+            $login = $request->getPost("USER_LOGIN");
+            if (empty($login)) {
+                $fieldErrors["USER_LOGIN"] = "Обязательно для заполнения";
+                $errors[] = "Email или логин обязателен для заполнения";
+            }
+            break;
+    }
+
+    // Проверка капчи
+    if ($params["USE_CAPTCHA"] === "Y" || ($type === 'register' && $params["USE_CAPTCHA_REGISTRATION"] === "Y")) {
+        $captchaWord = $request->getPost("captcha_word");
+        if (empty($captchaWord)) {
+            $fieldErrors["captcha_word"] = "Введите код с картинки";
+            $errors[] = "Код капчи обязателен для заполнения";
+        }
+    }
+
+    return [
+        "errors" => $errors,
+        "fieldErrors" => $fieldErrors,
+        "isValid" => empty($errors)
+    ];
+}

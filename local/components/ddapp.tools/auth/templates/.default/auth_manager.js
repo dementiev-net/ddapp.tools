@@ -222,6 +222,12 @@ BX.DDAPP.Tools.AuthManager.prototype = {
         var messageDiv = document.getElementById(this.componentId + '_' + type + '_message');
 
         if (form) {
+            // Инициализация валидатора
+            this.validator = new BX.DDAPP.Tools.FormValidator(this.componentId + '_' + type + '_form', this.authParams);
+
+            // Добавляем обработчики для очистки ошибок при вводе
+            this.bindClearErrorsEvents(form, messageDiv);
+
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
                 this.handleFormSubmit(type, form, messageDiv);
@@ -315,8 +321,58 @@ BX.DDAPP.Tools.AuthManager.prototype = {
         });
     },
 
+    bindClearErrorsEvents: function (form, messageDiv) {
+        var self = this;
+
+        // Получаем все поля ввода
+        var inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="tel"], textarea, select');
+
+        inputs.forEach(function(input) {
+            // Для текстовых полей - событие input
+            if (input.type === 'text' || input.type === 'email' || input.type === 'password' ||
+                input.type === 'tel' || input.tagName === 'TEXTAREA') {
+
+                input.addEventListener('input', function() {
+                    self.clearFieldError(this, messageDiv);
+                });
+            }
+
+            // Для селектов, чекбоксов, радио - событие change
+            if (input.tagName === 'SELECT' || input.type === 'checkbox' || input.type === 'radio') {
+                input.addEventListener('change', function() {
+                    self.clearFieldError(this, messageDiv);
+                });
+            }
+
+            // Для полей файлов
+            if (input.type === 'file') {
+                input.addEventListener('change', function() {
+                    self.clearFieldError(this, messageDiv);
+                });
+            }
+        });
+    },
+
+    clearFieldError: function (field, messageDiv) {
+        // Очищаем ошибку конкретного поля через валидатор
+        if (this.validator) {
+            this.validator.clearFieldValidation(field);
+        }
+
+        // Скрываем общее сообщение об ошибке при первом вводе в любое поле
+        if (messageDiv && !messageDiv.classList.contains('d-none')) {
+            messageDiv.classList.add('d-none');
+            messageDiv.textContent = '';
+        }
+    },
+
     onFormResponse: function (type, response, messageDiv) {
         console.log('AuthManager: Form response', type, response);
+
+        // Очищаем предыдущие ошибки валидации
+        if (this.validator) {
+            this.validator.clearAllValidation();
+        }
 
         if (response && response.success) {
             // Показываем success toast
@@ -338,7 +394,33 @@ BX.DDAPP.Tools.AuthManager.prototype = {
                 }
             }.bind(this), 2000);
         } else {
+            // Обрабатываем ошибки валидации полей
+            if (response.fieldErrors && this.validator) {
+                this.validator.showFieldErrors(response.fieldErrors);
+                this.validator.scrollToFirstError();
+            }
+
+            // Показываем общее сообщение об ошибке
             this.showMessage(messageDiv, response.message, 'error');
+        }
+    },
+
+    setupModalCleanup: function (type) {
+        var modalElement = document.getElementById(this.componentId + '_' + type + '_modal');
+        var self = this;
+
+        if (modalElement) {
+            // Обрабатываем событие после скрытия модального окна
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                // Очищаем валидацию при закрытии
+                if (self.validator) {
+                    self.validator.clearAllValidation();
+                    self.validator = null;
+                }
+
+                this.remove();
+                self.modalsLoaded[type] = false;
+            });
         }
     },
 

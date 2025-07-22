@@ -5,6 +5,7 @@ use Bitrix\Main\Page\Asset;
 
 Asset::getInstance()->addJs("/bitrix/js/main/core/core.js");
 Asset::getInstance()->addJs("/bitrix/js/main/core/core_ajax.js");
+Asset::getInstance()->addJs($templateFolder . "/form_validator.js");
 Asset::getInstance()->addJs($templateFolder . "/auth_manager.js");
 
 $componentId = $arResult["COMPONENT_ID"];

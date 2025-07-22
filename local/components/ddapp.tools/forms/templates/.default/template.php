@@ -3,6 +3,8 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\Page\Asset;
 
+Asset::getInstance()->addJs("/bitrix/js/main/core/core.js");
+Asset::getInstance()->addJs("/bitrix/js/main/core/core_ajax.js");
 Asset::getInstance()->addJs($templateFolder . "/form_validator.js");
 Asset::getInstance()->addJs($templateFolder . "/form_manager.js");
 Asset::getInstance()->addJs($templateFolder . "/inputmask.min.js");

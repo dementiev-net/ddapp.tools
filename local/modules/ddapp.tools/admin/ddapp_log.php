@@ -203,21 +203,23 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
     </div>
 
     <script>
-        // Инициализация
         BX.ready(function () {
+            BX.message({
+                DDAPP_LOGFILE_MESSAGE_TITLE: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_TITLE")?>',
+                DDAPP_LOGFILE_MESSAGE_BEFORE_DELETE: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_BEFORE_DELETE")?>',
+                DDAPP_LOGFILE_MESSAGE_LOG_CLEAR: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_LOG_CLEAR")?>',
+                DDAPP_LOGFILE_MESSAGE_ERROR: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR")?>',
+                DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_FILE: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_FILE")?>',
+                DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_DATA: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_DATA")?>',
+                DDAPP_LOGFILE_MESSAGE_ERROR_LOG_CLEAR: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR_LOG_CLEAR")?>',
+                DDAPP_LOGFILE_FILTER_USER_ALL: '<?= Loc::getMessage("DDAPP_LOGFILE_FILTER_USER_ALL")?>',
+                DDAPP_LOGFILE_CONTROL_FILE_SELECT: '<?= Loc::getMessage("DDAPP_LOGFILE_CONTROL_FILE_SELECT")?>',
+                DDAPP_LOGFILE_MESSAGE_DATA_NOT_FOUND: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_DATA_NOT_FOUND")?>',
+                DDAPP_LOGFILE_TABLE_PAGES_FROM: '<?= Loc::getMessage("DDAPP_LOGFILE_TABLE_PAGES_FROM")?>',
+            });
+            // Инициализация
             new BX.DDAPP.Tools.LogViewer({
                 ajaxUrl: "<?= Main::getAjaxUrl("admin/ddapp_log.php") ?>",
-                messageTitle: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_TITLE")?>',
-                messageBeforeDelete: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_BEFORE_DELETE")?>',
-                messageDeleteOk: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_LOG_CLEAR")?>',
-                messageError: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR")?>',
-                messageErrorLoadFile: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_FILE")?>',
-                messageErrorLoadData: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_DATA")?>',
-                messageErrorLogClear: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_ERROR_LOG_CLEAR")?>',
-                messageAllUsers: '<?= Loc::getMessage("DDAPP_LOGFILE_FILTER_USER_ALL")?>',
-                messageSelectLogFile: '<?= Loc::getMessage("DDAPP_LOGFILE_CONTROL_FILE_SELECT")?>',
-                messageDataNotFound: '<?= Loc::getMessage("DDAPP_LOGFILE_MESSAGE_DATA_NOT_FOUND")?>',
-                messagePageFrom: '<?= Loc::getMessage("DDAPP_LOGFILE_TABLE_PAGES_FROM")?>',
             });
         });
     </script>

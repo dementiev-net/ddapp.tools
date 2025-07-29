@@ -248,26 +248,28 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_a
 
     <script>
         BX.ready(function () {
+            BX.message({
+                DDAPP_IMPORT_MESSAGE_TITLE: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_TITLE") ?>',
+                DDAPP_IMPORT_MESSAGE_ERROR: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_ERROR") ?>',
+                DDAPP_IMPORT_MESSAGE_ERROR_SERVER_CONNECT: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_ERROR_SERVER_CONNECT") ?>',
+                DDAPP_IMPORT_MESSAGE_BEFORE_DELETE: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_BEFORE_DELETE") ?>',
+                DDAPP_IMPORT_SETTINGS_PROFILE_SELECT: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_PROFILE_SELECT") ?>',
+                DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT") ?>',
+                DDAPP_IMPORT_SETTINGS_IBLOCK_FIELD: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_FIELD") ?>',
+                DDAPP_IMPORT_SETTINGS_IBLOCK_PROPERTY: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_PROPERTY") ?>',
+                DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT") ?>',
+                DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT_FIRST: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT_FIRST") ?>',
+                DDAPP_IMPORT_MESSAGE_IBLOCK_FIELD_VALIDATION_ERROR: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_IBLOCK_FIELD_VALIDATION_ERROR") ?>',
+                DDAPP_IMPORT_MESSAGE_PROFILE_ERROR: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_ERROR") ?>',
+                DDAPP_IMPORT_MESSAGE_PROFILE_SAVE_ERROR: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_SAVE_ERROR") ?>',
+                DDAPP_IMPORT_MESSAGE_PROFILE_SELECT_ERROR: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_SELECT_ERROR") ?>',
+                DDAPP_IMPORT_MESSAGE_PROFILE_DELETE_ERROR: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_DELETE_ERROR") ?>',
+                DDAPP_IMPORT_MESSAGE_PROFILE_DELETE: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_DELETE") ?>',
+                DDAPP_IMPORT_MESSAGE_IBLOCK_TYPE_ERROR: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_IBLOCK_TYPE_ERROR") ?>',
+            });
             // Инициализация
             new BX.DDAPP.Tools.ImportProfileManager({
                 ajaxUrl: '<?= Main::getAjaxUrl("admin/ddapp_data_import.php") ?>',
-                messageTitle: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_TITLE")?>',
-                messageError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_ERROR")?>',
-                messageErrorServerConnect: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_ERROR_SERVER_CONNECT")?>',
-                messageBeforeDelete: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_BEFORE_DELETE")?>',
-                messageProfileSelect: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_PROFILE_SELECT")?>',
-                messageIblockSelect: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT")?>',
-                messageIblockField: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_FIELD")?>',
-                messageIblockProperty: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_PROPERTY")?>',
-                messageIblockTypeSelect: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT")?>',
-                messageIblockTypeSelectFirst: '<?= Loc::getMessage("DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT_FIRST")?>',
-                messageIblockFieldValidationError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_IBLOCK_FIELD_VALIDATION_ERROR")?>',
-                messageProfileLoadError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_ERROR")?>',
-                messageProfileSaveError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_SAVE_ERROR")?>',
-                messageProfileSelectError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_SELECT_ERROR")?>',
-                messageProfileDeleteError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_DELETE_ERROR")?>',
-                messageProfileDeleteOk: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_PROFILE_DELETE")?>',
-                messageIblockSelectError: '<?= Loc::getMessage("DDAPP_IMPORT_MESSAGE_IBLOCK_TYPE_ERROR")?>',
             });
         });
     </script>

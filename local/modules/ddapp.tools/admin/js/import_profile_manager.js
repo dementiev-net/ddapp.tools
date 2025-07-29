@@ -24,7 +24,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
 
         this.toggleButtons(false);
         this.bindEvents();
-        this.loadProfiles("");
+        this.loadProfiles('');
         this.loadIblockTypes();
     },
 
@@ -32,7 +32,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         var self = this;
 
         // Выбор профиля
-        var profileSelect = document.getElementById("profile_select");
+        var profileSelect = document.getElementById('profile_select');
         if (profileSelect) {
             BX.bind(profileSelect, 'change', function () {
                 if (this.value) {
@@ -48,7 +48,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }
 
         // Создание нового профиля
-        var createBtn = document.getElementById("create_profile_btn");
+        var createBtn = document.getElementById('create_profile_btn');
         if (createBtn) {
             BX.bind(createBtn, 'click', function () {
                 self.createNewProfile();
@@ -56,7 +56,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }
 
         // Удаление профиля
-        var deleteBtn = document.getElementById("delete_profile_btn");
+        var deleteBtn = document.getElementById('delete_profile_btn');
         if (deleteBtn) {
             BX.bind(deleteBtn, 'click', function () {
                 self.deleteProfile();
@@ -64,7 +64,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }
 
         // Изменение типа инфоблока
-        var iblockTypeSelect = document.getElementById("iblock_type_select");
+        var iblockTypeSelect = document.getElementById('iblock_type_select');
         if (iblockTypeSelect) {
             BX.bind(iblockTypeSelect, 'change', function () {
                 self.loadIblocks(this.value);
@@ -72,7 +72,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }
 
         // Изменение инфоблока
-        var iblockSelect = document.getElementById("iblock_select");
+        var iblockSelect = document.getElementById('iblock_select');
         if (iblockSelect) {
             BX.bind(iblockSelect, 'change', function () {
                 if (this.value) {
@@ -84,7 +84,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }
 
         // Выбор всех полей
-        var selectAllBtn = document.getElementById("select_all_fields");
+        var selectAllBtn = document.getElementById('select_all_fields');
         if (selectAllBtn) {
             BX.bind(selectAllBtn, 'click', function () {
                 self.selectAllFields(true);
@@ -92,7 +92,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }
 
         // Снятие всех полей
-        var deselectAllBtn = document.getElementById("deselect_all_fields");
+        var deselectAllBtn = document.getElementById('deselect_all_fields');
         if (deselectAllBtn) {
             BX.bind(deselectAllBtn, 'click', function () {
                 self.selectAllFields(false);
@@ -100,7 +100,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }
 
         // Сохранение формы
-        var form = document.getElementById("data_import_form");
+        var form = document.getElementById('data_import_form');
         if (form) {
             BX.bind(form, 'submit', function (e) {
                 BX.PreventDefault(e);
@@ -109,7 +109,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         }
 
         // Отмена
-        var cancelBtn = document.getElementById("cancel_btn");
+        var cancelBtn = document.getElementById('cancel_btn');
         if (cancelBtn) {
             BX.bind(cancelBtn, 'click', function () {
                 self.toggleSettings(false);
@@ -137,7 +137,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
             if (!profileSelect) return;
 
             // Очищаем опции кроме первой
-            profileSelect.innerHTML = '<option value="">' + self.params.messageProfileSelect + '</option>';
+            profileSelect.innerHTML = '<option value="">' + BX.message('DDAPP_IMPORT_SETTINGS_PROFILE_SELECT') + '</option>';
 
             if (response.data && response.data.length) {
                 response.data.forEach(function (profile) {
@@ -154,7 +154,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
 
         }, function (error) {
             BX.closeWait();
-            self.showError(self.params.messageProfileLoadError);
+            self.showError(BX.message('DDAPP_IMPORT_MESSAGE_PROFILE_ERROR'));
             console.error('ImportProfileManager: Load Profile Error', error);
         });
     },
@@ -196,7 +196,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
             }
         }, function (error) {
             BX.closeWait();
-            self.showError(self.params.messageProfileLoadError);
+            self.showError(BX.message('DDAPP_IMPORT_MESSAGE_PROFILE_ERROR'));
             console.error('ImportProfileManager: Load Profile Error', error);
         });
     },
@@ -209,13 +209,13 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         var profileId = profileSelect.value;
 
         if (!profileId) {
-            this.showAlert(self.params.messageProfileSelectError);
+            this.showAlert(BX.message('DDAPP_IMPORT_MESSAGE_PROFILE_SELECT_ERROR'));
             return;
         }
 
         const messageBox = BX.UI.Dialogs.MessageBox.create({
-                message: self.params.messageBeforeDelete,
-                title: self.params.messageTitle,
+                message: BX.message('DDAPP_IMPORT_MESSAGE_BEFORE_DELETE'),
+                title: BX.message('DDAPP_IMPORT_MESSAGE_TITLE'),
                 buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
                 onOk: function (messageBox) {
                     self.doDeleteProfile(profileId);
@@ -233,13 +233,13 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
 
         this.makeRequest('delete_profile', {profile_id: profileId}, function () {
             BX.closeWait();
-            self.loadProfiles("");
+            self.loadProfiles('');
             self.toggleSettings(false);
             self.resetForm();
-            self.showAlert(self.params.messageProfileDeleteOk);
+            self.showAlert(BX.message('DDAPP_IMPORT_MESSAGE_PROFILE_DELETE'));
         }, function (error) {
             BX.closeWait();
-            self.showError(self.params.messageProfileDeleteError);
+            self.showError(BX.message('DDAPP_IMPORT_MESSAGE_PROFILE_DELETE_ERROR'));
             console.error('ImportProfileManager: Delete Profile Error', error);
         });
     },
@@ -251,7 +251,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
             var select = document.getElementById('iblock_type_select');
             if (!select) return;
 
-            select.innerHTML = '<option value="">' + self.params.messageIblockTypeSelect + '</option>';
+            select.innerHTML = '<option value="">' + BX.message('DDAPP_IMPORT_SETTINGS_IBLOCK_TYPE_SELECT') + '</option>';
 
             if (response.data && response.data.length) {
                 response.data.forEach(function (type) {
@@ -262,7 +262,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
                 });
             }
         }, function (error) {
-            self.showError(self.params.messageIblockSelectError);
+            self.showError(BX.message('DDAPP_IMPORT_MESSAGE_IBLOCK_TYPE_ERROR'));
             console.error('ImportProfileManager: Load Profile Type Error', error);
         });
     },
@@ -273,14 +273,14 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         if (!select) return;
 
         if (!typeId) {
-            select.innerHTML = '<option value="">' + self.params.messageIblockTypeSelectFirst + '</option>';
+            select.innerHTML = '<option value="">' + BX.message('DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT_FIRST') + '</option>';
             select.disabled = true;
             this.toggleFieldsSelection(false);
             return;
         }
 
         this.makeRequest('get_iblocks', {type_id: typeId}, function (response) {
-            select.innerHTML = '<option value="">' + self.params.messageIblockSelect + '</option>';
+            select.innerHTML = '<option value="">' + BX.message('DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT') + '</option>';
 
             if (response.data && response.data.length) {
                 response.data.forEach(function (iblock) {
@@ -420,7 +420,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
 
         }, function (error) {
             BX.closeWait();
-            self.showError(self.params.messageProfileSaveError);
+            self.showError(BX.message('DDAPP_IMPORT_MESSAGE_PROFILE_SAVE_ERROR'));
             console.error('ImportProfileManager: Save Profile Error', error);
         });
     },
@@ -443,14 +443,14 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
                 } else {
                     if (errorCallback) {
                         console.error('ImportProfileManager: Connect Error', result);
-                        errorCallback(result && result.message ? result.message : this.params.messageErrorServerConnect);
+                        errorCallback(result && result.message ? result.message : BX.message('DDAPP_IMPORT_MESSAGE_ERROR_SERVER_CONNECT'));
                     }
                 }
             },
             onfailure: function (error) {
                 if (errorCallback) {
                     console.error('ImportProfileManager: Connect Error', error);
-                    errorCallback(this.params.messageErrorServerConnect);
+                    errorCallback(BX.message('DDAPP_IMPORT_MESSAGE_ERROR_SERVER_CONNECT'));
                 }
             }
         });
@@ -464,8 +464,8 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
 
         // Группируем поля по типам
         var fieldGroups = {
-            'FIELD': this.params.messageIblockField,
-            'PROPERTY': this.params.messageIblockProperty
+            'FIELD': BX.message('DDAPP_IMPORT_SETTINGS_IBLOCK_FIELD'),
+            'PROPERTY': BX.message('DDAPP_IMPORT_SETTINGS_IBLOCK_PROPERTY')
         };
 
         var self = this;
@@ -566,7 +566,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         try {
             var settings = JSON.parse(settingsJson);
 
-            console.log("ImportProfileManager: Profile settings", settings);
+            console.log('ImportProfileManager: Profile settings', settings);
 
             // Если результат парсинга - строка, парсим еще раз
             if (typeof settings === 'string') {
@@ -635,7 +635,7 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
 
         var iblockSelect = document.getElementById('iblock_select');
         if (iblockSelect) {
-            iblockSelect.innerHTML = '<option value="">' + this.params.messageIblockTypeSelectFirst + '</option>';
+            iblockSelect.innerHTML = '<option value="">' + BX.message('DDAPP_IMPORT_SETTINGS_IBLOCK_SELECT_FIRST') + '</option>';
             iblockSelect.disabled = true;
         }
 
@@ -702,17 +702,17 @@ BX.DDAPP.Tools.ImportProfileManager.prototype = {
         });
 
         if (emptyFields.length > 0) {
-            return this.params.messageIblockFieldValidationError + emptyFields.join(', ');
+            return BX.message('DDAPP_IMPORT_MESSAGE_IBLOCK_FIELD_VALIDATION_ERROR') + emptyFields.join(', ');
         }
 
         return null;
     },
 
     showAlert: function (message) {
-        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageTitle);
+        BX.UI.Dialogs.MessageBox.alert(message, BX.message('DDAPP_IMPORT_MESSAGE_TITLE'));
     },
 
     showError: function (message) {
-        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageError);
+        BX.UI.Dialogs.MessageBox.alert(message, BX.message('DDAPP_IMPORT_MESSAGE_ERROR'));
     }
 };

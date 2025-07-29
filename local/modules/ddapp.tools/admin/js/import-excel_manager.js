@@ -33,14 +33,14 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
         var self = this;
 
         this.currentDialog = new BX.CDialog({
-            title: this.params.modalMessageTitle,
+            title: BX.message('DDAPP_EVENT_MODAL_TITLE'),
             content: BX('excel_import_div').innerHTML,
             width: 500,
             height: 250,
             resizable: true,
             draggable: true,
             buttons: [{
-                title: this.params.modalMessageBtnClose,
+                title: BX.message('DDAPP_EVENT_MODAL_BTN_CLOSE'),
                 id: 'excel_import_close',
                 name: 'close',
                 action: function () {
@@ -62,7 +62,7 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
                     var fileNameSpan = self.currentDialog.PARTS.CONTENT.querySelector('#file-name');
 
                     if (fileNameSpan) {
-                        fileNameSpan.textContent = fileName ? self.params.modalMessageFile + fileName : '';
+                        fileNameSpan.textContent = fileName ? BX.message('DDAPP_EVENT_MODAL_FILE') + fileName : '';
                     }
 
                     self.handleExcelFile(e);
@@ -98,7 +98,7 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
                 self.settings.import_fields.forEach(function (fieldCode) {
                     var cellAddress = self.settings.import_cells[fieldCode];
                     if (!cellAddress) {
-                        errors.push(self.params.messageImportCellError + fieldCode);
+                        errors.push(BX.message('DDAPP_EVENT_MESSAGE_CELL_IS_NULL_ERROR') + fieldCode);
                         return;
                     }
 
@@ -112,10 +112,10 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
                             fieldElement.value = self.formatCellValue(cellValue, fieldCode);
                             importedCount++;
                         } else {
-                            errors.push(self.params.messageImportFieldError + fieldCode);
+                            errors.push(BX.message('DDAPP_EVENT_MESSAGE_FIELD_NOT_FOUND_ERROR') + fieldCode);
                         }
                     } else {
-                        errors.push(self.params.messageImportSelectorError + fieldCode);
+                        errors.push(BX.message('DDAPP_EVENT_MESSAGE_SELECTOR_NOT_TRUE_ERROR') + fieldCode);
                     }
                 });
 
@@ -124,7 +124,7 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
                     self.currentDialog.Close();
                 }
 
-                var message = self.params.messageImport + importedCount;
+                var message = BX.message('DDAPP_EVENT_MESSAGE_IMPORT_MESSAGE') + importedCount;
                 if (errors.length > 0) {
                     message += '<br>' + errors.join('<br>');
                 }
@@ -137,7 +137,7 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
                     self.currentDialog.Close();
                 }
 
-                self.showError(self.params.messageFileImportError);
+                self.showError(BX.message('DDAPP_EVENT_MESSAGE_FILE_IMPORT_ERROR'));
                 console.error('ImportExcelManager: File Import Error', error.message);
 
             } finally {
@@ -147,7 +147,7 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
 
         reader.onerror = function () {
             BX.closeWait();
-            self.showError(self.params.messageFileReadtError);
+            self.showError(BX.message('DDAPP_EVENT_MESSAGE_FILE_READ_ERROR'));
             console.error('ImportExcelManager: File Read Error');
         };
 
@@ -238,10 +238,10 @@ BX.DDAPP.Tools.ImportExcelManager.prototype = {
     },
 
     showAlert: function (message) {
-        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageTitle);
+        BX.UI.Dialogs.MessageBox.alert(message, BX.message('DDAPP_EVENT_MESSAGE_TITLE'));
     },
 
     showError: function (message) {
-        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageError);
+        BX.UI.Dialogs.MessageBox.alert(message, BX.message('DDAPP_EVENT_MESSAGE_ERROR'));
     }
 };

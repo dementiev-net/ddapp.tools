@@ -99,25 +99,24 @@ class AdminEvents
                 ?>
                 <script>
                     BX.ready(function () {
+                        BX.message({
+                            DDAPP_EVENT_MODAL_TITLE: '<?= Loc::getMessage("DDAPP_EVENT_MODAL_TITLE") ?>',
+                            DDAPP_EVENT_MODAL_FILE: '<?= Loc::getMessage("DDAPP_EVENT_MODAL_FILE") ?>',
+                            DDAPP_EVENT_MODAL_BTN_CLOSE: '<?= Loc::getMessage("DDAPP_EVENT_MODAL_BTN_CLOSE") ?>',
+                            DDAPP_EVENT_MESSAGE_TITLE: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_TITLE") ?>',
+                            DDAPP_EVENT_MESSAGE_ERROR: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_ERROR") ?>',
+                            DDAPP_EVENT_MESSAGE_FILE_IMPORT_ERROR: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_FILE_IMPORT_ERROR") ?>',
+                            DDAPP_EVENT_MESSAGE_FILE_READ_ERROR: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_FILE_READ_ERROR") ?>',
+                            DDAPP_EVENT_MESSAGE_IMPORT_MESSAGE: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_IMPORT_MESSAGE") ?>',
+                            DDAPP_EVENT_MESSAGE_CELL_IS_NULL_ERROR: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_CELL_IS_NULL_ERROR") ?>',
+                            DDAPP_EVENT_MESSAGE_FIELD_NOT_FOUND_ERROR: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_FIELD_NOT_FOUND_ERROR") ?>',
+                            DDAPP_EVENT_MESSAGE_SELECTOR_NOT_TRUE_ERROR: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_SELECTOR_NOT_TRUE_ERROR") ?>',
+                        });
+                        // Инициализация
                         new BX.DDAPP.Tools.ImportExcelManager({
                             iblockId: <?= $iblockId ?>,
                             settings: <?= json_encode($settings) ?>,
                             properties: <?= json_encode($properties) ?>,
-                            modalMessageTitle: '<?= Loc::getMessage("DDAPP_EVENT_MODAL_TITLE")?>',
-                            modalMessageFile: '<?= Loc::getMessage("DDAPP_EVENT_MODAL_FILE")?>',
-                            modalMessageBtnClose: '<?= Loc::getMessage("DDAPP_EVENT_MODAL_BTN_CLOSE")?>',
-                            messageTitle: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_TITLE")?>',
-                            messageError: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_ERROR")?>',
-
-
-                            messageFileImportError: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_FILE_IMPORT_ERROR")?>',
-                            messageFileReadtError: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_FILE_READ_ERROR")?>',
-                            messageImport: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_IMPORT_MESSAGE")?>',
-                            messageImportCellError: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_CELL_IS_NULL_ERROR")?>',
-                            messageImportFieldError: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_FIELD_NOT_FOUND_ERROR")?>',
-                            messageImportSelectorError: '<?= Loc::getMessage("DDAPP_EVENT_MESSAGE_SELECTOR_NOT_TRUE_ERROR")?>',
-
-
                         });
                     });
                 </script>
@@ -140,7 +139,8 @@ class AdminEvents
                                        class="adm-file-btn-input"
                                        accept=".xlsx,.xls">
                             </label>
-                            <span class="adm-file-input-filename" id="file-name"><?= Loc::getMessage("DDAPP_EVENT_MODAL_EXCEL_FILE_NOT_SELECTED") ?></span>
+                            <span class="adm-file-input-filename"
+                                  id="file-name"><?= Loc::getMessage("DDAPP_EVENT_MODAL_EXCEL_FILE_NOT_SELECTED") ?></span>
                         </div>
                     </div>
                 </div>

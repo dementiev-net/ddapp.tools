@@ -214,13 +214,15 @@ $tabControl->Begin();
 
     <script>
         BX.ready(function () {
+            BX.message({
+                DDAPP_TOOLS_SMTP_TEST_LOADING: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_LOADING") ?>',
+                DDAPP_TOOLS_SMTP_TEST_SUCCESS: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_SUCCESS") ?>',
+                DDAPP_TOOLS_SMTP_TEST_ERROR: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_ERROR") ?>',
+                DDAPP_TOOLS_SMTP_TEST_ERROR_AJAX: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_ERROR_AJAX") ?>',
+            });
             // Инициализация
             new BX.DDAPP.Tools.SmtpTest({
                 ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/smtp_test.php") ?>',
-                messageLoadingText: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_LOADING") ?>',
-                messageSuccessText: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_SUCCESS") ?>',
-                messageErrorText: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_ERROR") ?>',
-                messageAjaxErrorText: '<?= Loc::getMessage("DDAPP_TOOLS_SMTP_TEST_ERROR_AJAX") ?>',
             });
         });
     </script>

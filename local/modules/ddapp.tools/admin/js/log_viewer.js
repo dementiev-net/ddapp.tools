@@ -144,14 +144,14 @@ BX.DDAPP.Tools.LogViewer.prototype = {
             onfailure: function () {
                 BX.closeWait();
                 console.error('LogViewer: Load Files Error');
-                self.showError(self.params.messageErrorLoadFile);
+                self.showError(BX.message('DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_FILE'));
             }
         });
     },
 
     updateLogFilesSelect: function (files) {
         var select = this.logFileSelect;
-        select.innerHTML = '<option value="">' + this.params.messageSelectLogFile + '</option>';
+        select.innerHTML = '<option value="">' + BX.message('DDAPP_LOGFILE_CONTROL_FILE_SELECT') + '</option>';
 
         for (var i = 0; i < files.length; i++) {
             var option = BX.create('option', {
@@ -203,7 +203,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
             onfailure: function () {
                 BX.closeWait();
                 console.error('LogViewer: Load Data Error');
-                self.showError(self.params.messageErrorLoadData);
+                self.showError(BX.message('DDAPP_LOGFILE_MESSAGE_ERROR_LOAD_DATA'));
             }
         });
     },
@@ -230,7 +230,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
         var select = this.userFilter;
         var currentValue = select.value;
 
-        select.innerHTML = '<option value="">' + this.params.messageAllUsers + '</option>';
+        select.innerHTML = '<option value="">' + BX.message('DDAPP_LOGFILE_FILTER_USER_ALL') + '</option>';
 
         for (var i = 0; i < users.length; i++) {
             var option = BX.create('option', {
@@ -250,7 +250,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
         var tbody = this.logEntries;
 
         if (entries.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="no-data">' + this.params.messageDataNotFound + '</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="no-data">' + BX.message('DDAPP_LOGFILE_MESSAGE_DATA_NOT_FOUND') + '</td></tr>';
             return;
         }
 
@@ -286,7 +286,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
 
         this.paginationInfo.textContent =
             'Показано ' + (((pagination.current_page - 1) * 5) + 1) + '-' +
-            Math.min(pagination.current_page * 5, pagination.total) + ' ' + this.params.messagePageFrom + ' ' + pagination.total;
+            Math.min(pagination.current_page * 5, pagination.total) + ' ' + BX.message('DDAPP_LOGFILE_TABLE_PAGES_FROM') + ' ' + pagination.total;
 
         this.prevPage.disabled = pagination.current_page === 1;
         this.nextPage.disabled = pagination.current_page === pagination.pages;
@@ -331,7 +331,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
     },
 
     clearTable: function () {
-        this.logEntries.innerHTML = '<tr><td colspan="5" class="no-data">' + this.params.messageDataNotFound + '</td></tr>';
+        this.logEntries.innerHTML = '<tr><td colspan="5" class="no-data">' + BX.message('DDAPP_LOGFILE_MESSAGE_DATA_NOT_FOUND') + '</td></tr>';
         this.pagination.style.display = 'none';
         this.updateStats({total: 0, debug: 0, info: 0, warning: 0, error: 0, critical: 0});
     },
@@ -355,8 +355,8 @@ BX.DDAPP.Tools.LogViewer.prototype = {
         var self = this;
 
         const messageBox = BX.UI.Dialogs.MessageBox.create({
-                message: self.params.messageBeforeDelete,
-                title: self.params.messageTitle,
+                message: BX.message('DDAPP_LOGFILE_MESSAGE_BEFORE_DELETE'),
+                title: BX.message('DDAPP_LOGFILE_MESSAGE_TITLE'),
                 buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
                 onOk: function (messageBox) {
                     self.performClearLog();
@@ -385,7 +385,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
                 BX.closeWait();
                 if (response.success) {
                     self.loadLogData();
-                    self.showAlert(self.params.messageDeleteOk);
+                    self.showAlert(BX.message('DDAPP_LOGFILE_MESSAGE_LOG_CLEAR'));
                 } else {
                     console.error('LogViewer: Error', response.message);
                     self.showError(response.message);
@@ -394,7 +394,7 @@ BX.DDAPP.Tools.LogViewer.prototype = {
             onfailure: function () {
                 BX.closeWait();
                 console.error('LogViewer: Clear Log Error');
-                self.showError(self.params.messageErrorLogClear);
+                self.showError(BX.message('DDAPP_LOGFILE_MESSAGE_ERROR_LOG_CLEAR'));
             }
         });
     },
@@ -417,11 +417,11 @@ BX.DDAPP.Tools.LogViewer.prototype = {
     },
 
     showAlert: function (message) {
-        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageTitle);
+        BX.UI.Dialogs.MessageBox.alert(message, BX.message('DDAPP_LOGFILE_MESSAGE_TITLE'));
     },
 
     showError: function (message) {
-        tbody.innerHTML = '<tr><td colspan="5" class="no-data">' + this.params.messageDataNotFound + '</td></tr>';
-        BX.UI.Dialogs.MessageBox.alert(message, this.params.messageError);
+        tbody.innerHTML = '<tr><td colspan="5" class="no-data">' + BX.message('DDAPP_LOGFILE_MESSAGE_DATA_NOT_FOUND') + '</td></tr>';
+        BX.UI.Dialogs.MessageBox.alert(message, BX.message('DDAPP_LOGFILE_MESSAGE_ERROR'));
     }
 };

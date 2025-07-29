@@ -139,12 +139,12 @@ BX.DDAPP.Tools.SmtpTest.prototype = {
 
         switch (type) {
             case 'loading':
-                html = this.params.messageLoadingText;
+                html = BX.message('DDAPP_TOOLS_SMTP_TEST_LOADING');
                 targetElement = this.messageLoading;
                 break;
 
             case 'success':
-                html = this.params.messageSuccessText;
+                html = BX.message('DDAPP_TOOLS_SMTP_TEST_SUCCESS');
                 if (message) {
                     html += BX.util.htmlspecialchars(message);
                 }
@@ -152,7 +152,7 @@ BX.DDAPP.Tools.SmtpTest.prototype = {
                 break;
 
             case 'error':
-                html = this.params.messageErrorText;
+                html = BX.message('DDAPP_TOOLS_SMTP_TEST_ERROR');
                 if (message) {
                     html += BX.util.htmlspecialchars(message);
                 }
@@ -160,7 +160,7 @@ BX.DDAPP.Tools.SmtpTest.prototype = {
                 break;
 
             case 'ajax_error':
-                html = this.params.messageAjaxErrorText;
+                html = BX.message('DDAPP_TOOLS_SMTP_TEST_ERROR_AJAX');
                 targetElement = this.messageError;
                 break;
         }

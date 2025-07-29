@@ -91,7 +91,7 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
     onBeforeUnload: function (e) {
         if (this.isUploading) {
             e.preventDefault();
-            e.returnValue = this.params.messageBeforeUnload;
+            e.returnValue = BX.message('DDAPP_IMAGES_MESSAGE_BEFORE_UNLOAD');
             return e.returnValue;
         }
     },
@@ -163,7 +163,7 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
 
     handleResponse: function (response, currentStep) {
         if (!response) {
-            this.finishUpload(this.params.messageWrongServerResponse);
+            this.finishUpload(BX.message('DDAPP_IMAGES_MESSAGE_WRONG_SERVER_RESPONSE'));
             return;
         }
 
@@ -175,10 +175,10 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
                 this.handleDone(response);
                 break;
             case 'error':
-                this.finishUpload(response.message || this.params.messageUnknownError);
+                this.finishUpload(response.message || BX.message('DDAPP_IMAGES_MESSAGE_UNKNOWN_ERROR'));
                 break;
             default:
-                this.finishUpload(this.params.messageUnknownStatus + ': ' + response.status);
+                this.finishUpload(BX.message('DDAPP_IMAGES_MESSAGE_UNKNOWN_STATUS') + ': ' + response.status);
         }
     },
 
@@ -205,7 +205,7 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
 
         console.error('ImagesManager: AJAX Error', xhr);
 
-        this.finishUpload(this.params.messageErrorServerConnect + ' (HTTP ' + (xhr.status || 'unknown') + ')');
+        this.finishUpload(BX.message('DDAPP_IMAGES_MESSAGE_ERROR_SERVER_CONNECT') + ' (HTTP ' + (xhr.status || 'unknown') + ')');
     },
 
     updateCounters: function (response) {
@@ -215,7 +215,7 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
     },
 
     updateProgress: function () {
-        var progressText = this.uploaded + ' ' + this.params.messageFrom + ' ' + this.total;
+        var progressText = this.uploaded + ' ' + BX.message('DDAPP_IMAGES_SETTINGS_FROM') + ' ' + this.total;
 
         if (this.total > 0) {
             var percent = Math.round((this.uploaded / this.total) * 100);
@@ -232,7 +232,7 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
         if (!response.fileUrl) return;
 
         var fileName = response.fileName || response.fileUrl.split('/').pop();
-        var linkHtml = this.params.messageFile + ': <a href="' +
+        var linkHtml = BX.message('DDAPP_IMAGES_SETTINGS_FILE') + ': <a href="' +
             BX.util.htmlspecialchars(response.fileUrl) + '" target="_blank">' +
             BX.util.htmlspecialchars(fileName) + '</a>';
 
@@ -270,7 +270,7 @@ BX.DDAPP.Tools.ImagesManager.prototype = {
 
     resetMessages: function () {
         if (this.messageOk) {
-            this.messageOk.textContent = '0 ' + this.params.messageFrom + ' 0';
+            this.messageOk.textContent = '0 ' + BX.message('DDAPP_IMAGES_SETTINGS_FROM') + ' 0';
         }
         if (this.messageProgressA) {
             this.messageProgressA.style.width = '0px';

@@ -166,8 +166,10 @@ $oMenu = new CAdminContextMenu([
     <div class="adm-info-message-wrap adm-info-message-gray" id="export_message">
         <div class="adm-info-message">
             <div class="adm-info-message-title"><?= Loc::getMessage("DDAPP_EXPORT_PROCESS_TITLE") ?></div>
-            <?= Loc::getMessage("DDAPP_EXPORT_PROCESS_ITEMS_OK") ?><strong><span id="export_message_ok">0</span></strong>
-            <br><?= Loc::getMessage("DDAPP_EXPORT_PROCESS_ITEMS_ERROR") ?><strong><span id="export_message_error">0</span></strong>
+            <?= Loc::getMessage("DDAPP_EXPORT_PROCESS_ITEMS_OK") ?><strong><span
+                        id="export_message_ok">0</span></strong>
+            <br><?= Loc::getMessage("DDAPP_EXPORT_PROCESS_ITEMS_ERROR") ?><strong><span
+                        id="export_message_error">0</span></strong>
             <p id="export_message_file"></p>
             <div class="adm-progress-bar-outer" style="width: 500px;">
                 <div class="adm-progress-bar-inner" id="progress_percent_a" style="width: 0;">
@@ -198,7 +200,8 @@ $oMenu = new CAdminContextMenu([
         <?php $tabControl->BeginNextTab(); ?>
 
         <tr>
-            <td width="40%" style="position: relative; top: -4px;"><?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_PROFILE") ?>
+            <td width="40%"
+                style="position: relative; top: -4px;"><?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_PROFILE") ?>
                 :
             </td>
             <td width="60%">
@@ -376,35 +379,36 @@ $oMenu = new CAdminContextMenu([
 
     <script>
         BX.ready(function () {
+            BX.message({
+                DDAPP_EXPORT_MESSAGE_TITLE: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_TITLE") ?>',
+                DDAPP_EXPORT_MESSAGE_ERROR: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_ERROR") ?>',
+                DDAPP_EXPORT_MESSAGE_ERROR_SERVER_CONNECT: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_ERROR_SERVER_CONNECT") ?>',
+                DDAPP_EXPORT_MESSAGE_BEFORE_DELETE: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_BEFORE_DELETE") ?>',
+                DDAPP_EXPORT_SETTINGS_PROFILE_SELECT: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_PROFILE_SELECT") ?>',
+                DDAPP_EXPORT_SETTINGS_IBLOCK_SELECT: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_SELECT") ?>',
+                DDAPP_EXPORT_SETTINGS_IBLOCK_FIELD: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_FIELD") ?>',
+                DDAPP_EXPORT_SETTINGS_IBLOCK_PROPERTY: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_PROPERTY") ?>',
+                DDAPP_EXPORT_SETTINGS_IBLOCK_TYPE_SELECT: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_TYPE_SELECT") ?>',
+                DDAPP_EXPORT_SETTINGS_IBLOCK_SELECT_FIRST: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_SELECT_FIRST") ?>',
+                DDAPP_EXPORT_MESSAGE_PROFILE_ERROR: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_ERROR") ?>',
+                DDAPP_EXPORT_MESSAGE_PROFILE_SAVE_ERROR: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_SAVE_ERROR") ?>',
+                DDAPP_EXPORT_MESSAGE_PROFILE_SELECT_ERROR: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_SELECT_ERROR") ?>',
+                DDAPP_EXPORT_MESSAGE_PROFILE_DELETE_ERROR: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_DELETE_ERROR") ?>',
+                DDAPP_EXPORT_MESSAGE_PROFILE_DELETE: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_DELETE") ?>',
+                DDAPP_EXPORT_MESSAGE_IBLOCK_TYPE_ERROR: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_IBLOCK_TYPE_ERROR") ?>',
+                DDAPP_EXPORT_MESSAGE_BEFORE_UNLOAD: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_BEFORE_UNLOAD") ?>',
+                DDAPP_EXPORT_MESSAGE_WRONG_SERVER_RESPONSE: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_WRONG_SERVER_RESPONSE") ?>',
+                DDAPP_EXPORT_MESSAGE_UNKNOWN_ERROR: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_UNKNOWN_ERROR") ?>',
+                DDAPP_EXPORT_MESSAGE_UNKNOWN_STATUS: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_UNKNOWN_STATUS") ?>',
+                DDAPP_EXPORT_SETTINGS_FROM: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_FROM") ?>',
+                DDAPP_EXPORT_SETTINGS_FILE: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_FILE") ?>',
+            });
             // Инициализация
             new BX.DDAPP.Tools.ExportProfileManager({
                 ajaxUrl: '<?= Main::getAjaxUrl("admin/ddapp_data_export.php") ?>',
-                messageTitle: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_TITLE")?>',
-                messageError: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_ERROR")?>',
-                messageErrorServerConnect: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_ERROR_SERVER_CONNECT")?>',
-                messageBeforeDelete: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_BEFORE_DELETE")?>',
-                messageProfileSelect: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_PROFILE_SELECT")?>',
-                messageIblockSelect: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_SELECT")?>',
-                messageIblockField: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_FIELD")?>',
-                messageIblockProperty: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_PROPERTY")?>',
-                messageIblockTypeSelect: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_TYPE_SELECT")?>',
-                messageIblockTypeSelectFirst: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_IBLOCK_SELECT_FIRST")?>',
-                messageProfileLoadError: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_ERROR")?>',
-                messageProfileSaveError: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_SAVE_ERROR")?>',
-                messageProfileSelectError: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_SELECT_ERROR")?>',
-                messageProfileDeleteError: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_DELETE_ERROR")?>',
-                messageProfileDeleteOk: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_PROFILE_DELETE")?>',
-                messageIblockSelectError: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_IBLOCK_TYPE_ERROR")?>',
             });
             new BX.DDAPP.Tools.ExportManager({
                 ajaxUrl: '<?= Main::getAjaxUrl("admin/ajax/data_export.php") ?>',
-                messageBeforeUnload: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_BEFORE_UNLOAD")?>',
-                messageWrongServerResponse: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_WRONG_SERVER_RESPONSE")?>',
-                messageUnknownError: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_UNKNOWN_ERROR")?>',
-                messageUnknownStatus: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_UNKNOWN_STATUS")?>',
-                messageErrorServerConnect: '<?= Loc::getMessage("DDAPP_EXPORT_MESSAGE_ERROR_SERVER_CONNECT")?>',
-                messageFrom: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_FROM")?>',
-                messageFile: '<?= Loc::getMessage("DDAPP_EXPORT_SETTINGS_FILE")?>',
             });
         });
     </script>

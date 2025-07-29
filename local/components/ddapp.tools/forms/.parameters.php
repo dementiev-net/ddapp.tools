@@ -30,10 +30,7 @@ $arComponentParameters = array(
         ),
         "FILES" => array(
             "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_GROUP_FILES"),
-        ),
-        "ANALYTICS" => array(
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_GROUP_ANALYTICS"),
-        ),
+        )
     ),
     "PARAMETERS" => array(
         "IBLOCK_ID" => array(
@@ -96,30 +93,6 @@ $arComponentParameters = array(
         ),
 
         // Настройки защиты
-        "USE_BITRIX_CAPTCHA" => array(
-            "PARENT" => "CAPTCHA",
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_USE_BITRIX_CAPTCHA"),
-            "TYPE" => "CHECKBOX",
-            "DEFAULT" => "N",
-        ),
-        "USE_GOOGLE_RECAPTCHA" => array(
-            "PARENT" => "CAPTCHA",
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_USE_GOOGLE_RECAPTCHA"),
-            "TYPE" => "CHECKBOX",
-            "DEFAULT" => "N",
-        ),
-        "GOOGLE_RECAPTCHA_PUBLIC_KEY" => array(
-            "PARENT" => "CAPTCHA",
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_GOOGLE_RECAPTCHA_PUBLIC_KEY"),
-            "TYPE" => "STRING",
-            "DEFAULT" => "",
-        ),
-        "GOOGLE_RECAPTCHA_SECRET_KEY" => array(
-            "PARENT" => "CAPTCHA",
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_GOOGLE_RECAPTCHA_SECRET_KEY"),
-            "TYPE" => "STRING",
-            "DEFAULT" => "",
-        ),
         "RATE_LIMIT_ENABLED" => array(
             "PARENT" => "CAPTCHA",
             "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_RATE_LIMIT_ENABLED"),
@@ -164,32 +137,6 @@ $arComponentParameters = array(
             "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_CHECK_FILE_CONTENT"),
             "TYPE" => "CHECKBOX",
             "DEFAULT" => "Y",
-        ),
-
-        // Настройки аналитики
-        "ENABLE_ANALYTICS" => array(
-            "PARENT" => "ANALYTICS",
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_USE_ANALYTICS"),
-            "TYPE" => "CHECKBOX",
-            "DEFAULT" => "N",
-        ),
-        "GA_MEASUREMENT_ID" => array(
-            "PARENT" => "ANALYTICS",
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_GA_MEASUREMENT_ID"),
-            "TYPE" => "STRING",
-            "DEFAULT" => "",
-        ),
-        "YANDEX_METRIKA_ID" => array(
-            "PARENT" => "ANALYTICS",
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_YANDEX_METRIKA_ID"),
-            "TYPE" => "STRING",
-            "DEFAULT" => "",
-        ),
-        "VK_PIXEL_ID" => array(
-            "PARENT" => "ANALYTICS",
-            "NAME" => Loc::getMessage("DDAPP_FORM_BUTTON_PARAM_VK_PIXEL_ID"),
-            "TYPE" => "STRING",
-            "DEFAULT" => "",
         ),
     ),
 );

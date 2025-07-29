@@ -14,9 +14,6 @@ $arComponentParameters = array(
         "SETTINGS" => array(
             "NAME" => Loc::getMessage("DDAPP_AUTH_GROUP_SETTINGS"),
         ),
-        "CAPTCHA" => array(
-            "NAME" => Loc::getMessage("DDAPP_AUTH_GROUP_CAPTCHA"),
-        ),
         "FIELDS" => array(
             "NAME" => Loc::getMessage("DDAPP_AUTH_GROUP_FIELDS"),
         ),
@@ -101,20 +98,6 @@ $arComponentParameters = array(
                 "" => Loc::getMessage("DDAPP_AUTH_MODAL_SIZE_DEFAULT")
             ),
             "DEFAULT" => ""
-        ),
-
-        // Настройки CAPTCHA
-        "USE_CAPTCHA" => array(
-            "PARENT" => "CAPTCHA",
-            "NAME" => Loc::getMessage("DDAPP_AUTH_PARAM_USE_CAPTCHA"),
-            "TYPE" => "CHECKBOX",
-            "DEFAULT" => "N",
-        ),
-        "USE_CAPTCHA_REGISTRATION" => array(
-            "PARENT" => "CAPTCHA",
-            "NAME" => Loc::getMessage("DDAPP_AUTH_PARAM_USE_CAPTCHA_REGISTRATION"),
-            "TYPE" => "CHECKBOX",
-            "DEFAULT" => "Y",
         ),
 
         // Дополнительные поля

@@ -3,6 +3,14 @@ $ddapp_tools_default_option = [
     "maint_period" => 30,
     "cache_period" => 0,
     "export_step" => 100,
+    "use_captcha" => 0,
+    "google_public_key" => "",
+    "google_secret_key" => "",
+    "yandex_client_key" => "",
+    "yandex_server_key" => "",
+    "yandex_invisible" => "N",
+    "yandex_shield" => "N",
+    "yandex_position" => 0,
 
     "log_enabled" => "Y",
     "log_date_format" => "d.m.Y H:i:s",
@@ -34,4 +42,9 @@ $ddapp_tools_default_option = [
     "smtp_dkim_selector" => "mail",
     "smtp_dkim_passphrase" => "",
     "smtp_dkim_private_key" => "-----BEGIN RSA PRIVATE KEY-----",
+
+    "analytic_enabled" => "N",
+    "analytic_ga_id" => "",
+    "analytic_ya_id" => "",
+    "analytic_vk_id" => "",
 ];

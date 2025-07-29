@@ -1,4 +1,5 @@
 <?php
+// Вкладки
 $MESS["DDAPP_TOOLS_TAB1"] = "Настройки";
 $MESS["DDAPP_TOOLS_TAB1_TITLE"] = "Настройка параметров модуля";
 $MESS["DDAPP_TOOLS_TAB2"] = "Логирование";
@@ -7,14 +8,20 @@ $MESS["DDAPP_TOOLS_TAB3"] = "Свободное место";
 $MESS["DDAPP_TOOLS_TAB3_TITLE"] = "Настройка мониторинга остатка места на диске";
 $MESS["DDAPP_TOOLS_TAB4"] = "SMTP почта";
 $MESS["DDAPP_TOOLS_TAB4_TITLE"] = "Настройка отправки писем через SMTP";
+$MESS["DDAPP_TOOLS_TAB5"] = "Аналитика";
+$MESS["DDAPP_TOOLS_TAB5_TITLE"] = "Настройка отправки аналитики";
 
+// Блоки
 $MESS["DDAPP_TOOLS_BLOCK1"] = "Основные настройки";
 $MESS["DDAPP_TOOLS_BLOCK2"] = "Настройки ротации";
 $MESS["DDAPP_TOOLS_BLOCK3"] = "Настройки email уведомлений при критических ошибках";
 $MESS['DDAPP_TOOLS_BLOCK4'] = "Настройки ограничения места";
 $MESS['DDAPP_TOOLS_BLOCK5'] = "Авторизация";
 $MESS['DDAPP_TOOLS_BLOCK6'] = "Настройка DKIM подписи";
+$MESS['DDAPP_TOOLS_BLOCK7'] = "Google reCAPTCHA v3";
+$MESS['DDAPP_TOOLS_BLOCK8'] = "Yandex SmartCaptcha";
 
+// Настройки
 $MESS["DDAPP_TOOLS_MAINT_PERIOD"] = "Периодичность плана обслуживания, дни:";
 $MESS["DDAPP_TOOLS_CACHE_PERIOD"] = "Периодичность очистки кеша:";
 $MESS["DDAPP_TOOLS_CACHE_PERIOD_DEFAULT"] = [
@@ -26,7 +33,30 @@ $MESS["DDAPP_TOOLS_CACHE_PERIOD_DEFAULT"] = [
 ];
 $MESS["DDAPP_TOOLS_CACHE_SIZE"] = "размер: ";
 $MESS["DDAPP_TOOLS_EXPORT_STEP"] = "Шаг экспорта за раз, шт.:";
+$MESS["DDAPP_TOOLS_USE_CAPTCHA"] = "Использовать защиту:";
+$MESS["DDAPP_TOOLS_USE_CAPTCHA_DEFAULT"] = [
+    "0" => "Ничего",
+    "1" => "Bitrix Captcha",
+    "2" => "Google reCAPTCHA v3",
+    "3" => "Yandex SmartCaptcha",
+];
+$MESS["DDAPP_TOOLS_GOOGLE_RECAPTCHA_PUBLIC_KEY"] = "Публичный ключ:";
+$MESS["DDAPP_TOOLS_GOOGLE_RECAPTCHA_SECRET_KEY"] = "Секретный ключ:";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_CLIENT_KEY"] = "Ключ клиента:";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_SERVER_KEY"] = "Ключ сервера:";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_INVISIBLE"] = "Невидимая капча:";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_SHIELD_CUSTOM"] = "Скрыть шильдик (использовать кастомный):";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_SHIELD_POSITION"] = "Расположение шильдика на странице:";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_SHIELD_POSITION_DEFAULT"] = [
+    "1" => "Верхний левый угол",
+    "2" => "По центру слева",
+    "3" => "Нижний левый угол",
+    "4" => "Верхний правый угол",
+    "5" => "По центру справа",
+    "6" => "Нижний правый угол",
+];
 
+// Логирование
 $MESS["DDAPP_TOOLS_LOG_ENABLED"] = "Активность:";
 $MESS["DDAPP_TOOLS_LOG_MIN_LEVEL"] = "Минимальный уровень логирования:";
 $MESS["DDAPP_TOOLS_LOG_MIN_LEVEL_DEFAULT"] = [
@@ -48,6 +78,7 @@ $MESS["DDAPP_TOOLS_LOG_EMAIL_ENABLED"] = "Отправлять письмо:";
 $MESS["DDAPP_TOOLS_LOG_EMAIL"] = "E-Mail:";
 $MESS["DDAPP_TOOLS_LOG_EMAIL_DEFAULT"] = "admin@yoursite.ru";
 
+// Свободное место
 $MESS["DDAPP_TOOLS_DISK_ENABLED"] = "Активность:";
 $MESS["DDAPP_TOOLS_DISK_DELETE_CACHE"] = "Удалять кэш при малом месте:";
 $MESS["DDAPP_TOOLS_DISK_EMAIL_ENABLED"] = "Отправлять письмо:";
@@ -65,6 +96,7 @@ $MESS['DDAPP_TOOLS_DISK_ALL_SPACE_DEFAULT'] = "0";
 $MESS['TYPE_FILESYSTEM_1'] = "Функции PHP";
 $MESS['TYPE_FILESYSTEM_2'] = "Функция обхода папок";
 
+// SMTP почта
 $MESS["DDAPP_TOOLS_SMTP_ENABLED"] = "Отправлять письма через SMTP:";
 $MESS["DDAPP_TOOLS_SMTP_HOST"] = "SMTP сервер:";
 $MESS["DDAPP_TOOLS_SMTP_SMTP_SECURE"] = "Тип защищенного соединения:";
@@ -94,9 +126,17 @@ $MESS["DDAPP_TOOLS_SMTP_TEST_SUCCESS"] = "SMTP тест пройден успе�
 $MESS["DDAPP_TOOLS_SMTP_TEST_ERROR"] = "Ошибка: ";
 $MESS["DDAPP_TOOLS_SMTP_TEST_ERROR_AJAX"] = "Ошибка AJAX-запроса";
 
+// Аналитика
+$MESS["DDAPP_TOOLS_ANALYTICS_ENABLED"] = "Включить аналитику:";
+$MESS["DDAPP_TOOLS_ANALYTICS_GA_MEASUREMENT_ID"] = "ID Google Analytics:";
+$MESS["DDAPP_TOOLS_ANALYTICS_YANDEX_METRIKA_ID"] = "ID Яндекс.Метрики:";
+$MESS["DDAPP_TOOLS_ANALYTICS_VK_PIXEL_ID"] = "ID VK Pixel:";
+
+// Кнопки
 $MESS["DDAPP_TOOLS_BTN_APPLY"] = "Применить";
 $MESS["DDAPP_TOOLS_BTN_DEFAULT"] = "По умолчанию";
 
+// Подсказки
 $MESS["DDAPP_TOOLS_HELP_TAB1"] = "";
 $MESS["DDAPP_TOOLS_HELP_TAB2"] = "
 <h4>Подключение:</h4>
@@ -169,3 +209,4 @@ openssl rsa -in dkim_private.key -pubout -out dkim_public.key
 # Имя: default._domainkey.yoursite.ru
 # Значение: v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
 </pre>";
+$MESS["DDAPP_TOOLS_HELP_TAB5"] = "";

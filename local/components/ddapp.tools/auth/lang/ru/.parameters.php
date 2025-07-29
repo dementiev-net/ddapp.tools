@@ -1,7 +1,6 @@
 <?php
 $MESS["DDAPP_AUTH_GROUP_BUTTONS"] = "Настройки кнопок";
 $MESS["DDAPP_AUTH_GROUP_SETTINGS"] = "Основные настройки";
-$MESS["DDAPP_AUTH_GROUP_CAPTCHA"] = "Настройки защиты";
 $MESS["DDAPP_AUTH_GROUP_FIELDS"] = "Дополнительные поля";
 $MESS["DDAPP_AUTH_GROUP_REDIRECTS"] = "Перенаправления";
 
@@ -26,10 +25,6 @@ $MESS["DDAPP_AUTH_MODAL_SIZE_SMALL"] = "Маленькое";
 $MESS["DDAPP_AUTH_MODAL_SIZE_DEFAULT"] = "Обычное";
 $MESS["DDAPP_AUTH_MODAL_SIZE_LARGE"] = "Большое";
 $MESS["DDAPP_AUTH_MODAL_SIZE_EXTRA_LARGE"] = "Очень большое";
-
-// CAPTCHA
-$MESS["DDAPP_AUTH_PARAM_USE_CAPTCHA"] = "Использовать CAPTCHA при входе";
-$MESS["DDAPP_AUTH_PARAM_USE_CAPTCHA_REGISTRATION"] = "Использовать CAPTCHA при регистрации";
 
 // Поля
 $MESS["DDAPP_AUTH_PARAM_REGISTRATION_FIELDS"] = "Дополнительные поля регистрации (через запятую)";

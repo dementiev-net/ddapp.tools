@@ -26,6 +26,16 @@ Loader::includeModule($module_id);
 
 $cacheSize = FileHelper::formatBytes(CacheHelper::checkCacheSize());
 
+/*
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_OPTION_CLIENT_KEY"] = "Ключ клиента";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_OPTION_SERVER_KEY"] = "Ключ сервера";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_OPTION_INVISIBLE"] = "Невидимая капча";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_OPTION_SHIELD_CUSTOM"] = "Скрыть шильдик (использовать кастомный)";
+$MESS["DDAPP_TOOLS_YANDEX_CAPTCHA_OPTION_SHIELD_POSITION"] = "Расположение шильдика на странице";
+
+ */
+
+
 // Настройки модуля для админки, в том числе значения по умолчанию
 $aTabs = [
     [
@@ -37,6 +47,16 @@ $aTabs = [
             ["cache_period", Loc::getMessage("DDAPP_TOOLS_CACHE_PERIOD"), 0, ["selectbox", Loc::getMessage("DDAPP_TOOLS_CACHE_PERIOD_DEFAULT")]],
             ["", "", Loc::getMessage("DDAPP_TOOLS_CACHE_SIZE") . $cacheSize, ["statichtml"]],
             ["export_step", Loc::getMessage("DDAPP_TOOLS_EXPORT_STEP"), 100, ["text", 5, 50]],
+            ["use_captcha", Loc::getMessage("DDAPP_TOOLS_USE_CAPTCHA"), 0, ["selectbox", Loc::getMessage("DDAPP_TOOLS_USE_CAPTCHA_DEFAULT")]],
+            Loc::getMessage("DDAPP_TOOLS_BLOCK7"),
+            ["google_public_key", Loc::getMessage("DDAPP_TOOLS_GOOGLE_RECAPTCHA_PUBLIC_KEY"), "", ["text", 50, 50]],
+            ["google_secret_key", Loc::getMessage("DDAPP_TOOLS_GOOGLE_RECAPTCHA_SECRET_KEY"), "", ["text", 50, 50]],
+            Loc::getMessage("DDAPP_TOOLS_BLOCK8"),
+            ["yandex_client_key", Loc::getMessage("DDAPP_TOOLS_YANDEX_CAPTCHA_CLIENT_KEY"), "", ["text", 50, 50]],
+            ["yandex_server_key", Loc::getMessage("DDAPP_TOOLS_YANDEX_CAPTCHA_SERVER_KEY"), "", ["text", 50, 50]],
+            ["yandex_invisible", Loc::getMessage("DDAPP_TOOLS_YANDEX_CAPTCHA_INVISIBLE"), "N", ["checkbox"]],
+            ["yandex_shield", Loc::getMessage("DDAPP_TOOLS_YANDEX_CAPTCHA_SHIELD_CUSTOM"), "N", ["checkbox"]],
+            ["yandex_position", Loc::getMessage("DDAPP_TOOLS_YANDEX_CAPTCHA_SHIELD_POSITION"), 0, ["selectbox", Loc::getMessage("DDAPP_TOOLS_YANDEX_CAPTCHA_SHIELD_POSITION_DEFAULT")]],
         ]
     ], [
         "DIV" => "TAB2",
@@ -95,6 +115,16 @@ $aTabs = [
         ]
     ], [
         "DIV" => "TAB5",
+        "TAB" => Loc::getMessage("DDAPP_TOOLS_TAB5"),
+        "TITLE" => Loc::getMessage("DDAPP_TOOLS_TAB5_TITLE"),
+        "OPTIONS" => [
+            ["analytic_enabled", Loc::getMessage("DDAPP_TOOLS_ANALYTICS_ENABLED"), "N", ["checkbox"]],
+            ["analytic_ga_id", Loc::getMessage("DDAPP_TOOLS_ANALYTICS_GA_MEASUREMENT_ID"), "", ["text", 50, 50]],
+            ["analytic_ya_id", Loc::getMessage("DDAPP_TOOLS_ANALYTICS_YANDEX_METRIKA_ID"), "", ["text", 50, 50]],
+            ["analytic_vk_id", Loc::getMessage("DDAPP_TOOLS_ANALYTICS_VK_PIXEL_ID"), "", ["text", 50, 50]],
+        ]
+    ], [
+        "DIV" => "TAB5",
         "TAB" => Loc::getMessage("MAIN_TAB_RIGHTS"),
         "TITLE" => Loc::getMessage("MAIN_TAB_TITLE_RIGHTS")
     ]
@@ -116,7 +146,6 @@ if ($request->isPost() && check_bitrix_sessid()) {
                 $optionValue = $request->getPost($arOption[0]);
 
                 // Метод getPost() не работает с input типа checkbox, для работы сделан этот костыль
-                if ($arOption[0] == "smtp_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "log_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "log_email_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "disk_enabled") $optionValue = $optionValue ?: "N";
@@ -124,6 +153,7 @@ if ($request->isPost() && check_bitrix_sessid()) {
                 if ($arOption[0] == "disk_email_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "smtp_enabled") $optionValue = $optionValue ?: "N";
                 if ($arOption[0] == "smtp_dkim_enabled") $optionValue = $optionValue ?: "N";
+                if ($arOption[0] == "analytic_enabled") $optionValue = $optionValue ?: "N";
                 // Настройка агента очистки кеша
                 if ($arOption[0] == "cache_period") {
 
